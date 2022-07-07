@@ -1,0 +1,17 @@
+{% extends "magicCounter/base.html" %}
+{% load static %}
+
+{% block main_content %}
+
+    {% if card %}
+        <h1>Modifier {{ card.name }}</h1>
+    {% else %}
+        <h1>Ajouter une carte</h1>
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Valider</button>
+    </form>
+
+{% endblock %}

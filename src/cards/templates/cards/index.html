@@ -1,0 +1,16 @@
+{% extends "magicCounter/base.html" %}
+
+{% block main_content %}
+    <h1>Liste des cartes</h1>
+    <ul>
+        {% for card in cards %}
+            <li>{{ card.name }}
+                <a href="{% url 'card_edit' pk=card.pk %}">Modifier</a> -
+                <a href="{% url 'card_delete' pk=card.pk %}">Supprimer</a>
+            </li>
+        {% endfor%}
+    </ul>
+    <a href="{% url 'card_add' %}">
+        <button type="button">Ajouter une carte</button>
+    </a>
+{% endblock %}
