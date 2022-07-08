@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'livereload',
     'django.contrib.staticfiles',
-    'cards.apps.CardsConfig'
+    'cards.apps.CardsConfig',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "magicCounter/static")
 ]
+
+AUTH_USER_MODEL = "user.CustomUser"

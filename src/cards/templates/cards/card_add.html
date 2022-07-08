@@ -11,6 +11,7 @@
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
+        {% if error %} <div class="text-red">{{error}}</div> {% endif %}
         <button type="submit">Valider</button>
     </form>
 

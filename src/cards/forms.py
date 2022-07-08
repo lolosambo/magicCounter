@@ -63,24 +63,19 @@ class CardForm(forms.ModelForm):
         model = Card
         fields = [
             "name",
-            "types",
-            "colors",
-            "description",
             "power",
             "defense"
         ]
         labels = {
             "name": "Nom de la carte",
-            "types": "Types",
-            "colors": "Couleurs",
-            "description": "Description",
             "power": "Attaque",
             "defense": "Défense"
+
         }
-        widgets = {
-            "colors": forms.CheckboxSelectMultiple(choices=COLORS),
-            "types": forms.CheckboxSelectMultiple()
-        }
+        # widgets = {
+        #     "colors": forms.CheckboxSelectMultiple(choices=COLORS),
+        #     "types": forms.CheckboxSelectMultiple()
+        # }
 
     # Validation des éléments de formulaire après soumission.
     # ATTENTION au nommage "clean_" + "NomDuChamp" obligatoire
