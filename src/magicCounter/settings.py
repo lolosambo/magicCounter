@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'livereload',
-    'environ',
     'django.contrib.staticfiles',
     'cards.apps.CardsConfig'
 ]
