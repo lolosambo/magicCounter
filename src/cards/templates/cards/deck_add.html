@@ -1,0 +1,38 @@
+{% extends "magicCounter/base.html" %}
+{% load static %}
+
+{% block page_title %}
+    {% if deck %}
+        <h1>Modifier {{ deck.name }}</h1>
+    {% else %}
+        <h1>Ajouter un deck</h1>
+    {% endif %}
+    <a href="{% url 'decks_index' %}">
+        <button type="button" class="btn btn-success">Revenir à la liste des decks</button>
+    </a>
+{% endblock %}
+
+{% block main_content %}
+     <div class="offset-lg-4 col-lg-4 offset-md-3 col-md-6 col-12 form-wrapper">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="fieldWrapper">
+                {{ form.name.errors }}
+                <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                {{ form.name }}
+            </div>
+
+            <div class="fieldWrapper">
+                {{ form.colors.errors }}
+                <label for="{{ form.language.id_for_label }}">{{ form.colors.label }}</label>
+                {{ form.colors }}
+            </div>
+
+            {% if error %} <div class="text-red">{{error}}</div> {% endif %}
+            <button class="btn btn-success" type="submit">Valider</button>
+        </form>
+     </div>
+
+{% endblock %}

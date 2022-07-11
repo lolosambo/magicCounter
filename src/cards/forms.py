@@ -1,40 +1,13 @@
 from django import forms
 import json
-
-from cards.models import Card
-
-COLORS = (
-    ("red", "Rouge"),
-    ("blue", "Bleu"),
-    ("green", "Vert"),
-    ("black", "Noir"),
-    ("white", "Blanc"),
-    ("no_color", "Incolore"),
-)
+from cards.models import Card, Deck
+from magicCounter.form.widgets.HorizontalCheckboxSelectMultiple import HorizontalCheckboxSelectMultiple
 
 
 class AddCardForm(forms.Form):
     name = forms.CharField(
         label="Nom de la carte",
         required=True
-    )
-    colors = forms.MultipleChoiceField(
-        label="Couleurs",
-        required=True,
-        choices=COLORS,
-        widget=forms.CheckboxSelectMultiple()
-    )
-
-    # types = forms.ModelChoiceField(
-    #     label="Types",
-    #     required=True,
-    #
-    #     widget=forms.CheckboxSelectMultiple()
-    # )
-
-    description = forms.CharField(
-        label="Description",
-        required=False
     )
 
     power = forms.CharField(
@@ -47,6 +20,28 @@ class AddCardForm(forms.Form):
         max_length=4,
         label="Défense",
         required=True
+    )
+
+    LANGUAGES = [
+        ("english", "Anglais"),
+        ("french", "Français"),
+    ]
+    language = forms.ChoiceField(
+        label="Langue",
+        choices=LANGUAGES,
+        required=True
+    )
+
+    decks = Deck.objects.all().order_by("name")
+    formatted_decks = []
+
+    for deck in decks:
+        formatted_decks.append((deck.name, deck.name))
+
+    deck = forms.MultipleChoiceField(
+        label="Deck(s)",
+        choices=formatted_decks,
+        widget=HorizontalCheckboxSelectMultiple()
     )
 
     # Validation des éléments de formulaire après soumission.
@@ -84,3 +79,70 @@ class CardForm(forms.ModelForm):
         if "$" in name:
             raise forms.ValidationError('Le nom ne peut pas contenir de "$"')
         return name
+
+
+class DeckForm(forms.Form):
+    COLORS = [
+        ("White", "Blanc"),
+        ("Black", "Noir"),
+        ("Red", "Rouge"),
+        ("Green", "Vert"),
+        ("Blue", "Bleu"),
+        ("Uncolored", "Incolore"),
+    ]
+    model = Deck
+    name = forms.CharField(
+        label="Nom du deck",
+        required=True
+    )
+
+    colors = forms.MultipleChoiceField(
+        label="Couleur(s)",
+        required=True,
+        choices=COLORS,
+        widget=HorizontalCheckboxSelectMultiple()
+    )
+
+    # Validation des éléments de formulaire après soumission.
+    # ATTENTION au nommage "clean_" + "NomDuChamp" obligatoire
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+        if "$" in name:
+            raise forms.ValidationError('Le nom ne peut pas contenir de "$"')
+        return name
+
+
+class EditDeckForm(forms.ModelForm):
+    class Meta:
+        model = Deck
+        fields = [
+            "name",
+            "colors",
+        ]
+        labels = {
+            "name": "Nom du deck",
+            "colors": "Couleurs",
+
+        }
+        widgets = {
+            "colors": HorizontalCheckboxSelectMultiple(),
+        }
+
+    # Validation des éléments de formulaire après soumission.
+    # ATTENTION au nommage "clean_" + "NomDuChamp" obligatoire
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+        if "$" in name:
+            raise forms.ValidationError('Le nom ne peut pas contenir de "$"')
+        return name
+
+
+class AssociationForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        fields = [
+            "deck",
+        ]
+        widgets = {
+            "deck": HorizontalCheckboxSelectMultiple(),
+        }

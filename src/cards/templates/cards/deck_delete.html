@@ -1,0 +1,12 @@
+{% extends "magicCounter/base.html" %}
+{% load static %}
+
+{% block main_content %}
+    <h1>Supprimer {{ card.name }}</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Oui je veux supprimer</button>
+    </form>
+
+{% endblock %}

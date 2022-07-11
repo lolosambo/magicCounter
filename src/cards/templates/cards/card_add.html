@@ -1,18 +1,62 @@
 {% extends "magicCounter/base.html" %}
 {% load static %}
 
-{% block main_content %}
-
+{% block page_title %}
     {% if card %}
         <h1>Modifier {{ card.name }}</h1>
     {% else %}
         <h1>Ajouter une carte</h1>
     {% endif %}
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        {% if error %} <div class="text-red">{{error}}</div> {% endif %}
-        <button type="submit">Valider</button>
-    </form>
+    <a href="{% url 'cards_index' %}">
+        <button type="button" class="btn btn-success">Revenir à la liste des cartes</button>
+    </a>
+{% endblock %}
+
+{% block main_content %}
+     <div class="offset-lg-4 col-lg-4 offset-md-3 col-md-6 col-12 form-wrapper">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="fieldWrapper">
+                {{ form.name.errors }}
+                <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                {{ form.name }}
+            </div>
+
+            <div class="row">
+                <div class="col-5">
+                     <div class="fieldWrapper">
+                        {{ form.power.errors }}
+                        <label for="{{ form.power.id_for_label }}">{{ form.power.label }}</label>
+                        {{ form.power }}
+                    </div>
+                </div>
+                <div class="col-2"><span style="font-size: 6rem; color: black;">/</span></div>
+                <div class="col-5">
+                    <div class="fieldWrapper">
+                        {{ form.defense.errors }}
+                        <label for="{{ form.defense.id_for_label }}">{{ form.defense.label }}</label>
+                        {{ form.defense }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="fieldWrapper">
+                {{ form.language.errors }}
+                <label for="{{ form.language.id_for_label }}">{{ form.language.label }}</label>
+                {{ form.language }}
+            </div>
+
+            <div class="fieldWrapper">
+                {{ form.deck.errors }}
+                <label for="{{ form.deck.id_for_label }}">{{ form.deck.label }}</label>
+                {{ form.deck }}
+            </div>
+
+            {% if error %} <div class="text-red">{{error}}</div> {% endif %}
+            <button class="btn btn-success" type="submit">Valider</button>
+        </form>
+     </div>
 
 {% endblock %}

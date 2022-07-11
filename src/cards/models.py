@@ -16,7 +16,6 @@ class Color(models.Model):
 
 
 class Deck(models.Model):
-    SAME_CARD_NUMBER = 4
     name = models.CharField(max_length=255)
     colors = models.ManyToManyField(Color, blank=True)
 
@@ -25,6 +24,9 @@ class Deck(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("deck_consult", kwargs={"deck_id": self.pk})
 
 
 class CardType(models.Model):
@@ -46,6 +48,7 @@ class Card(models.Model):
     power = models.CharField(max_length=4)
     defense = models.CharField(max_length=4)
     illustration = models.URLField(blank=True)
+    language = models.CharField(max_length=50, default="English")
 
     class Meta:
         verbose_name = "Carte"
