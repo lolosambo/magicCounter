@@ -42,7 +42,7 @@ class CardType(models.Model):
 class Card(models.Model):
     deck = models.ManyToManyField(Deck)
     name = models.CharField(max_length=100)
-    types = models.ManyToManyField(CardType)
+    types = models.ManyToManyField(CardType, blank=True)
     colors = models.ManyToManyField(Color, blank=True)
     description = models.TextField(blank=True)
     power = models.CharField(max_length=4)

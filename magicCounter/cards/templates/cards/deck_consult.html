@@ -9,6 +9,9 @@
     <a href="{% url 'decks_index' %}">
         <button type="button" class="btn btn-success">Revenir à la liste des decks</button>
     </a>
+    <a href="{% url 'token_add' %}">
+        <button type="button" class="btn btn-success">Créer un Jeton</button>
+    </a>
 {% endblock %}
 
 {% block main_content %}
@@ -29,7 +32,7 @@
                                   <div class="row">
                                       {% for card in deck.card_set.all %}
                                           <div class="col-3" style="text-align: center;">
-                                              <img class="deck-illustration" src="{{card.illustration}}" width="250" alt="{{ card.name }}">
+                                              <img class="deck-illustration" src="{{card.illustration}}" width="250" alt="{{ card.name }}"><br>
                                           <a
                                                   class="btn btn-danger"
                                                   href="{% url 'remove_card_from_deck' deck_id=deck.pk card_id=card.pk %}"

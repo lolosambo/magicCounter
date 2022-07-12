@@ -1,0 +1,38 @@
+{% extends "magicCounter/base.html" %}
+
+
+{% block page_title%}
+    <h1>Liste des Tokens</h1>
+    <a href="{% url 'homepage' %}">
+        <button type="button" class="btn btn-success">Retour à l'accueil</button>
+    </a>
+    <a href="{% url 'token_add' %}">
+        <button type="button" class="btn btn-success">Ajouter un Token</button>
+    </a>
+{% endblock%}
+
+{% block main_content %}
+ <div class="col-12">
+     <div class="row">
+         {% for token in tokens %}
+             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6"  style="text-align: center;">
+                 <a href="{% url 'token_consult' token_id=token.pk %}">
+                     <div class="row deck-wrapper">
+                         <div class="col-12 deck_colors">
+                             {% for color in token.colors.all %}
+                                <img src="/media/{{color|lower}}.png" width="40" alt="{{ color }} picto">
+                             {% endfor %}
+                         </div>
+                         <div class="col-12 deck_name">
+                             {{ token.name }}
+                         </div>
+                     </div>
+                 </a>
+                 <a class="btn btn-warning" href="{% url 'token_edit' pk=token.pk %}">Editer</a>
+                 <a class="btn btn-danger" href="{% url 'token_delete' pk=token.pk %}">Supprimer</a>
+            </div>
+        {% endfor%}
+     </div>
+ </div>
+
+{% endblock %}

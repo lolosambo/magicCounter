@@ -1,0 +1,59 @@
+{% extends "magicCounter/base.html" %}
+{% load static %}
+{% block page_title %}
+    <h1>{{ token.name }}</h1>
+    <a href="{% url 'homepage' %}">
+        <button type="button" class="btn btn-success">Retour à l'accueil</button>
+    </a>
+    <a href="{% url 'tokens_index' %}">
+        <button type="button" class="btn btn-success">Revenir à la liste des tokens</button>
+    </a>
+{% endblock %}
+{% block main_content %}
+    <div class="modal" tabindex="-1" id="associationModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title">Associer dans le(s) deck(s)</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form method="POST" action="{% url 'associate_token_to_deck' pk=token.pk %}">
+                  {% csrf_token %}
+                  {{ form.deck}}
+                  <button type="submit" class="btn btn-success">Associer</button>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <div class="col-12">
+         <div class="row">
+              <div class="col-lg-8">
+                   <div class="row card-info">
+                      <div class="col-xl-6 col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                          <img class="card-info-illustration" src="{{ token.illustration }}" alt="{{ token.name }}"/>
+                      </div>
+                      <div class="col-xl-6 col-md-7 col-sm-12 col-xs-12">
+                          <ul>
+                              <li><span>Nom :</span> {{ token.name}}</li>
+                              <li><span>Couleurs :</span> {% for color in token.colors.all %} {{ color.color }} {% endfor %}</li>
+                              <li><span>Types :</span> {% for type in token.types.all %} {{ type.name }} {% endfor %}</li>
+                              <li><span>Force/Endurance :</span> {{ token.power }} / {{ token.defense }}</li>
+                              <li><span>Description :</span> {{ token.description }}</li>
+                              <li><span>Actuellement dans le(s) deck(s) :</span> {% for deck in token.deck.all %} {{ deck.name }},  {% endfor %}</li>
+                          </ul><br><br>
+                          <a href="{% url 'token_delete' pk=token.pk %}">
+                             <button class="btn btn-danger">Supprimer</button>
+                         </a>
+                          <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#associationModal">
+                              Associer/Dissocier deck(s)
+                          </button>
+                      </div>
+                   </div>
+              </div>
+         </div>
+     </div>
+{% endblock %}
+

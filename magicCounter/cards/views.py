@@ -4,7 +4,7 @@ from cards.models import Card, Color, CardType, Deck
 from mtgsdk import Card as MtgCard
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
-from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm
+from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, AddTokenForm
 
 
 def index(request):
@@ -177,5 +177,102 @@ def removeCardFromDeckView(request, deck_id, card_id):
     deck = Deck.objects.filter(pk=deck_id)[0]
     card.deck.remove(deck)
     card.save()
+
+    return redirect(deck)
+
+
+def token_index(request):
+    tokens = Card.objects.all().filter(description="Token")
+    return render(request, "cards/tokens_index.html", {"tokens": tokens})
+
+
+def token(request, token_id):
+    token = get_object_or_404(Card, pk=token_id)
+    form = AssociationForm(request.POST)
+    return render(request, 'cards/token_consult.html', {"token": token, "form": form})
+
+
+def tokenAddView(request):
+    if request.method == "POST":
+        form = AddTokenForm(request.POST)
+        if form.is_valid():
+            token = Card(name=request.POST["name"] + ' Token')
+            token.save()
+            results = dict(QueryDict.lists(request.POST))
+            # On associe les couleur le deck en création
+            for color in results["colors"]:
+                color_to_add = Color.objects.filter(color=color)
+                if not color_to_add:
+                    color = Color(color=color)
+                    color.save()
+                    token.colors.add(color)
+                else:
+                    token.colors.add(color_to_add[0])
+
+            print(results)
+            # On associe les types de la carte Magic avec la carte en création
+            types = []
+            if "types" in results:
+                for type_item in results["types"]:
+                    type_to_add = CardType.objects.filter(name=type_item)
+                    types.append(type)
+                    if not type_to_add:
+                        new_type = CardType(name=type)
+                        new_type.save()
+                        token.types.add(new_type)
+                    else:
+                        token.types.add(type_to_add[0])
+
+            # On associe les decks avec la carte en création
+            for deck_item in results["deck"]:
+                deck_to_add = Deck.objects.filter(name=deck_item)
+                token.deck.add(deck_to_add[0])
+
+            token.power = results["power"][0]
+            token.defense = results["defense"][0]
+            token.description = "Token"
+            token.language = results["language"][0]
+
+            for add_type in results["add_type"]:
+                if add_type not in types:
+                    new_type = CardType(name=add_type)
+                    new_type.save()
+                    token.types.add(new_type)
+
+            token.save()
+
+            return redirect('tokens_index')
+    else:
+        form = AddTokenForm()
+
+    return render(request, 'cards/token_add.html', context={"form": form})
+
+
+class TokenEditView(UpdateView):
+    model = Card
+    context_object_name = "card"
+    form_class = AddTokenForm
+    template_name = "cards/token_add.html"
+
+
+class TokenDeleteView(DeleteView):
+    model = Deck
+    context_object_name = "deck"
+    template_name = "cards/deck_delete.html"
+    success_url = reverse_lazy("decks_index")
+
+
+class AssociateTokenToDeckView(UpdateView):
+    model = Card
+    context_object_name = "token"
+    form_class = AssociationForm
+    template_name = "cards/token_add.html"
+
+
+def removeTokenFromDeckView(request, deck_id, token_id):
+    token = Card.objects.filter(pk=token_id)[0]
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    token.deck.remove(deck)
+    token.save()
 
     return redirect(deck)
