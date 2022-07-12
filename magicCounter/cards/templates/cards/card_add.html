@@ -7,6 +7,9 @@
     {% else %}
         <h1>Ajouter une carte</h1>
     {% endif %}
+    <a href="{% url 'homepage' %}">
+        <button type="button" class="btn btn-success">Retour à l'accueil</button>
+    </a>
     <a href="{% url 'cards_index' %}">
         <button type="button" class="btn btn-success">Revenir à la liste des cartes</button>
     </a>
