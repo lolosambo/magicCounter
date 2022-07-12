@@ -229,3 +229,29 @@ class AddTokenForm(forms.Form):
         if "$" in name:
             raise forms.ValidationError('Le nom ne peut pas contenir de "$"')
         return name
+
+
+class EditTokenForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        fields = [
+            "name",
+            "colors",
+            "types",
+            "deck",
+            "power",
+            "defense",
+        ]
+        labels = {
+            "name": "Nom du deck",
+            "colors": "Couleur(s)",
+            "types": "Type(s)",
+            "deck": "Deck(s)",
+            "power": "Attaque",
+            "defense": "Défense",
+        }
+        widgets = {
+            "colors": HorizontalCheckboxSelectMultiple(),
+            "types": HorizontalCheckboxSelectMultiple(),
+            "deck": HorizontalCheckboxSelectMultiple(),
+        }

@@ -4,7 +4,7 @@ from cards.models import Card, Color, CardType, Deck
 from mtgsdk import Card as MtgCard
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
-from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, AddTokenForm
+from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, AddTokenForm, EditTokenForm
 
 
 def index(request):
@@ -250,8 +250,8 @@ def tokenAddView(request):
 
 class TokenEditView(UpdateView):
     model = Card
-    context_object_name = "card"
-    form_class = AddTokenForm
+    context_object_name = "token"
+    form_class = EditTokenForm
     template_name = "cards/token_add.html"
 
 
