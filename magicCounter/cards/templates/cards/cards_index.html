@@ -1,8 +1,11 @@
 {% extends "magicCounter/base.html" %}
-
+{% load static %}
 
 {% block page_title%}
     <h1>Liste des cartes</h1>
+{% endblock%}
+
+{% block page_menu %}
     <a href="{% url 'homepage' %}">
         <button type="button" class="btn btn-success">Retour à l'accueil</button>
     </a>
@@ -18,7 +21,20 @@
          <div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
              <a href="{% url 'card_consult' card_id=card.pk %}">
                  <div class="card-wrapper">
-                    <img class="card-illustration" src="{{ card.illustration }}" alt="{{ card.name }}"/>
+                     {% if card.description == "Token" %}
+                     <div class="token-illustration">
+                         <div class="token-name">{{ card.name }}</div>
+                         {% for color in card.colors.all %}
+                            <img class="token-colors" width="15" src="/media/{{ color.color|lower }}.png" alt="{{color.color}}"/>
+                         {% endfor %}
+                         <div class="token-description">{{ card.description }}</div>
+                         <div class="token-po-de">{{ card.power }} / {{ card.defense }}</div>
+
+                     </div>
+                     {% else %}
+                         <img class="card-illustration" src="{{ card.illustration }}" alt="{{ card.name }}"/>
+                     {% endif %}
+
                      <p style="margin-bottom: 10px;">{{ card.name }}</p>
                      <a class="btn btn-danger" href="{% url 'card_delete' pk=card.pk %}">Supprimer</a>
                  </div>

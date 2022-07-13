@@ -1,14 +1,18 @@
 {% extends "magicCounter/base.html" %}
 
 
-{% block page_title%}
-    <h1>Liste des Tokens</h1>
+{% block page_menu %}
     <a href="{% url 'homepage' %}">
         <button type="button" class="btn btn-success">Retour à l'accueil</button>
     </a>
     <a href="{% url 'token_add' %}">
         <button type="button" class="btn btn-success">Ajouter un Token</button>
     </a>
+{% endblock%}
+
+{% block page_title%}
+    <h1>Liste des Tokens</h1>
+
 {% endblock%}
 
 {% block main_content %}

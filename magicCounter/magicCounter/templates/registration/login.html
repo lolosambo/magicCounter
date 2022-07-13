@@ -12,7 +12,6 @@
             integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
             crossorigin="anonymous"
     >
-    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
 
 <!-- -----JAVASCRIPT ---------------------------- -->
     <script
@@ -21,20 +20,33 @@
             crossorigin="anonymous">
 
     </script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row"> <header>{% block header %} {% endblock %}</header></div>
+        <div class="row page_title">
+            <header>
+                <h1>MAGIC COUNTER</h1>
+                <h3>SE CONNECTER</h3>
+            </header>
+        </div>
          <div class="row">
-             <div class="col-lg-6 col-md-7 col-12" style="text-align: center;">
-                {% block page_title %} {% endblock %}
+             <div class="offset-lg-4 col-lg-4 offset-md-3 col-md-6 col-12 form-wrapper">
+                 <form method="POST" action="">
+                     {% csrf_token %}
+
+                     {{ form.as_p}}
+                     <button class="btn btn-success" type="submit">Se connecter</button><br><br>
+                     <a class="btn btn-warning" href="{% url 'user_password_reset' %}">J'ai oublié mon mot de passe</a>
+                 </form>
              </div>
-             <div class="col-lg-6 col-md-5 col-12 nav-menu">
-                {% block page_menu %} {% endblock %}
-             </div>
-             {% block main_content %} {% endblock %}
+
          </div>
-         <div class="row"> <footer>{% block footer %} {% endblock %}</footer> </div>
+         <div class="row">
+             <footer>
+
+             </footer>
+         </div>
     </div>
 </body>
 </html>

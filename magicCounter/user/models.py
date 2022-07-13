@@ -4,4 +4,4 @@ from django.db import models
 
 # Create your models here.
 class CustomUser(AbstractUser):
-    date_of_birth = models.DateField(blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)

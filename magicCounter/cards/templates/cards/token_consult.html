@@ -1,13 +1,17 @@
 {% extends "magicCounter/base.html" %}
 {% load static %}
-{% block page_title %}
-    <h1>{{ token.name }}</h1>
+
+{% block page_menu %}
     <a href="{% url 'homepage' %}">
         <button type="button" class="btn btn-success">Retour à l'accueil</button>
     </a>
     <a href="{% url 'tokens_index' %}">
         <button type="button" class="btn btn-success">Revenir à la liste des tokens</button>
     </a>
+{% endblock%}
+
+{% block page_title %}
+    <h1>{{ card.name }}</h1>
 {% endblock %}
 {% block main_content %}
     <div class="modal" tabindex="-1" id="associationModal">
@@ -20,7 +24,7 @@
           <div class="modal-body">
               <form method="POST" action="{% url 'associate_token_to_deck' pk=token.pk %}">
                   {% csrf_token %}
-                  {{ form.deck}}
+                  {{ form.deck }}
                   <button type="submit" class="btn btn-success">Associer</button>
               </form>
           </div>
@@ -32,10 +36,17 @@
          <div class="row">
               <div class="col-lg-8">
                    <div class="row card-info">
-                      <div class="col-xl-6 col-lg-5 col-md-5 col-sm-12 col-xs-12">
-                          <img class="card-info-illustration" src="{{ token.illustration }}" alt="{{ token.name }}"/>
+                      <div class="col-xl-4 col-lg-4 col-md-5 col-sm-12 col-xs-12 token-wrapper-consult ">
+                          <div class="token-name-consult">{{ token.name }}</div>
+                          <div class="token-colors-consult">
+                              {% for color in token.colors.all %}
+                                    <img width="18" src="/media/{{ color.color|lower }}.png" alt="{{color.color}}"/>
+                              {% endfor %}
+                          </div>
+                          <div class="token-description-consult">{{ token.description }}</div>
+                          <div class="token-po-de-consult">{{ token.power }} / {{ token.defense }}</div>
                       </div>
-                      <div class="col-xl-6 col-md-7 col-sm-12 col-xs-12">
+                      <div class="col-xl-8 col-lg-8 col-md-7 col-sm-12 col-xs-12">
                           <ul>
                               <li><span>Nom :</span> {{ token.name}}</li>
                               <li><span>Couleurs :</span> {% for color in token.colors.all %} {{ color.color }} {% endfor %}</li>

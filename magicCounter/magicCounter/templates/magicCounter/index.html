@@ -2,6 +2,10 @@
 
 {% block page_title%}
     <h1>Bienvenue sur Magic Counter</h1>
+
+{% endblock%}
+
+{% block page_menu %}
     <a href="{% url 'decks_index' %}">
         <button type="button" class="btn btn-success">Liste des decks</button>
     </a>
@@ -16,15 +20,22 @@
 {% block main_content %}
  <div class="col-12">
      <div class="row">
-         {% for card in cards %}
-         <div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
-             <a href="{% url 'card_consult' card_id=card.pk %}">
-                 <div class="card-wrapper">
-                    <img class="card-illustration" src="{{ card.illustration }}" alt="{{ card.name }}"/>
-                     <p style="margin-bottom: 10px;">{{ card.name }}</p>
-                     <a class="btn btn-danger" href="{% url 'card_delete' pk=card.pk %}">Supprimer</a>
+         {% for deck in decks %}
+         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6"  style="text-align: center;">
+             <a href="{% url 'deck_consult' deck_id=deck.pk %}">
+                 <div class="row deck-wrapper">
+                     <div class="col-12 deck_colors">
+                         {% for color in deck.colors.all %}
+                            <img src="/media/{{color|lower}}.png" width="40" alt="{{ color }} picto">
+                         {% endfor %}
+                     </div>
+                     <div class="col-12 deck_name">
+                         {{ deck.name }}
+                     </div>
                  </div>
              </a>
+             <a class="btn btn-warning" href="{% url 'deck_edit' pk=deck.pk %}">Editer</a>
+             <a class="btn btn-danger" href="{% url 'deck_delete' pk=deck.pk %}">Supprimer</a>
         </div>
         {% endfor%}
      </div>

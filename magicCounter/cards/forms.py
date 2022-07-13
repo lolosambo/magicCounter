@@ -1,10 +1,23 @@
 from django import forms
-import json
 from cards.models import Card, Deck, CardType
 from magicCounter.form.widgets.HorizontalCheckboxSelectMultiple import HorizontalCheckboxSelectMultiple
+from user.models import CustomUser
 
 
 class AddCardForm(forms.Form):
+
+    def __init__(self, user=None, **kwargs):
+        super(AddCardForm, self).__init__(**kwargs)
+        formatted_decks = []
+        if user == Deck.objects.filter(user=user)[0].user:
+            for deck in Deck.objects.filter(user=user):
+                formatted_decks.append((deck.name, deck.name))
+            self.fields["deck"] = forms.MultipleChoiceField(
+                label="Deck(s)",
+                choices=formatted_decks,
+                widget=HorizontalCheckboxSelectMultiple()
+            )
+
     name = forms.CharField(
         label="Nom de la carte",
         required=True
@@ -26,22 +39,11 @@ class AddCardForm(forms.Form):
         ("english", "Anglais"),
         ("french", "Français"),
     ]
+
     language = forms.ChoiceField(
         label="Langue",
         choices=LANGUAGES,
         required=True
-    )
-
-    decks = Deck.objects.all().order_by("name")
-    formatted_decks = []
-
-    for deck in decks:
-        formatted_decks.append((deck.name, deck.name))
-
-    deck = forms.MultipleChoiceField(
-        label="Deck(s)",
-        choices=formatted_decks,
-        widget=HorizontalCheckboxSelectMultiple()
     )
 
     # Validation des éléments de formulaire après soumission.
@@ -140,6 +142,7 @@ class EditDeckForm(forms.ModelForm):
 class AssociationForm(forms.ModelForm):
     class Meta:
         model = Card
+        exclude = ('user',)
         fields = [
             "deck",
         ]
@@ -147,8 +150,24 @@ class AssociationForm(forms.ModelForm):
             "deck": HorizontalCheckboxSelectMultiple(),
         }
 
+    def __init__(self, user=None, **kwargs):
+        super(AssociationForm, self).__init__(**kwargs)
+        if user == Deck.objects.filter(user=user)[0].user:
+            self.fields['deck'].queryset = Deck.objects.filter(user=user)
+
 
 class AddTokenForm(forms.Form):
+    def __init__(self, user=None, **kwargs):
+        super(AddTokenForm, self).__init__(**kwargs)
+        formatted_decks = []
+        if user == Deck.objects.filter(user=user)[0].user:
+            for deck in Deck.objects.filter(user=user):
+                formatted_decks.append((deck.name, deck.name))
+            self.fields["deck"] = forms.MultipleChoiceField(
+                label="Deck(s)",
+                choices=formatted_decks,
+                widget=HorizontalCheckboxSelectMultiple()
+            )
     name = forms.CharField(
         label="Nom de la carte",
         required=True
@@ -174,18 +193,6 @@ class AddTokenForm(forms.Form):
         label="Langue",
         choices=LANGUAGES,
         required=True
-    )
-
-    decks = Deck.objects.all().order_by("name")
-    formatted_decks = []
-
-    for deck in decks:
-        formatted_decks.append((deck.name, deck.name))
-
-    deck = forms.MultipleChoiceField(
-        label="Deck(s)",
-        choices=formatted_decks,
-        widget=HorizontalCheckboxSelectMultiple()
     )
 
     COLORS = [
@@ -238,20 +245,17 @@ class EditTokenForm(forms.ModelForm):
             "name",
             "colors",
             "types",
-            "deck",
             "power",
             "defense",
         ]
         labels = {
-            "name": "Nom du deck",
+            "name": "Nom du jeton",
             "colors": "Couleur(s)",
             "types": "Type(s)",
-            "deck": "Deck(s)",
             "power": "Attaque",
             "defense": "Défense",
         }
         widgets = {
             "colors": HorizontalCheckboxSelectMultiple(),
             "types": HorizontalCheckboxSelectMultiple(),
-            "deck": HorizontalCheckboxSelectMultiple(),
         }

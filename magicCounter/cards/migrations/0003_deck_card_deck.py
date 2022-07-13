@@ -2,6 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
+from user.models import CustomUser
 
 
 class Migration(migrations.Migration):

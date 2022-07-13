@@ -1,0 +1,36 @@
+{% extends "magicCounter/base.html" %}
+{% load static %}
+
+{% block page_title %}
+    {% if user.is_authenticated %}
+        <h1>Profile de {{ user.username|upper }}</h1>
+        <a href="{% url 'user_password_change' %}">
+            <button type="button" class="btn btn-success">Changer le mot de passe</button>
+        </a>
+    {% else %}
+        <h1>Profile inconnu</h1>
+    {% endif %}
+{% endblock %}
+
+{% block main_content %}
+     <div class="offset-lg-4 col-lg-4 offset-md-3 col-md-6 col-12 form-wrapper">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="fieldWrapper">
+                {{ form.date_of_birth.errors }}
+                <label for="{{ form.date_of_birth.id_for_label }}">{{ form.date_of_birth.label }}</label>
+                {{ form.date_of_birth }}
+            </div>
+
+            <div class="fieldWrapper">
+                {{ form.email.errors }}
+                <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                {{ form.email}}
+            </div>
+
+            {% if error %} <div class="text-red">{{error}}</div> {% endif %}
+            <button class="btn btn-success" type="submit">Valider</button>
+        </form>
+     </div>
+
+{% endblock %}

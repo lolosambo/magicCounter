@@ -1,5 +1,8 @@
 from django.shortcuts import render
-from datetime import datetime
+from cards.models import Deck
+
 
 def index(request):
-    return render(request, "magicCounter/index.html")
+    user = request.user
+    decks = Deck.objects.filter(user=user)
+    return render(request, "magicCounter/index.html", context={"user": user, "decks": decks})

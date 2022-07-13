@@ -1,6 +1,15 @@
 {% extends "magicCounter/base.html" %}
 {% load static %}
 
+{% block page_menu %}
+    <a href="{% url 'homepage' %}">
+        <button type="button" class="btn btn-success">Retour à l'accueil</button>
+    </a>
+    <a href="{% url 'decks_index' %}">
+        <button type="button" class="btn btn-success">Revenir à la liste des decks</button>
+    </a>
+{% endblock%}
+
 {% block main_content %}
     <h1>Supprimer {{ card.name }}</h1>
 

@@ -1,8 +1,7 @@
 {% extends "magicCounter/base.html" %}
 {% load static %}
 
-{% block page_title %}
-    <h1>{{ deck.name|upper }}</h1>
+{% block page_menu %}
     <a href="{% url 'homepage' %}">
         <button type="button" class="btn btn-success">Retour à l'accueil</button>
     </a>
@@ -12,6 +11,11 @@
     <a href="{% url 'token_add' %}">
         <button type="button" class="btn btn-success">Créer un Jeton</button>
     </a>
+{% endblock%}
+
+
+{% block page_title %}
+    <h1>{{ deck.name|upper }}</h1>
 {% endblock %}
 
 {% block main_content %}
@@ -30,15 +34,30 @@
                               <li>
                                   <span>Cartes :</span>
                                   <div class="row">
-                                      {% for card in deck.card_set.all %}
-                                          <div class="col-3" style="text-align: center;">
-                                              <img class="deck-illustration" src="{{card.illustration}}" width="250" alt="{{ card.name }}"><br>
-                                          <a
-                                                  class="btn btn-danger"
-                                                  href="{% url 'remove_card_from_deck' deck_id=deck.pk card_id=card.pk %}"
-                                          >
-                                              Dissocier
-                                          </a>
+                                      {% for card in deck.cards.all %}
+                                          <div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
+                                             <a href="{% url 'card_consult' card_id=card.pk %}">
+                                                 <div class="card-wrapper">
+                                                      {% if card.description == "Token" %}
+                                                         <div class="token-illustration">
+                                                             <div class="token-name">{{ card.name }}</div>
+                                                             {% for color in card.colors.all %}
+                                                                <img class="token-colors" width="15" src="/media/{{ color.color|lower }}.png" alt="{{color.color}}"/>
+                                                             {% endfor %}
+                                                             <div class="token-description">{{ card.description }}</div>
+                                                             <div class="token-po-de">{{ card.power }} / {{ card.defense }}</div>
+
+                                                         </div>
+                                                      {% else %}
+                                                         <img class="card-illustration" src="{{ card.illustration }}" alt="{{ card.name }}"/><br>
+                                                      {% endif %}
+                                                      <a
+                                                          class="btn btn-danger"
+                                                          href="{% url 'remove_card_from_deck' deck_id=deck.pk card_id=card.pk %}"
+                                                      >Dissocier
+                                                      </a>
+                                                 </div>
+                                             </a>
                                           </div>
                                       {% endfor %}
                                   </div>

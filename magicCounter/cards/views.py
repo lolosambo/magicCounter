@@ -9,20 +9,27 @@ from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, Ad
 
 def index(request):
     cards = Card.objects.all().order_by('name')
-    return render(request, "cards/cards_index.html", {"cards": cards})
+    filteredCards = []
+    for card in cards:
+        for deck in card.deck.all():
+            if deck.user == request.user:
+                filteredCards.append(card)
+    return render(request, "cards/cards_index.html", {"cards": filteredCards})
 
 
 def card(request, card_id):
     card = get_object_or_404(Card, id=card_id)
-    form = AssociationForm(request.POST)
+    print(request.user)
+    form = AssociationForm(user=request.user)
 
     return render(request, 'cards/card_consult.html', {"card": card, "form": form})
+
 
 # Ajout d'une carte en mode FBV Function Based Views'
 def addCard(request):
     if request.method == "POST":
         # request.POST = les données récupérées du formulaire (dictionnaire)
-        form = AddCardForm(request.POST)
+        form = AddCardForm(request.user)
         if form.is_valid():
             mtgcard = MtgCard\
                 .where(name=request.POST["name"]) \
@@ -95,7 +102,7 @@ def addCard(request):
             # On redirige vers la même page pour éviter la ressoumission des données par erreur
             return HttpResponseRedirect(request.path)
     else:
-        form = AddCardForm()
+        form = AddCardForm(request.user)
 
     return render(request, 'cards/card_add.html', context={"form": form})
 
@@ -117,7 +124,7 @@ class CardDeleteView(DeleteView):
 
 
 def deck_index(request):
-    decks = Deck.objects.all().order_by('name')
+    decks = Deck.objects.filter(user=request.user).order_by('name')
     return render(request, "cards/decks_index.html", {"decks": decks})
 
 
@@ -130,7 +137,7 @@ def deckAddView(request):
     if request.method == "POST":
         form = DeckForm(request.POST)
         if form.is_valid():
-            deck = Deck(name=request.POST["name"])
+            deck = Deck(name=request.POST["name"], user=request.user)
             deck.save()
             results = dict(QueryDict.lists(request.POST))
             # On associe les couleur le deck en création
@@ -183,18 +190,23 @@ def removeCardFromDeckView(request, deck_id, card_id):
 
 def token_index(request):
     tokens = Card.objects.all().filter(description="Token")
-    return render(request, "cards/tokens_index.html", {"tokens": tokens})
+    filteredCards = []
+    for card in tokens:
+        for deck in card.deck.all():
+            if deck.user == request.user:
+                filteredCards.append(card)
+    return render(request, "cards/tokens_index.html", {"tokens": filteredCards})
 
 
 def token(request, token_id):
     token = get_object_or_404(Card, pk=token_id)
-    form = AssociationForm(request.POST)
+    form = AssociationForm(user=request.user)
     return render(request, 'cards/token_consult.html', {"token": token, "form": form})
 
 
 def tokenAddView(request):
     if request.method == "POST":
-        form = AddTokenForm(request.POST)
+        form = AddTokenForm(request.user)
         if form.is_valid():
             token = Card(name=request.POST["name"] + ' Token')
             token.save()
@@ -243,7 +255,7 @@ def tokenAddView(request):
 
             return redirect('tokens_index')
     else:
-        form = AddTokenForm()
+        form = AddTokenForm(request.user)
 
     return render(request, 'cards/token_add.html', context={"form": form})
 
@@ -256,10 +268,10 @@ class TokenEditView(UpdateView):
 
 
 class TokenDeleteView(DeleteView):
-    model = Deck
-    context_object_name = "deck"
-    template_name = "cards/deck_delete.html"
-    success_url = reverse_lazy("decks_index")
+    model = Card
+    context_object_name = "token"
+    template_name = "cards/token_delete.html"
+    success_url = reverse_lazy("tokens_index")
 
 
 class AssociateTokenToDeckView(UpdateView):

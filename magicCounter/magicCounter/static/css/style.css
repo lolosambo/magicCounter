@@ -37,6 +37,15 @@ ul > li > span {
 
 }
 
+/* --------- ARCHITECTURE-ZONE -----------------  */
+
+.nav-menu {
+    margin-top: 20px;
+    display: flex:
+    flex-direction: row;
+    text-align: right;
+}
+
 /* --------- BOOTSTRAP OVERRIDE ZONE -------*/
 .btn-success{
     background-color: RebeccaPurple;
@@ -54,6 +63,10 @@ ul > li > span {
     color: red;
 }
 
+.page_title{
+    text-align: center;
+}
+
 
 /* ---------- FORMS SECTION -------*/
 .form-wrapper {
@@ -63,6 +76,25 @@ ul > li > span {
     margin-bottom: 20px;
     border: 2px solid HoneyDew;
     border-radius: 10px;
+}
+
+form > p {
+    margin-top: 10px;
+}
+
+form > ul {
+    margin-top: 10px !important;
+    margin-bottom: 20px;
+}
+
+.helptext {
+    color: RebeccaPurple;
+}
+
+form > ul >li {
+    color: RebeccaPurple;
+    font-size: 0.8rem;
+    margin-top: 4px;
 }
 
 .fieldWrapper{
@@ -84,6 +116,7 @@ input {
    width: 100%;
    height: 3rem;
    margin-top: 10px;
+   margin-bottom: 10px;
    border-radius: 10px;
 }
 
@@ -143,6 +176,75 @@ form > button{
    box-shadow: 10px 10px 5px black;
 }
 
+.token-illustration{
+   height: 300px;
+   width: 220px;
+   background-image: url('../../media/token.png');
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   border: 2px solid white;
+   border-radius: 20px;
+   margin-top: 20px;
+   margin-bottom: 20px;
+   box-shadow: 10px 10px 5px black;
+}
+
+.token-name {
+    margin-right: 50px;
+    margin-top: 15px;
+    color: black;
+    font-size: 1rem;
+}
+
+.token-description {
+    margin-top: 30px;
+    color: black;
+    font-size: 1rem;
+}
+
+.token-po-de {
+    margin-top: 39px;
+    margin-left: 145px;
+    color: black;
+    font-size: 1rem;
+}
+
+.token-colors{
+    margin-top: 136px;
+}
+
+.token-name-consult {
+    margin-left: 15px;
+    margin-top: 23px;
+    color: black;
+    font-size: 1rem;
+}
+
+.token-colors-consult {
+    margin-top: 188px;
+    display: flex;
+    flex-direction; row;
+    align-items: center;
+    justify-content: center;
+    margin-right: 40px;
+}
+
+.token-description-consult {
+    margin-top: 55px;
+    margin-left: 110px;
+    color: black;
+    font-size: 1rem;
+
+}
+
+.token-po-de-consult {
+    margin-top: 52px;
+    margin-left: 215px;
+    color: black;
+    font-size: 1rem;
+}
+
 /* -------- DECK SECTION ------------------*/
 .deck-wrapper {
     background-image: url('../../media/card_verso.png');
@@ -161,7 +263,7 @@ form > button{
 }
 
 .deck_colors {
-    margin-top: 100px;;
+    margin-top: 100px;
 }
 
 .deck_name {
@@ -182,4 +284,14 @@ form > button{
    border-radius: 20px;
    margin-top: 20px;
    margin-bottom: 20px;
+}
+
+.token-wrapper-consult {
+    background-image: url('../../media/token.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left;
+    min-height: 400px;
+    margin-top: 18px;
+    margin-bottom: 15px;
 }

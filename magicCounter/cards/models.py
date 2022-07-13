@@ -3,6 +3,8 @@ from itertools import count
 from django.db import models
 from django.urls import reverse
 
+from user.models import CustomUser
+
 
 class Color(models.Model):
     color = models.CharField(max_length=25)
@@ -18,6 +20,7 @@ class Color(models.Model):
 class Deck(models.Model):
     name = models.CharField(max_length=255)
     colors = models.ManyToManyField(Color, blank=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True, default=0)
 
     class Meta:
         verbose_name = "Deck"
@@ -40,7 +43,7 @@ class CardType(models.Model):
 
 
 class Card(models.Model):
-    deck = models.ManyToManyField(Deck)
+    deck = models.ManyToManyField(Deck, related_name="cards")
     name = models.CharField(max_length=100)
     types = models.ManyToManyField(CardType, blank=True)
     colors = models.ManyToManyField(Color, blank=True)

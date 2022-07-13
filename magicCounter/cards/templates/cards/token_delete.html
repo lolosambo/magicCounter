@@ -2,16 +2,16 @@
 {% load static %}
 
 {% block page_menu %}
-     <a href="{% url 'homepage' %}">
+    <a href="{% url 'homepage' %}">
         <button type="button" class="btn btn-success">Retour à l'accueil</button>
     </a>
-    <a href="{% url 'cards_index' %}">
-        <button type="button" class="btn btn-success">Revenir à la liste des cartes</button>
+    <a href="{% url 'tokens_index' %}">
+        <button type="button" class="btn btn-success">Revenir à la liste des tokens</button>
     </a>
 {% endblock%}
 
 {% block main_content %}
-    <h1>Supprimer {{ card.name }}</h1>
+    <h1>Supprimer {{ token.name }}</h1>
 
     <form method="POST">
         {% csrf_token %}

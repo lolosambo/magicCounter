@@ -19,10 +19,13 @@ from django.urls import path, include
 
 from . import settings
 from .views import index
+from user.views import signup, profile
 
 urlpatterns = [
     path('', index, name="homepage"),
     path("cards/", include("cards.urls")),
+    path("user/", include("user.urls")),
     path('admin/', admin.site.urls),
+    path("compte/", include('django.contrib.auth.urls')),
+    path("accounts/profile/", profile, name="profile"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
