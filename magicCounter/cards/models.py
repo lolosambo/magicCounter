@@ -20,7 +20,7 @@ class Color(models.Model):
 class Deck(models.Model):
     name = models.CharField(max_length=255)
     colors = models.ManyToManyField(Color, blank=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True, default=0)
+    user = models.ForeignKey(CustomUser, editable=False, on_delete=models.CASCADE, blank=True, null=True, default=0)
 
     class Meta:
         verbose_name = "Deck"
@@ -50,6 +50,7 @@ class Card(models.Model):
     description = models.TextField(blank=True)
     power = models.CharField(max_length=4)
     defense = models.CharField(max_length=4)
+    isFlying = models.BooleanField(default=False)
     illustration = models.URLField(blank=True)
     language = models.CharField(max_length=50, default="English")
 
@@ -61,6 +62,24 @@ class Card(models.Model):
 
     def get_absolute_url(self):
         return reverse("card_consult", kwargs={"card_id": self.pk})
+
+
+class Playground(models.Model):
+    user = models.ForeignKey(CustomUser, editable=False, on_delete=models.CASCADE, blank=True, null=True, default=0)
+    deck = models.ForeignKey(Deck, editable=False, on_delete=models.CASCADE, blank=True, null=True, default=0)
+    config = models.JSONField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Aire de jeu"
+
+    def __str__(self):
+        return "playground-" + self.pk
+
+    def get_absolute_url(self):
+        return reverse("playground_consult", kwargs={"playground_id": self.pk})
+
+
+
 
 
 

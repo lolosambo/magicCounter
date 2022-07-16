@@ -49,6 +49,20 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-2 mt-3">
+                    <div class="fieldWrapper">
+                        {{ form.isFlying.errors }}
+                        <label for="{{ form.isFlying.id_for_label }}">{{ form.isFlying.label }}</label>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="fieldWrapper" style="width: 20px;">
+                        {{ form.isFlying }}
+                    </div>
+                </div>
+            </div>
+
             <div class="fieldWrapper">
                 {{ form.language.errors }}
                 <label for="{{ form.language.id_for_label }}">{{ form.language.label }}</label>

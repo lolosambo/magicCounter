@@ -22,7 +22,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <form method="POST" action="{% url 'associate_token_to_deck' pk=token.pk %}">
+              <form method="POST" action="{% url 'associate_token_to_deck' card_id=token.pk %}">
                   {% csrf_token %}
                   {{ form.deck }}
                   <button type="submit" class="btn btn-success">Associer</button>
@@ -59,7 +59,7 @@
                              <button class="btn btn-danger">Supprimer</button>
                          </a>
                           <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#associationModal">
-                              Associer/Dissocier deck(s)
+                              Associer avec deck(s)
                           </button>
                       </div>
                    </div>

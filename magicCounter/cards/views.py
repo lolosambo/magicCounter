@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseRedirect, QueryDict
-from cards.models import Card, Color, CardType, Deck
+from django.http import HttpResponseRedirect, QueryDict, HttpResponse
+from cards.models import Card, Color, CardType, Deck, Playground
 from mtgsdk import Card as MtgCard
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
@@ -12,14 +12,13 @@ def index(request):
     filteredCards = []
     for card in cards:
         for deck in card.deck.all():
-            if deck.user == request.user:
+            if deck.user == request.user and card not in filteredCards:
                 filteredCards.append(card)
     return render(request, "cards/cards_index.html", {"cards": filteredCards})
 
 
 def card(request, card_id):
     card = get_object_or_404(Card, id=card_id)
-    print(request.user)
     form = AssociationForm(user=request.user)
 
     return render(request, 'cards/card_consult.html', {"card": card, "form": form})
@@ -29,8 +28,9 @@ def card(request, card_id):
 def addCard(request):
     if request.method == "POST":
         # request.POST = les données récupérées du formulaire (dictionnaire)
-        form = AddCardForm(request.user)
+        form = AddCardForm(request.POST, user=request.user)
         if form.is_valid():
+            print("jhferuih fguirhe uighreuih guirehg uierui gherui")
             mtgcard = MtgCard\
                 .where(name=request.POST["name"]) \
                 .where(language=request.POST["language"]) \
@@ -94,6 +94,8 @@ def addCard(request):
                 card.defense = mtgcard[0].toughness
                 card.description = mtgcard[0].text
                 card.language = request.POST["language"]
+                if "Flying" in mtgcard[0].text or "Volant" in mtgcard[0].text:
+                    card.isFlying = True
                 card.save()
 
             # "commit=False", dans la fonction save() empêche la sauveagarde en BDD
@@ -102,7 +104,7 @@ def addCard(request):
             # On redirige vers la même page pour éviter la ressoumission des données par erreur
             return HttpResponseRedirect(request.path)
     else:
-        form = AddCardForm(request.user)
+        form = AddCardForm(user=request.user)
 
     return render(request, 'cards/card_add.html', context={"form": form})
 
@@ -172,11 +174,20 @@ class DeckDeleteView(DeleteView):
     success_url = reverse_lazy("decks_index")
 
 
-class AssociateCardToDeckView(UpdateView):
-    model = Card
-    context_object_name = "card"
-    form_class = AssociationForm
-    template_name = "cards/card_edit.html"
+def associateCardToDeckView(request, card_id):
+    card = Card.objects.filter(pk=card_id)[0]
+    if request.method == "POST":
+        form = AssociationForm(request.POST, user=request.user)
+        if form.is_valid():
+            for deck in form.cleaned_data["deck"]:
+                deck_to_associate = Deck.objects.filter(name=deck)[0]
+                card.deck.add(deck_to_associate)
+            card.save()
+            return render(request, "cards/card_consult.html", context={"card": card, "form": form})
+    else:
+        form = AssociationForm(user=request.user)
+
+    return render(request, "cards/card_consult.html", context={"card": card, "form": form})
 
 
 def removeCardFromDeckView(request, deck_id, card_id):
@@ -193,7 +204,7 @@ def token_index(request):
     filteredCards = []
     for card in tokens:
         for deck in card.deck.all():
-            if deck.user == request.user:
+            if deck.user == request.user and card not in filteredCards:
                 filteredCards.append(card)
     return render(request, "cards/tokens_index.html", {"tokens": filteredCards})
 
@@ -206,7 +217,7 @@ def token(request, token_id):
 
 def tokenAddView(request):
     if request.method == "POST":
-        form = AddTokenForm(request.user)
+        form = AddTokenForm(request.POST, user=request.user)
         if form.is_valid():
             token = Card(name=request.POST["name"] + ' Token')
             token.save()
@@ -246,7 +257,7 @@ def tokenAddView(request):
             token.language = results["language"][0]
 
             for add_type in results["add_type"]:
-                if add_type not in types:
+                if add_type != "" and add_type not in types:
                     new_type = CardType(name=add_type)
                     new_type.save()
                     token.types.add(new_type)
@@ -255,7 +266,7 @@ def tokenAddView(request):
 
             return redirect('tokens_index')
     else:
-        form = AddTokenForm(request.user)
+        form = AddTokenForm(user=request.user)
 
     return render(request, 'cards/token_add.html', context={"form": form})
 
@@ -274,11 +285,19 @@ class TokenDeleteView(DeleteView):
     success_url = reverse_lazy("tokens_index")
 
 
-class AssociateTokenToDeckView(UpdateView):
-    model = Card
-    context_object_name = "token"
-    form_class = AssociationForm
-    template_name = "cards/token_add.html"
+def associateTokenToDeckView(request, card_id):
+    token = Card.objects.filter(pk=card_id)[0]
+    if request.method == "POST":
+        form = AssociationForm(request.POST, user=request.user)
+        if form.is_valid():
+            for deck in form.cleaned_data["deck"]:
+                deck_to_associate = Deck.objects.filter(name=deck)[0]
+                token.deck.add(deck_to_associate)
+            token.save()
+            return render(request, "cards/token_consult.html", context={"token": token, "form": form})
+    else:
+        form = AssociationForm(user=request.user)
+    return render(request, "cards/token_consult.html", context={"token": token, "form": form})
 
 
 def removeTokenFromDeckView(request, deck_id, token_id):
@@ -288,3 +307,79 @@ def removeTokenFromDeckView(request, deck_id, token_id):
     token.save()
 
     return redirect(deck)
+
+
+def playground(request):
+    user = request.user
+    decks = Deck.objects.filter(user=user)
+    return render(request, "cards/playground.html", context={"decks": decks})
+
+
+def playground_game_starts(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+
+    if not Playground.objects.filter(user=request.user, deck=deck):
+        # On crée et on stocke la partie
+        playground = Playground(user=request.user)
+        playground.deck = deck
+        json = {
+            "life": 20,
+            "cards": [],
+        }
+        playground.config = json
+        playground.save()
+    else:
+        json = Playground.objects.filter(user=request.user, deck=deck)[0].config
+
+    return render(request, "cards/playground_game_starts.html", context={"deck": deck, "json": json})
+
+
+def playground_add_card(request, card_id, deck_id):
+    card = Card.objects.filter(pk=card_id)[0]
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+    types = []
+    for type in card.types.all():
+        types.append(type.name)
+
+    colors = []
+    for color in card.colors.all():
+        colors.append(color.color)
+
+    json = playground.config
+
+    index = len(json["cards"])
+
+    json["cards"].append(
+        {
+            "pk": card.pk,
+            "index": index + 1,
+            "name": card.name,
+            "colors": colors,
+            "types": types,
+            "description": card.description,
+            "power": card.power,
+            "defense": card.defense,
+            "isFlying": card.isFlying,
+            "language": card.language,
+            "illustration": card.illustration,
+        }
+    )
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_remove_creature(request, deck_id, index):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+    json = playground.config
+    cards = []
+    for card in json['cards']:
+        if card['index'] != int(index):
+            cards.append(card)
+    json['cards'] = cards
+    playground.config = json
+    playground.save()
+
+    return redirect('playground_game_starts', deck_id=deck.pk)
+

@@ -11,6 +11,9 @@
     <a href="{% url 'cards_index' %}">
         <button type="button" class="btn btn-success">Revenir à la liste des cartes</button>
     </a>
+    <a href="{% url 'card_add' %}">
+        <button type="button" class="btn btn-success">Créer une carte</button>
+    </a>
 {% endblock%}
 
 
@@ -23,7 +26,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <form method="POST" action="{% url 'associate_card_to_deck' pk=card.pk %}">
+              <form method="POST" action="{% url 'associate_card_to_deck' card_id=card.pk %}">
                   {% csrf_token %}
                   {{ form.deck }}
                   <button type="submit" class="btn btn-success">Associer</button>
@@ -46,6 +49,7 @@
                               <li><span>Couleurs :</span> {% for color in card.colors.all %} {{ color.color }} {% endfor %}</li>
                               <li><span>Types :</span> {% for type in card.types.all %} {{ type.name }} {% endfor %}</li>
                               <li><span>Force/Endurance :</span> {{ card.power }} / {{ card.defense }}</li>
+                              <li><span>Vol :</span> {% if card.isFlying %} Oui {% else %} Non {% endif %}</li>
                               <li><span>Description :</span> {{ card.description }}</li>
                               <li><span>Actuellement dans le(s) deck(s) :</span> {% for deck in card.deck.all %} {{ deck.name }},  {% endfor %}</li>
                           </ul><br><br>
@@ -53,7 +57,7 @@
                              <button class="btn btn-danger">Supprimer</button>
                          </a>
                           <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#associationModal">
-                              Associer/Dissocier deck(s)
+                              Associer avec deck(s)
                           </button>
                       </div>
                    </div>
