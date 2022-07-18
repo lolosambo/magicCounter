@@ -128,10 +128,6 @@ input {
    margin-top: 8px;
 }
 
-input[type=checkbox] {
-
-}
-
 label {
    font-size: 1.5rem !important;
    color: black;
@@ -320,10 +316,6 @@ form > button{
     float: left;
 }
 
-.card-thumbnail {
-
-}
-
 .playground-wrapper {
     height: 100%;
 }
@@ -335,8 +327,8 @@ form > button{
 
 .playground-card-wrapper {
     background-color: DimGray;
-    height: 400px;
-    width: 215px;
+    height: 410px;
+    width: 225px;
     padding: 20px;
     margin-left: 20px;
     margin-bottom: 20px;
@@ -350,25 +342,25 @@ form > button{
 .death-button{
     background-color: black;
     color: white;
-    margin-left: 22px;
+    margin-left: 35px;
     margin-top: 10px;
 }
 
 .playground-token-illustration{
-   width: 165px;
-   height: 229px;
+   width: 185px;
+   height: 249px;
    background-image: url('../../media/token.png');
    background-size: contain;
    background-repeat: no-repeat;
    background-position: center;
    border: 5px solid black;
-   margin-bottom: 20px;
+   margin-bottom: 10px;
 
 }
 
 .playground-token-name {
-    margin-left: 15px;
-    margin-top: 10px;
+    margin-left: 17px;
+    margin-top: 13px;
     color: black;
     font-size: 0.8rem;
 }
@@ -379,8 +371,9 @@ form > button{
 }
 
 .playground-token-po-de {
-    margin-top: 7px;
-    margin-left: 120px;
+    text-align: center;
+    margin-top: 25px;
+    margin-left: 117px;
     color: black;
     font-size: 0.6rem;
 }
@@ -389,4 +382,52 @@ form > button{
     background-color: DarkSlateBlue;
     height: 100%;
     text-align: center;
+}
+
+.custom_counter_wrapper{
+    border: 1px solid white;
+    background-color: indigo;
+}
+
+#custom_counter_form {
+    text-align: left;
+    font-size: 0.7rem;
+
+}
+
+#custom_counter_form > p > input{
+    text-align: left;
+    font-size: 0.7rem !important;
+    width: 50px;
+    height: 20px;
+}
+
+#custom_counter_form > p >label{
+    text-align: left;
+    font-size: 0.9rem !important;
+    color: goldenrod;
+}
+
+#custom_counter_form .form-check-inline > label {
+    font-size: 0.9rem !important;
+    color: white;
+}
+
+#id_power, #id_defense{
+    width: 50px !important;
+    height: 30px !important;
+    font-size: 1.5rem !important;
+    border-radius: 5px;
+}
+
+#custom_counter_form > button[type=submit] {
+    width: 100px;
+    height: 30px;
+    font-size: 1rem !important;
+    margin-left: 22%;
+    margin-bottom: 20px;
+}
+
+#id_forFlying {
+    height: 20px !important;
 }

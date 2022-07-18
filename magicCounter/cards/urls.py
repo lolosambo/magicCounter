@@ -3,7 +3,7 @@ from .views import index, card, addCard, CardEditView, CardDeleteView, \
     deck_index, deck, deckAddView, DeckEditView, DeckDeleteView, associateCardToDeckView, \
     removeCardFromDeckView, token_index, tokenAddView, token, TokenEditView, TokenDeleteView, associateTokenToDeckView, \
     removeTokenFromDeckView, playground, playground_game_starts, playground_add_card, playground_remove_creature, \
-    playground_save, playground_save_for_all
+    playground_save, playground_save_for_all, playground_reset_all, playground_kill_game
 
 urlpatterns = [
     # CARD VIEWS
@@ -39,4 +39,6 @@ urlpatterns = [
     path('playground/deck/<str:deck_id>/delete/<str:index>', playground_remove_creature, name="playground_remove_creature"),
     path('playground/deck/<str:deck_id>/card/<str:card_index>/save/<str:button>/<str:new_value>', playground_save, name="playground_save"),
     path('playground/deck/<str:deck_id>/save/<str:button>', playground_save_for_all, name="playground_save_for_all"),
+    path('playground/deck/<str:deck_id>/reset', playground_reset_all, name="playground_reset_all"),
+    path('playground/deck/<str:deck_id>/kill_game', playground_kill_game, name="kill_game"),
 ]

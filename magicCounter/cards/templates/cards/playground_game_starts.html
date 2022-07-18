@@ -62,35 +62,37 @@
                              <div class="playground-token-po-de">{{ card.power }} / {{ card.defense }}</div>
                          </div>
                     {% else %}
-                         <img src="{{ card.illustration }}" width="175" alt="{{ card.name }}"/>
+                         <img src="{{ card.illustration }}" width="185" alt="{{ card.name }}"/>
                     {% endif %}
-                    <button
-                            type="button"
-                            id="power-minus-{{ card.index }}"
-                            class="btn btn-sm btn-danger"
-                            data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='power-minus' new_value=0 %}">-</button>
-                    <span id="power-{{ card.index }}">{% if "*" in card.power %} 0 {% else %} {{ card.power }} {% endif %}</span>
-                    <button
-                            type="button"
-                            id="power-plus-{{ card.index }}"
-                            class="btn btn-sm btn-primary"
-                            data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='power-plus' new_value=0 %}">
-                        +
-                    </button>
-                    <span style="font-size: 1.8rem; padding-left: 5px; padding-right: 5px;">/</span>
-                    <button
-                            type="button"
-                            id="defense-minus-{{ card.index }}"
-                            class="btn btn-sm btn-danger"
-                            data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='defense-minus' new_value=0 %}">-</button>
-                    <span id="defense-{{ card.index }}">{% if "*" in card.defense %} 0 {% else %} {{ card.defense }} {% endif %}</span>
-                    <button
-                            type="button"
-                            id="defense-plus-{{ card.index }}"
-                            class="btn btn-sm btn-primary"
-                            data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='defense-plus' new_value=0 %}">
-                        +
-                    </button>
+                    <div style="text-align: center">
+                        <button
+                                type="button"
+                                id="power-minus-{{ card.index }}"
+                                class="btn btn-sm btn-danger"
+                                data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='power-minus' new_value=0 %}">-</button>
+                        <span id="power-{{ card.index }}">{% if "*" in card.power %} 0 {% else %} {{ card.power }} {% endif %}</span>
+                        <button
+                                type="button"
+                                id="power-plus-{{ card.index }}"
+                                class="btn btn-sm btn-primary"
+                                data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='power-plus' new_value=0 %}">
+                            +
+                        </button>
+                        <span style="font-size: 1.8rem; padding-left: 5px; padding-right: 5px;">/</span>
+                        <button
+                                type="button"
+                                id="defense-minus-{{ card.index }}"
+                                class="btn btn-sm btn-danger"
+                                data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='defense-minus' new_value=0 %}">-</button>
+                        <span id="defense-{{ card.index }}">{% if "*" in card.defense %} 0 {% else %} {{ card.defense }} {% endif %}</span>
+                        <button
+                                type="button"
+                                id="defense-plus-{{ card.index }}"
+                                class="btn btn-sm btn-primary"
+                                data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='defense-plus' new_value=0 %}">
+                            +
+                        </button>
+                    </div>
                     <a href="#"
                        id="death-{{ card.index }}"
                        class="btn btn-sm death-button"
@@ -107,8 +109,11 @@
     </div>
 
 <!-- ------- MENU ACTIONS -------->
+
+
     <div class="col-lg-2 col-md-4 col-sm-12 action-menu-wrapper">
-        <p>Jeton pour toutes les cartes</p>
+        <br><p>Compteur pour toutes les cartes</p>
+        <span class="show-value-power">0</span>
         <button
                 type="button"
                 id="power-minus-forAll"
@@ -117,7 +122,6 @@
         >
             -
         </button>
-        <span id="power_forAll">0</span>
         <button
                 type="button"
                 id="power-plus-forAll"
@@ -135,7 +139,6 @@
         >
             -
         </button>
-        <span id="defense_forAll">0</span>
         <button
                 type="button"
                 id="defense-plus-forAll"
@@ -144,5 +147,34 @@
         >
             +
         </button>
+        <span class="show-value-defense">0</span>
+         <!-- ------------- REINITIALIZE TOUTES LES CARTES ---------------------->
+        <button
+                id="reset_all_cards"
+                class="btn btn-sm btn-warning mt-4 mb-4"
+                data-reset-url="{% url 'playground_reset_all' deck_id=deck.pk %}"
+        >
+            Réinitialiser toutes les cartes
+        </button>
+
+        <div class="row">
+            <div class="offset-1 col-10 custom_counter_wrapper">
+                <br><p>Compteur personnalisé</p>
+                <form id="custom_counter_form" method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    {{ form.as_p }}
+                    <button class="btn btn-sm btn-primary" type="submit">Valider</button>
+                </form>
+            </div>
+        </div>
+
+
+         <!-- ------------- FIN DE PARTIE ---------------------->
+        <a href="{% url 'kill_game' deck_id=deck.pk %}">
+            <button class="btn btn-sm btn-danger mt-4 mb-4">Mettre fin à la partie</button>
+        </a>
     </div>
+
 {% endblock %}

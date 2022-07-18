@@ -1,9 +1,9 @@
 $(document).ready(function () {
+    $("span[class*='show-value']").hide();
 
 //    ------------------ POUR UNE SEULE CARTE ------------------------------
     function savePlayground(valueElement, url){
         let newValue= valueElement
-        console.log(url.charAt(url.length - 1));
         if(url.charAt(url.length - 1) >= 0){
             url = url.substring(0, url.length - 1) + newValue;
         }
@@ -36,38 +36,38 @@ $(document).ready(function () {
 
     $("a[id*='death-']").on("click", function(){
         let url = $(this).attr("data-remove-url");
-            $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
+        $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
     });
 
     //    ------------------ POUR TOUTES LES CARTES ------------------------------
 
     $("#power-plus-forAll").on("click", function(){
-        $("span[id*='power_forAll']").text(parseInt($("span[id*='power_forAll']").text()) + 1) ;
         $("span[id*='power-']").each(function(){
             $(this).text(parseInt($(this).text()) + 1);
         });
     });
 
     $("#power-minus-forAll").on("click", function(){
-        $("span[id*='power_forAll']").text(parseInt($("span[id*='power_forAll']").text()) - 1) ;
         $("span[id*='power-']").each(function(){
             $(this).text(parseInt($(this).text()) -1);
         });
     });
 
     $("#defense-plus-forAll").on("click", function(){
-        $("span[id*='defense_forAll']").text(parseInt($("span[id*='defense_forAll']").text()) + 1) ;
         $("span[id*='defense-']").each(function(){
             $(this).text(parseInt($(this).text()) + 1);
         });
     });
 
     $("#defense-minus-forAll").on("click", function(){
-        $("span[id*='defense_forAll']").text(parseInt($("span[id*='defense_forAll']").text()) - 1) ;
         $("span[id*='defense-']").each(function(){
             $(this).text(parseInt($(this).text()) -1);
         });
     });
 
-
+//    ------ RESET TOUTES LES CARTES -------
+    $("#reset_all_cards").on('click', function(){
+        let url = $(this).attr("data-reset-url");
+        $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
+    });
 });

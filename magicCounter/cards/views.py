@@ -4,7 +4,7 @@ from cards.models import Card, Color, CardType, Deck, Playground
 from mtgsdk import Card as MtgCard
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
-from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, AddTokenForm, EditTokenForm
+from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, AddTokenForm, EditTokenForm, CustomCounterForm
 from datetime import datetime
 
 
@@ -31,7 +31,6 @@ def addCard(request):
         # request.POST = les données récupérées du formulaire (dictionnaire)
         form = AddCardForm(request.POST, user=request.user)
         if form.is_valid():
-            print("jhferuih fguirhe uighreuih guirehg uierui gherui")
             mtgcard = MtgCard\
                 .where(name=request.POST["name"]) \
                 .where(language=request.POST["language"]) \
@@ -95,7 +94,7 @@ def addCard(request):
                 card.defense = mtgcard[0].toughness
                 card.description = mtgcard[0].text
                 card.language = request.POST["language"]
-                if "Flying" in mtgcard[0].text or "Volant" in mtgcard[0].text:
+                if "flying" in mtgcard[0].text.lower() or "vol" in mtgcard[0].text.lower():
                     card.isFlying = True
                 card.save()
 
@@ -318,7 +317,6 @@ def playground(request):
 
 def playground_game_starts(request, deck_id):
     deck = Deck.objects.filter(pk=deck_id)[0]
-
     if not Playground.objects.filter(user=request.user, deck=deck):
         # On crée et on stocke la partie
         playground = Playground(user=request.user)
@@ -331,10 +329,48 @@ def playground_game_starts(request, deck_id):
         playground.creation_date = datetime.today()
         playground.last_update_date = datetime.today()
         playground.save()
-    else:
-        json = Playground.objects.filter(user=request.user, deck=deck)[0].config
 
-    return render(request, "cards/playground_game_starts.html", context={"deck": deck, "json": json})
+        form = CustomCounterForm(deck=deck)
+        return render(request, "cards/playground_game_starts.html", context={"deck": deck, "json": json, "form": form})
+    else:
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        if request.method == "POST":
+            form = CustomCounterForm(request.POST, deck=deck)
+            if form.is_valid:
+                power = request.POST.get("power")
+                defense = request.POST.get("defense")
+                forFlying = request.POST.get("forFlying")
+                types = request.POST.get("types")
+                colors = request.POST.get("colors")
+
+                for card in json['cards']:
+                    to_be_incremented = False
+                    for type in card['types']:
+                        if types is not None and type in types:
+                            to_be_incremented = True
+                            break
+                    for color in card['colors']:
+                        if colors is not None and color in colors:
+                            to_be_incremented = True
+                            break
+                    if card['isFlying'] and forFlying:
+                        to_be_incremented = True
+                    if to_be_incremented:
+                        if isinstance(card['power'], str) and ("*" in card['power'] or "*" in card['power']):
+                            card['power'] = 0 + int(power)
+                            card['defense'] = 0 + int(defense)
+                        else:
+                            card['power'] = int(card['power']) + int(power)
+                            card['defense'] = int(card['defense']) + int(defense)
+
+                playground.last_update_date = datetime.today()
+                playground.save()
+
+                return redirect("playground_game_starts", deck_id=deck.pk)
+        else:
+            form = CustomCounterForm(deck=deck)
+            return render(request, "cards/playground_game_starts.html", context={"deck": deck, "json": json, "form": form})
 
 
 def playground_add_card(request, card_id, deck_id):
@@ -410,15 +446,28 @@ def playground_save_for_all(request, deck_id, button):
     deck = Deck.objects.filter(pk=deck_id)[0]
     playground = Playground.objects.filter(user=request.user, deck=deck)[0]
     json = playground.config
+
     for card in json['cards']:
         if button == "power-plus":
-            card['power'] = int(card['power']) + 1
+            if type(card['power']) == "str":
+                card['power'] = 0
+            else:
+                card['power'] = int(card['power']) + 1
         elif button == "power-minus":
-            card['power'] = int(card['power']) - 1
+            if type(card['power']) == "str":
+                card['power'] = 0
+            else:
+                card['power'] = int(card['power']) - 1
         elif button == "defense-plus":
-            card['defense'] = int(card['defense']) + 1
+            if type(card['defense']) == "str":
+                card['defense'] = 0
+            else:
+                card['defense'] = int(card['defense']) + 1
         elif button == "defense-minus":
-            card['defense'] = int(card['defense']) - 1
+            if type(card['defense']) == "str":
+                card['defense'] = 0
+            else:
+                card['defense'] = int(card['defense']) - 1
         else:
             card['power'] = 0
             card['defense'] = 0
@@ -428,5 +477,34 @@ def playground_save_for_all(request, deck_id, button):
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
 
+
+def playground_reset_all(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+    json = playground.config
+
+    for card in json['cards']:
+        for original_card in deck.cards.all():
+            if card['pk'] == original_card.pk:
+                if "*" in original_card.power:
+                    card['power'] = 0
+                else:
+                    card['power'] = original_card.power
+
+                if "*" in original_card.defense:
+                    card['defense'] = 0
+                else:
+                    card['defense'] = original_card.defense
+
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_kill_game(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+    playground.delete()
+    return redirect('playground')
 
 

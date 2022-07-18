@@ -1,5 +1,5 @@
 from django import forms
-from cards.models import Card, Deck, CardType
+from cards.models import Card, Deck, CardType, Playground
 from magicCounter.form.widgets.HorizontalCheckboxSelectMultiple import HorizontalCheckboxSelectMultiple
 
 
@@ -159,7 +159,6 @@ class AssociationForm(forms.ModelForm):
 class AddTokenForm(forms.Form):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
-        print(kwargs)
         super(AddTokenForm, self).__init__(*args, **kwargs)
         if user:
             formatted_decks = []
@@ -269,3 +268,48 @@ class EditTokenForm(forms.ModelForm):
             "colors": HorizontalCheckboxSelectMultiple(),
             "types": HorizontalCheckboxSelectMultiple(),
         }
+
+
+class CustomCounterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        deck = kwargs.pop('deck')
+        super(CustomCounterForm, self).__init__(*args, **kwargs)
+        if deck:
+            formatted_types = []
+            formatted_colors = []
+            for card in Card.objects.filter(deck=deck):
+                for type in card.types.all():
+                    to_search = (type.name, type.name)
+                    if to_search not in formatted_types:
+                        formatted_types.append(to_search)
+                for color in card.colors.all():
+                    to_search = (color.color, color.color)
+                    if to_search not in formatted_colors:
+                        formatted_colors.append(to_search)
+            self.fields["types"] = forms.MultipleChoiceField(
+                label="Type(s)",
+                choices=formatted_types,
+                widget=HorizontalCheckboxSelectMultiple()
+            )
+            self.fields["colors"] = forms.MultipleChoiceField(
+                label="Couleur(s)",
+                choices=formatted_colors,
+                widget=HorizontalCheckboxSelectMultiple()
+            )
+
+    model = Playground
+
+    power = forms.IntegerField(
+        label="Attaque",
+        required=True
+    )
+
+    defense = forms.IntegerField(
+        label="Defense",
+        required=True
+    )
+
+    forFlying = forms.BooleanField(
+        label="Vol",
+        required=False
+    )
