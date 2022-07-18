@@ -5,6 +5,7 @@ from mtgsdk import Card as MtgCard
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, AddTokenForm, EditTokenForm
+from datetime import datetime
 
 
 def index(request):
@@ -327,6 +328,8 @@ def playground_game_starts(request, deck_id):
             "cards": [],
         }
         playground.config = json
+        playground.creation_date = datetime.today()
+        playground.last_update_date = datetime.today()
         playground.save()
     else:
         json = Playground.objects.filter(user=request.user, deck=deck)[0].config
@@ -365,6 +368,7 @@ def playground_add_card(request, card_id, deck_id):
             "illustration": card.illustration,
         }
     )
+    playground.last_update_date = datetime.today()
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -379,7 +383,50 @@ def playground_remove_creature(request, deck_id, index):
             cards.append(card)
     json['cards'] = cards
     playground.config = json
+    playground.last_update_date = datetime.today()
     playground.save()
 
     return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_save(request, deck_id, card_index, button, new_value):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+    json = playground.config
+    for card in json['cards']:
+        if card['index'] == int(card_index):
+            if button == "power-plus" or button == "power-minus":
+                card['power'] = new_value
+            elif button == "defense-plus" or button == "defense-minus":
+                card['defense'] = new_value
+
+    playground.config = json
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_save_for_all(request, deck_id, button):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+    json = playground.config
+    for card in json['cards']:
+        if button == "power-plus":
+            card['power'] = int(card['power']) + 1
+        elif button == "power-minus":
+            card['power'] = int(card['power']) - 1
+        elif button == "defense-plus":
+            card['defense'] = int(card['defense']) + 1
+        elif button == "defense-minus":
+            card['defense'] = int(card['defense']) - 1
+        else:
+            card['power'] = 0
+            card['defense'] = 0
+
+    playground.config = json
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+
 

@@ -68,6 +68,8 @@ class Playground(models.Model):
     user = models.ForeignKey(CustomUser, editable=False, on_delete=models.CASCADE, blank=True, null=True, default=0)
     deck = models.ForeignKey(Deck, editable=False, on_delete=models.CASCADE, blank=True, null=True, default=0)
     config = models.JSONField(blank=True, null=True)
+    creation_date = models.DateField(blank=True, null=True)
+    last_update_date = models.DateField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Aire de jeu"

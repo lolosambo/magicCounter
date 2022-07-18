@@ -334,9 +334,9 @@ form > button{
 }
 
 .playground-card-wrapper {
-    background-color: DarkSlateGray;
-    height: 390px;
-    width: 205px;
+    background-color: DimGray;
+    height: 400px;
+    width: 215px;
     padding: 20px;
     margin-left: 20px;
     margin-bottom: 20px;
@@ -362,6 +362,7 @@ form > button{
    background-repeat: no-repeat;
    background-position: center;
    border: 5px solid black;
+   margin-bottom: 20px;
 
 }
 
@@ -381,5 +382,11 @@ form > button{
     margin-top: 7px;
     margin-left: 120px;
     color: black;
-    font-size: 0.8rem;
+    font-size: 0.6rem;
+}
+
+.action-menu-wrapper {
+    background-color: DarkSlateBlue;
+    height: 100%;
+    text-align: center;
 }

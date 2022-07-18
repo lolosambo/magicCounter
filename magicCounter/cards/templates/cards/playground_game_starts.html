@@ -8,7 +8,6 @@
 {% endblock%}
 
 {% block page_menu %}
-    <button id="save-playground" class="btn btn-warning" type="button">Sauvegarder</button>
     <a href="{% url 'decks_index' %}">
         <button type="button" class="btn btn-success">Liste des decks</button>
     </a>
@@ -63,15 +62,35 @@
                              <div class="playground-token-po-de">{{ card.power }} / {{ card.defense }}</div>
                          </div>
                     {% else %}
-                         <img src="{{ card.illustration }}" width="165" alt="{{ card.name }}"/>
+                         <img src="{{ card.illustration }}" width="175" alt="{{ card.name }}"/>
                     {% endif %}
-                    <button type="button" id="power-minus-{{ card.pk }}" class="btn btn-sm btn-danger">-</button>
-                    <span id="power-{{ card.pk }}">{% if "*" in card.power %} 0 {% else %} {{ card.power }} {% endif %}</span>
-                    <button type="button" id="power-plus-{{ card.pk }}" class="btn btn-sm btn-primary">+</button>
+                    <button
+                            type="button"
+                            id="power-minus-{{ card.index }}"
+                            class="btn btn-sm btn-danger"
+                            data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='power-minus' new_value=0 %}">-</button>
+                    <span id="power-{{ card.index }}">{% if "*" in card.power %} 0 {% else %} {{ card.power }} {% endif %}</span>
+                    <button
+                            type="button"
+                            id="power-plus-{{ card.index }}"
+                            class="btn btn-sm btn-primary"
+                            data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='power-plus' new_value=0 %}">
+                        +
+                    </button>
                     <span style="font-size: 1.8rem; padding-left: 5px; padding-right: 5px;">/</span>
-                    <button type="button" id="defense-minus-{{ card.pk }}" class="btn btn-sm btn-danger">-</button>
-                    <span id="defense-{{ card.pk }}">{% if "*" in card.defense %} 0 {% else %} {{ card.defense }} {% endif %}</span>
-                    <button type="button" id="defense-plus-{{ card.pk }}" class="btn btn-sm btn-primary">+</button>
+                    <button
+                            type="button"
+                            id="defense-minus-{{ card.index }}"
+                            class="btn btn-sm btn-danger"
+                            data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='defense-minus' new_value=0 %}">-</button>
+                    <span id="defense-{{ card.index }}">{% if "*" in card.defense %} 0 {% else %} {{ card.defense }} {% endif %}</span>
+                    <button
+                            type="button"
+                            id="defense-plus-{{ card.index }}"
+                            class="btn btn-sm btn-primary"
+                            data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='defense-plus' new_value=0 %}">
+                        +
+                    </button>
                     <a href="#"
                        id="death-{{ card.index }}"
                        class="btn btn-sm death-button"
@@ -89,6 +108,41 @@
 
 <!-- ------- MENU ACTIONS -------->
     <div class="col-lg-2 col-md-4 col-sm-12 action-menu-wrapper">
-
+        <p>Jeton pour toutes les cartes</p>
+        <button
+                type="button"
+                id="power-minus-forAll"
+                class="btn btn-sm btn-danger"
+                data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='power-minus' %}"
+        >
+            -
+        </button>
+        <span id="power_forAll">0</span>
+        <button
+                type="button"
+                id="power-plus-forAll"
+                class="btn btn-sm btn-primary"
+                data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='power-plus' %}"
+        >
+            +
+        </button>
+        <span style="font-size: 1.8rem; padding-left: 5px; padding-right: 5px;">/</span>
+        <button
+                type="button"
+                id="defense-minus-forAll"
+                class="btn btn-sm btn-danger"
+                data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='defense-minus' %}"
+        >
+            -
+        </button>
+        <span id="defense_forAll">0</span>
+        <button
+                type="button"
+                id="defense-plus-forAll"
+                class="btn btn-sm btn-primary"
+                data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='defense-plus' %}"
+        >
+            +
+        </button>
     </div>
 {% endblock %}
