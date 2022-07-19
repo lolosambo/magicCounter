@@ -8,6 +8,12 @@
 {% endblock%}
 
 {% block page_menu %}
+    <a href="{% url 'kill_game' deck_id=deck.pk %}">
+        <button class="btn btn-danger">Mettre fin à la partie</button>
+    </a>
+    <a href="{% url 'homepage' %}">
+        <button type="button" class="btn btn-success">Retour à l'accueil</button>
+    </a>
     <a href="{% url 'decks_index' %}">
         <button type="button" class="btn btn-success">Liste des decks</button>
     </a>
@@ -44,8 +50,8 @@
     </div>
 
 <!-- ------- AIRE DE JEU -------->
-    <div class="col-lg-8 col-md-4 col-sm-6 playground-wrapper">
-        <div class="row">
+    <div class="col-lg-8 col-md-4 col-sm-6">
+        <div class="row playground-wrapper">
             {% for card in json.cards %}
                 <div class="col-3 playground-card-wrapper" id="{{ card.index }}">
                     <p>{{ card.name }}</p>
@@ -113,7 +119,6 @@
 
     <div class="col-lg-2 col-md-4 col-sm-12 action-menu-wrapper">
         <br><p>Compteur pour toutes les cartes</p>
-        <span class="show-value-power">0</span>
         <button
                 type="button"
                 id="power-minus-forAll"
@@ -147,7 +152,6 @@
         >
             +
         </button>
-        <span class="show-value-defense">0</span>
          <!-- ------------- REINITIALIZE TOUTES LES CARTES ---------------------->
         <button
                 id="reset_all_cards"
@@ -169,12 +173,6 @@
                 </form>
             </div>
         </div>
-
-
-         <!-- ------------- FIN DE PARTIE ---------------------->
-        <a href="{% url 'kill_game' deck_id=deck.pk %}">
-            <button class="btn btn-sm btn-danger mt-4 mb-4">Mettre fin à la partie</button>
-        </a>
     </div>
 
 {% endblock %}

@@ -4,7 +4,8 @@ from cards.models import Card, Color, CardType, Deck, Playground
 from mtgsdk import Card as MtgCard
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
-from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, AddTokenForm, EditTokenForm, CustomCounterForm
+from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, AddTokenForm, EditTokenForm,  \
+     CustomCounterForm, EditCardForm
 from datetime import datetime
 
 
@@ -113,8 +114,8 @@ def addCard(request):
 class CardEditView(UpdateView):
     model = Card
     context_object_name = "card"
-    form_class = AddCardForm
-    template_name = "cards/card_add.html"
+    form_class = EditCardForm
+    template_name = "cards/card_edit.html"
 
 
 # Suppression d'une carte en mode CBV Class Based View

@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    $("span[class*='show-value']").hide();
 
 //    ------------------ POUR UNE SEULE CARTE ------------------------------
     function savePlayground(valueElement, url){

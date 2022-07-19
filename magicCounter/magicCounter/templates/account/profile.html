@@ -4,13 +4,19 @@
 {% block page_title %}
     {% if user.is_authenticated %}
         <h1>Profile de {{ user.username|upper }}</h1>
-        <a href="{% url 'user_password_change' %}">
-            <button type="button" class="btn btn-success">Changer le mot de passe</button>
-        </a>
     {% else %}
         <h1>Profile inconnu</h1>
     {% endif %}
 {% endblock %}
+
+{% block page_menu %}
+    <a href="{% url 'user_password_change' %}">
+        <button type="button" class="btn btn-warning">Changer le mot de passe</button>
+    </a>
+    <a href="{% url 'decks_index' %}">
+        <button type="button" class="btn btn-success">Revenir à l'accueil</button>
+    </a>
+{% endblock%}
 
 {% block main_content %}
      <div class="offset-lg-4 col-lg-4 offset-md-3 col-md-6 col-12 form-wrapper">

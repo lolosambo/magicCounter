@@ -245,6 +245,13 @@ form > button{
     font-size: 1rem;
 }
 
+.card-buttons {
+    display: flex;
+    flex-direction:row;
+    justify-content: space-around;
+    width: 55%;
+}
+
 /* -------- DECK SECTION ------------------*/
 .deck-wrapper {
     background-image: url('../../media/card_verso.png');
@@ -299,6 +306,8 @@ form > button{
 /* ------------ PLAYGROUND SECTION ---------------*/
 
 .cards-list-wrapper {
+    display: flex;
+    flex-direction: column;
     background-color: DarkRed;
     height: 100%;
     padding: 20px;
@@ -317,7 +326,9 @@ form > button{
 }
 
 .playground-wrapper {
-    height: 100%;
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
 }
 
 .action-menu-wrapper {
@@ -326,12 +337,18 @@ form > button{
 }
 
 .playground-card-wrapper {
-    background-color: DimGray;
+    background-color: #252727;
     height: 410px;
     width: 225px;
     padding: 20px;
-    margin-left: 20px;
+    /*margin-left: 20px;*/
     margin-bottom: 20px;
+}
+
+.playground-card-wrapper .toAnimate {
+    z-index: 9999;
+    animation-duration: 1.5s;
+    animation-name: slidein;
 }
 
 .playground-card-wrapper p {
@@ -387,6 +404,7 @@ form > button{
 .custom_counter_wrapper{
     border: 1px solid white;
     background-color: indigo;
+    margin-bottom: 20px;
 }
 
 #custom_counter_form {
@@ -430,4 +448,17 @@ form > button{
 
 #id_forFlying {
     height: 20px !important;
+}
+
+/* ------- ANIMATIONS -------------------- */
+@keyframes slidein {
+  from {
+    margin-left: 600%;
+    width: 100%;
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+  }
 }

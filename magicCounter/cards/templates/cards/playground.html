@@ -1,11 +1,14 @@
 {% extends "magicCounter/base.html" %}
 
 {% block page_title%}
-    <h1>Aire de jeu !</h1>
+    <h1>Bienvenue dans l'aire de jeu ! Choisis ton deck</h1>
 
 {% endblock%}
 
 {% block page_menu %}
+    <a href="{% url 'homepage' %}">
+        <button type="button" class="btn btn-success">Retour à l'accueil</button>
+    </a>
     <a href="{% url 'decks_index' %}">
         <button type="button" class="btn btn-success">Liste des decks</button>
     </a>

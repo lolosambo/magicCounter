@@ -54,11 +54,14 @@
                                                       {% else %}
                                                          <img class="card-illustration" src="{{ card.illustration }}" alt="{{ card.name }}"/><br>
                                                       {% endif %}
-                                                      <a
-                                                          class="btn btn-danger"
-                                                          href="{% url 'remove_card_from_deck' deck_id=deck.pk card_id=card.pk %}"
-                                                      >Dissocier
-                                                      </a>
+                                                      <div class="card-buttons">
+                                                          <a class="btn btn-warning" href="{% url 'card_edit' pk=card.pk %}">Editer</a>
+                                                          <a
+                                                              class="btn btn-danger"
+                                                              href="{% url 'remove_card_from_deck' deck_id=deck.pk card_id=card.pk %}"
+                                                          >Dissocier
+                                                          </a>
+                                                      </div>
                                                  </div>
                                              </a>
                                           </div>
@@ -70,6 +73,7 @@
                           <a href="{% url 'deck_delete' pk=deck.pk %}">
                              <button class="btn btn-danger">Supprimer</button>
                          </a>
+
                       </div>
                    </div>
               </div>

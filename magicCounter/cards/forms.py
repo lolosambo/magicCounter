@@ -83,6 +83,32 @@ class CardForm(forms.ModelForm):
         return name
 
 
+class EditCardForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        fields = [
+            "name",
+            "colors",
+            "types",
+            "power",
+            "defense",
+            "isFlying"
+        ]
+        labels = {
+            "name": "Nom de la carte",
+            "colors": "Couleur(s)",
+            "types": "Type(s)",
+            "power": "Attaque",
+            "defense": "Défense",
+            "isFlying": "Vol"
+        }
+        widgets = {
+            "colors": HorizontalCheckboxSelectMultiple(),
+            "types": HorizontalCheckboxSelectMultiple(),
+        }
+
+
+
 class DeckForm(forms.Form):
     COLORS = [
         ("White", "Blanc"),

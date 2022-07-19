@@ -6,6 +6,9 @@
 {% endblock%}
 
 {% block page_menu %}
+    <a href="{% url 'playground' %}">
+        <button class="btn btn-primary">Aller sur l'aire de jeu</button>
+    </a>
     <a href="{% url 'decks_index' %}">
         <button type="button" class="btn btn-success">Liste des decks</button>
     </a>
@@ -15,13 +18,13 @@
     <a href="{% url 'tokens_index' %}">
         <button type="button" class="btn btn-success">Liste des Jetons</button>
     </a>
+    <a href="{% url 'profile' %}">
+        <button type="button" class="btn btn-warning">Mon compte</button>
+    </a>
 {% endblock%}
 
 {% block main_content %}
      <div class="col-12">
-         <a href="{% url 'playground' %}">
-            <button class="btn btn-primary">Commencer une partie</button>
-         </a>
          <div class="row">
              {% for deck in decks %}
              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6"  style="text-align: center;">
