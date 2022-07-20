@@ -12,7 +12,7 @@ from datetime import datetime
 def index(request):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         cards = Card.objects.all().order_by('name')
         filteredCards = []
@@ -26,7 +26,7 @@ def index(request):
 def card(request, card_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         card = get_object_or_404(Card, id=card_id)
         form = AssociationForm(user=request.user)
@@ -38,7 +38,7 @@ def card(request, card_id):
 def addCard(request):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         if request.method == "POST":
             # request.POST = les données récupérées du formulaire (dictionnaire)
@@ -141,7 +141,7 @@ class CardDeleteView(DeleteView):
 def deck_index(request):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         decks = Deck.objects.filter(user=request.user).order_by('name')
         return render(request, "cards/decks_index.html", {"decks": decks})
@@ -150,7 +150,7 @@ def deck_index(request):
 def deck(request, deck_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         deck = get_object_or_404(Deck, pk=deck_id)
         return render(request, 'cards/deck_consult.html', {"deck": deck})
@@ -159,7 +159,7 @@ def deck(request, deck_id):
 def deckAddView(request):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         if request.method == "POST":
             form = DeckForm(request.POST)
@@ -202,7 +202,7 @@ class DeckDeleteView(DeleteView):
 def associateCardToDeckView(request, card_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         card = Card.objects.filter(pk=card_id)[0]
         if request.method == "POST":
@@ -222,7 +222,7 @@ def associateCardToDeckView(request, card_id):
 def removeCardFromDeckView(request, deck_id, card_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         card = Card.objects.filter(pk=card_id)[0]
         deck = Deck.objects.filter(pk=deck_id)[0]
@@ -235,7 +235,7 @@ def removeCardFromDeckView(request, deck_id, card_id):
 def token_index(request):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         tokens = Card.objects.all().filter(description="Token")
         filteredCards = []
@@ -249,7 +249,7 @@ def token_index(request):
 def token(request, token_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         token = get_object_or_404(Card, pk=token_id)
         form = AssociationForm(user=request.user)
@@ -259,7 +259,7 @@ def token(request, token_id):
 def tokenAddView(request):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         if request.method == "POST":
             form = AddTokenForm(request.POST, user=request.user)
@@ -333,7 +333,7 @@ class TokenDeleteView(DeleteView):
 def associateTokenToDeckView(request, card_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         token = Card.objects.filter(pk=card_id)[0]
         if request.method == "POST":
@@ -352,7 +352,7 @@ def associateTokenToDeckView(request, card_id):
 def removeTokenFromDeckView(request, deck_id, token_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         token = Card.objects.filter(pk=token_id)[0]
         deck = Deck.objects.filter(pk=deck_id)[0]
@@ -365,7 +365,7 @@ def removeTokenFromDeckView(request, deck_id, token_id):
 def playground(request):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         user = request.user
         decks = Deck.objects.filter(user=user)
@@ -375,7 +375,7 @@ def playground(request):
 def playground_game_starts(request, deck_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         deck = Deck.objects.filter(pk=deck_id)[0]
         if not Playground.objects.filter(user=request.user, deck=deck):
@@ -437,7 +437,7 @@ def playground_game_starts(request, deck_id):
 def playground_add_card(request, card_id, deck_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         card = Card.objects.filter(pk=card_id)[0]
         deck = Deck.objects.filter(pk=deck_id)[0]
@@ -477,7 +477,7 @@ def playground_add_card(request, card_id, deck_id):
 def playground_remove_creature(request, deck_id, index):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         deck = Deck.objects.filter(pk=deck_id)[0]
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]
@@ -497,7 +497,7 @@ def playground_remove_creature(request, deck_id, index):
 def playground_save(request, deck_id, card_index, button, new_value):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         deck = Deck.objects.filter(pk=deck_id)[0]
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]
@@ -518,7 +518,7 @@ def playground_save(request, deck_id, card_index, button, new_value):
 def playground_save_for_all(request, deck_id, button):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         deck = Deck.objects.filter(pk=deck_id)[0]
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]
@@ -558,7 +558,7 @@ def playground_save_for_all(request, deck_id, button):
 def playground_reset_all(request, deck_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         deck = Deck.objects.filter(pk=deck_id)[0]
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]
@@ -585,7 +585,7 @@ def playground_reset_all(request, deck_id):
 def playground_kill_game(request, deck_id):
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         deck = Deck.objects.filter(pk=deck_id)[0]
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]
@@ -594,10 +594,9 @@ def playground_kill_game(request, deck_id):
 
 
 def playground_life_save(request, deck_id, button):
-    print('yoloooooooo')
     user = request.user
     if not user.is_authenticated:
-        return redirect("compte/login")
+        return redirect("login")
     else:
         deck = Deck.objects.filter(pk=deck_id)[0]
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]

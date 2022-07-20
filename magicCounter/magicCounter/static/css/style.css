@@ -430,7 +430,7 @@ form > button{
     color: white;
 }
 
-#id_power, #id_defense{
+#custom_counter_form  #id_power, #custom_counter_form  #id_defense{
     width: 50px !important;
     height: 30px !important;
     font-size: 1.5rem !important;
