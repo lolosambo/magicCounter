@@ -84,6 +84,9 @@ class CardForm(forms.ModelForm):
 
 
 class EditCardForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(EditCardForm, self).__init__(*args, **kwargs)
+        self.fields['types'].queryset = CardType.objects.all().order_by('name')
     class Meta:
         model = Card
         fields = [
@@ -250,6 +253,7 @@ class AddTokenForm(forms.Form):
     for type in types:
         formatted_types.append((type.name, type.name))
 
+    formatted_types.sort()
     types = forms.MultipleChoiceField(
         label="Type(s)",
         choices=formatted_types,
@@ -272,6 +276,9 @@ class AddTokenForm(forms.Form):
 
 
 class EditTokenForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(EditTokenForm, self).__init__(*args, **kwargs)
+        self.fields['types'].queryset = CardType.objects.all().order_by('name')
     class Meta:
         model = Card
         fields = [
@@ -312,11 +319,13 @@ class CustomCounterForm(forms.Form):
                     to_search = (color.color, color.color)
                     if to_search not in formatted_colors:
                         formatted_colors.append(to_search)
+            formatted_types.sort()
             self.fields["types"] = forms.MultipleChoiceField(
                 label="Type(s)",
                 choices=formatted_types,
                 widget=HorizontalCheckboxSelectMultiple()
             )
+            formatted_colors.sort()
             self.fields["colors"] = forms.MultipleChoiceField(
                 label="Couleur(s)",
                 choices=formatted_colors,
