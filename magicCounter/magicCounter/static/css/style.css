@@ -453,6 +453,14 @@ form > button{
     text-align: center;
 }
 
+.life-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
 /* ------- ANIMATIONS -------------------- */
 @keyframes slidein {
   from {

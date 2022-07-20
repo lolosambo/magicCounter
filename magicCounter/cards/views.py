@@ -593,3 +593,22 @@ def playground_kill_game(request, deck_id):
         return redirect('playground')
 
 
+def playground_life_save(request, deck_id, button):
+    print('yoloooooooo')
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("compte/login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        if button == "life-plus":
+            json['life'] = int(json['life']) + 1
+        elif button == "life-minus":
+            json['life'] = int(json['life']) - 1
+        playground.config = json
+        playground.last_update_date = datetime.today()
+        playground.save()
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
+

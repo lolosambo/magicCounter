@@ -69,4 +69,17 @@ $(document).ready(function () {
         let url = $(this).attr("data-reset-url");
         $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
     });
+
+//  ---------- GESTION DE LA VIE ----------
+    $("#life-plus").on("click", function(){
+        let url = $(this).attr("data-save-url");
+        $("#life-points").text(parseInt($("#life-points").text()) + 1) ;
+        $.ajax({ type: 'GET', url: url });
+    });
+
+    $("#life-minus").on("click", function(){
+        let url = $(this).attr("data-save-url");
+        $("#life-points").text(parseInt($("#life-points").text()) - 1) ;
+        $.ajax({ type: 'GET', url: url });
+    });
 });

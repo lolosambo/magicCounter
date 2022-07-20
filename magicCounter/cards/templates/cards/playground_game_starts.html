@@ -115,6 +115,27 @@
 
 
     <div class="col-lg-2 col-md-4 col-sm-12 action-menu-wrapper">
+        <br><p>Points de vie</p>
+        <div class="life-wrapper">
+            <button
+                    type="button"
+                    id="life-minus"
+                    class="btn btn-sm btn-danger"
+                    data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-minus' %}"
+            >
+                -
+            </button>
+            <span id="life-points" style="font-size: 5rem; color:white;">{{ json.life }}</span>
+            <button
+                    type="button"
+                    id="life-plus"
+                    class="btn btn-sm btn-primary"
+                    data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-plus' %}"
+            >
+                +
+            </button>
+        </div>
+
         <br><p>Compteur pour toutes les cartes</p>
         <button
                 type="button"
