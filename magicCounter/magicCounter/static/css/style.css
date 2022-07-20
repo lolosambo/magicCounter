@@ -337,7 +337,7 @@ form > button{
 
 .playground-card-wrapper {
     background-color: #252727;
-    height: 410px;
+    height: 430px;
     width: 225px;
     padding: 20px;
     margin-left: 20px;
@@ -395,14 +395,14 @@ form > button{
 }
 
 .action-menu-wrapper {
-    background-color: DarkSlateBlue;
+    background-color: #242424;
     height: 100%;
     text-align: center;
 }
 
 .custom_counter_wrapper{
     border: 1px solid white;
-    background-color: indigo;
+    background-color: #100d12;
     margin-bottom: 20px;
 }
 

@@ -52,6 +52,7 @@
             {% for card in json.cards %}
                 <div class="col-3 playground-card-wrapper" id="{{ card.index }}">
                     <p>{{ card.name }}</p>
+                    <p><em>({% for type in card.types %} {{ type }} {% endfor%})</em></p>
                     <p style="color: goldenrod;">{% if card.isFlying %}Volant{% else %}Non-volant{% endif %}</p>
                     {% if card.description == "Token" %}
                          <div class="playground-token-illustration">
@@ -135,8 +136,9 @@
                 +
             </button>
         </div>
+        <hr>
 
-        <br><p>Compteur pour toutes les cartes</p>
+        <br><p>Compteur pour toutes les cartes</p><br>
         <button
                 type="button"
                 id="power-minus-forAll"
@@ -170,6 +172,7 @@
         >
             +
         </button>
+        <hr>
          <!-- ------------- REINITIALIZE TOUTES LES CARTES ---------------------->
         <button
                 id="reset_all_cards"
@@ -178,7 +181,7 @@
         >
             Réinitialiser toutes les cartes
         </button>
-
+        <hr>
         <div class="row">
             <div class="offset-1 col-10 custom_counter_wrapper">
                 <br><p>Compteur personnalisé</p>
