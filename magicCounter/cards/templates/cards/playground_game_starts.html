@@ -30,23 +30,20 @@
 <!--    MENU LISTE DES CARTES A JOUER-->
     <div class="col-lg-2 col-md-4 col-sm-6 cards-list-wrapper">
         <h2>Bibliothèque</h2>
+        <div class="row">
           {% for card in deck.cards.all|dictsort:"name" %}
-             <div class="row">
-                <div class="col-lg-2 card-thumbnail">
-                    {% if "Token" in card.description %}
-                        <img src="/media/token.png" width="40" alt="{{ card.name }}"/>
-                    {% else %}
-                        <img src="{{ card.illustration }}" width="40" alt="{{ card.name }}"/>
-                    {% endif %}
-
-                </div>
-                <div class="col-lg-10 ps-4 pt-3">
+                <div class="col-lg-6 col-md-12 col-sm-6 col-6 card-thumbnail">
                     <a href="{% url 'playground_add_card' deck_id=deck.pk card_id=card.pk %}">
-                        {{ card.name }}
+                        {% if "Token" in card.description %}
+                            <img src="/media/token.png" style="width: 100%" alt="{{ card.name }}"/>
+                        {% else %}
+                            <img src="{{ card.illustration }}" style="width: 100%" alt="{{ card.name }}"/>
+                        {% endif %}
+                        <p class="mb-2">{{ card.name }}</p>
                     </a>
                 </div>
-            </div>
           {% endfor %}
+        </div>
     </div>
 
 <!-- ------- AIRE DE JEU -------->

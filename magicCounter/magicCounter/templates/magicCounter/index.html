@@ -26,22 +26,25 @@
 {% block main_content %}
      <div class="col-12">
          <div class="row">
+             <h2 class="mb-0 mt-4">Mes decks</h2>
              {% for deck in decks %}
-             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6"  style="text-align: center;">
+             <div class="col-xxl-2 col-lg-3 col-md-4 col-sm-6 col-6"  style="text-align: center;">
                  <a href="{% url 'deck_consult' deck_id=deck.pk %}">
                      <div class="row deck-wrapper">
-                         <div class="col-12 deck_colors">
+                         <div class="col-6 deck_colors">
                              {% for color in deck.colors.all %}
                                 <img src="/media/{{color|lower}}.png" width="40" alt="{{ color }} picto">
                              {% endfor %}
                          </div>
-                         <div class="col-12 deck_name">
+                         <div class="col-7 deck_name">
                              {{ deck.name }}
                          </div>
                      </div>
                  </a>
-                 <a class="btn btn-warning" href="{% url 'deck_edit' pk=deck.pk %}">Editer</a>
-                 <a class="btn btn-danger" href="{% url 'deck_delete' pk=deck.pk %}">Supprimer</a>
+                 <div>Nombre de cartes  : {{ deck.cards.all|length }}</div><br>
+                 <a class="btn btn-sm btn-warning" href="{% url 'deck_edit' pk=deck.pk %}">Editer</a>
+                 <a class="btn btn-sm btn-danger" href="{% url 'deck_delete' pk=deck.pk %}">Supprimer</a>
+
             </div>
             {% endfor%}
          </div>

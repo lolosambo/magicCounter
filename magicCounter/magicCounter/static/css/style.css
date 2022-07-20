@@ -191,7 +191,7 @@ form > button{
 }
 
 .token-name {
-    margin-right: 50px;
+    margin-right: 35px;
     margin-top: 15px;
     color: black;
     font-size: 1rem;
@@ -227,7 +227,6 @@ form > button{
     flex-direction; row;
     align-items: center;
     justify-content: center;
-    margin-right: 40px;
 }
 
 .token-description-consult {
@@ -276,7 +275,7 @@ form > button{
 .deck_name {
     margin-top: -70px;
     color: black;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
 }
 
 .deck-info {
@@ -341,7 +340,7 @@ form > button{
     height: 410px;
     width: 225px;
     padding: 20px;
-    /*margin-left: 20px;*/
+    margin-left: 20px;
     margin-bottom: 20px;
 }
 
@@ -448,6 +447,10 @@ form > button{
 
 #id_forFlying {
     height: 20px !important;
+}
+
+.card-thumbnail {
+    text-align: center;
 }
 
 /* ------- ANIMATIONS -------------------- */

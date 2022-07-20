@@ -32,8 +32,8 @@
                          </div>
                      </div>
                  </a>
-                 <a class="btn btn-warning" href="{% url 'token_edit' pk=token.pk %}">Editer</a>
-                 <a class="btn btn-danger" href="{% url 'token_delete' pk=token.pk %}">Supprimer</a>
+                 <a class="btn btn-sm btn-warning" href="{% url 'token_edit' pk=token.pk %}">Editer</a>
+                 <a class="btn btn-sm btn-danger" href="{% url 'token_delete' pk=token.pk %}">Supprimer</a>
             </div>
         {% endfor%}
      </div>

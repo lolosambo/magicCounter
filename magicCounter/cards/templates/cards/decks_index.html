@@ -32,8 +32,9 @@
                      </div>
                  </div>
              </a>
-             <a class="btn btn-warning" href="{% url 'deck_edit' pk=deck.pk %}">Editer</a>
-             <a class="btn btn-danger" href="{% url 'deck_delete' pk=deck.pk %}">Supprimer</a>
+             <div>Nombre de cartes  : {{ deck.cards.all|length }}</div><br>
+             <a class="btn btn-sm btn-warning" href="{% url 'deck_edit' pk=deck.pk %}">Editer</a>
+             <a class="btn btn-sm btn-danger" href="{% url 'deck_delete' pk=deck.pk %}">Supprimer</a>
         </div>
         {% endfor%}
      </div>

@@ -40,9 +40,22 @@
          <div class="row">
               <div class="col-lg-8">
                    <div class="row card-info">
-                      <div class="col-xl-6 col-lg-5 col-md-5 col-sm-12 col-xs-12">
-                          <img class="card-info-illustration" src="{{ card.illustration }}" alt="{{ card.name }}"/>
-                      </div>
+                       {% if card.description == "Token" %}
+                           <div class="col-xl-6 col-lg-5 col-md-5 col-sm-12 col-xs-12 token-wrapper-consult ">
+                                <div class="token-name-consult">{{ card.name }}</div>
+                                <div class="token-colors-consult">
+                                    {% for color in card.colors.all %}
+                                        <img width="18" src="/media/{{ color.color|lower }}.png" alt="{{color.color}}"/>
+                                  {% endfor %}
+                                </div>
+                                <div class="token-description-consult">{{ card.description }}</div>
+                                <div class="token-po-de-consult">{{ card.power }} / {{ card.defense }}</div>
+                            </div>
+                      {% else %}
+                        <div class="col-xl-6 col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                            <img class="card-info-illustration" src="{{ card.illustration }}" alt="{{ card.name }}"/>
+                        </div>
+                      {% endif %}
                       <div class="col-xl-6 col-md-7 col-sm-12 col-xs-12">
                           <ul>
                               <li><span>Nom :</span> {{ card.name}}</li>
