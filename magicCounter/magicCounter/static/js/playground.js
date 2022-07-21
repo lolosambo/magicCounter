@@ -82,4 +82,11 @@ $(document).ready(function () {
         $("#life-points").text(parseInt($("#life-points").text()) - 1) ;
         $.ajax({ type: 'GET', url: url });
     });
+
+//    -------- BIBLIOTHEQUE -----------
+    $("a[id*='card']").on("click", function(){
+        is_token = $(this).attr("data-is-token");
+
+    });
+
 });

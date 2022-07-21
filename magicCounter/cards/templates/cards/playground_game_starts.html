@@ -28,26 +28,53 @@
 {% block main_content %}
 
 <!--    MENU LISTE DES CARTES A JOUER-->
-    <div class="col-lg-2 col-md-4 col-sm-6 cards-list-wrapper">
-        <h2>Bibliothèque</h2>
-        <div class="row">
-          {% for card in deck.cards.all|dictsort:"name" %}
-                <div class="col-lg-6 col-md-12 col-sm-6 col-6 card-thumbnail">
-                    <a href="{% url 'playground_add_card' deck_id=deck.pk card_id=card.pk %}">
-                        {% if "Token" in card.description %}
-                            <img src="/media/token.png" style="width: 100%" alt="{{ card.name }}"/>
-                        {% else %}
-                            <img src="{{ card.illustration }}" style="width: 100%" alt="{{ card.name }}"/>
-                        {% endif %}
-                        <p class="mb-2">{{ card.name }}</p>
-                    </a>
-                </div>
-          {% endfor %}
+    <div class="offcanvas offcanvas-top cards-list-wrapper" tabindex="-1" id="bibliothequeCanvas" aria-labelledby="bibliothequeCanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="bibliothequeCanvasLabel">Bibliothèque</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="row">
+              {% for card in deck.cards.all|dictsort:"name" %}
+                    <div class="col-lg-2 col-md-2 col-sm-3 col-4 card-thumbnail">
+                        <a
+                                href="{% url 'playground_add_card' deck_id=deck.pk card_id=card.pk %}"
+                                id="card-{{ card.pk }}"
+                                data-is-token="{% if 'Token' in card.description %}True{% else %}False{% endif %}"
+                        >
+                            {% if "Token" in card.description %}
+                                <img src="/media/token.png" style="width: 100%" alt="{{ card.name }}"/>
+                            {% else %}
+                                <img src="{{ card.illustration }}" style="width: 100%" alt="{{ card.name }}"/>
+                            {% endif %}
+                            <p class="mb-2">{{ card.name }}</p>
+                        </a>
+                    </div>
+              {% endfor %}
+            </div>
         </div>
     </div>
 
 <!-- ------- AIRE DE JEU -------->
-    <div class="col-lg-8 col-md-4 col-sm-6">
+    <div class="col-12">
+        <button
+                class="btn btn-warning ms-2"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#bibliothequeCanvas"
+                aria-controls="bibliothequeCanvas"
+        >
+          Bibliothèque
+        </button>
+        <button
+                class="btn btn-warning ms-2"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#counterCanvas"
+                aria-controls="counterCanvas"
+        >
+          Menu Actions
+        </button><br><br>
         <div class="row playground-wrapper">
             {% for card in json.cards %}
                 <div class="col-3 playground-card-wrapper" id="{{ card.index }}">
@@ -113,87 +140,89 @@
     </div>
 
 <!-- ------- MENU ACTIONS -------->
+    <div class="offcanvas offcanvas-end action-menu-wrapper" tabindex="-1" id="counterCanvas" aria-labelledby="counterCanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="counterCanvasLabel">MENU ACTION</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="life-wrapper">
+                <button
+                        type="button"
+                        id="life-minus"
+                        class="btn btn-sm btn-danger"
+                        data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-minus' %}"
+                >
+                    -
+                </button>
+                <span id="life-points" style="font-size: 5rem; color:white;">{{ json.life }}</span>
+                <button
+                        type="button"
+                        id="life-plus"
+                        class="btn btn-sm btn-primary"
+                        data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-plus' %}"
+                >
+                    +
+                </button>
+            </div>
+            <hr>
 
-
-    <div class="col-lg-2 col-md-4 col-sm-12 action-menu-wrapper">
-        <br><p>Points de vie</p>
-        <div class="life-wrapper">
+            <br><p>Compteur pour toutes les cartes</p><br>
             <button
                     type="button"
-                    id="life-minus"
+                    id="power-minus-forAll"
                     class="btn btn-sm btn-danger"
-                    data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-minus' %}"
+                    data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='power-minus' %}"
             >
                 -
             </button>
-            <span id="life-points" style="font-size: 5rem; color:white;">{{ json.life }}</span>
             <button
                     type="button"
-                    id="life-plus"
+                    id="power-plus-forAll"
                     class="btn btn-sm btn-primary"
-                    data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-plus' %}"
+                    data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='power-plus' %}"
             >
                 +
             </button>
-        </div>
-        <hr>
+            <span style="font-size: 1.8rem; padding-left: 5px; padding-right: 5px;">/</span>
+            <button
+                    type="button"
+                    id="defense-minus-forAll"
+                    class="btn btn-sm btn-danger"
+                    data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='defense-minus' %}"
+            >
+                -
+            </button>
+            <button
+                    type="button"
+                    id="defense-plus-forAll"
+                    class="btn btn-sm btn-primary"
+                    data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='defense-plus' %}"
+            >
+                +
+            </button>
+            <hr>
+             <!-- ------------- REINITIALIZE TOUTES LES CARTES ---------------------->
+            <button
+                    id="reset_all_cards"
+                    class="btn btn-sm btn-warning mt-4 mb-4"
+                    data-reset-url="{% url 'playground_reset_all' deck_id=deck.pk %}"
+            >
+                Réinitialiser toutes les cartes
+            </button>
+            <hr>
+            <div class="row">
+                <div class="offset-1 col-10 custom_counter_wrapper">
+                    <br><p>Compteur personnalisé</p>
+                    <form id="custom_counter_form" method="post">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
 
-        <br><p>Compteur pour toutes les cartes</p><br>
-        <button
-                type="button"
-                id="power-minus-forAll"
-                class="btn btn-sm btn-danger"
-                data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='power-minus' %}"
-        >
-            -
-        </button>
-        <button
-                type="button"
-                id="power-plus-forAll"
-                class="btn btn-sm btn-primary"
-                data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='power-plus' %}"
-        >
-            +
-        </button>
-        <span style="font-size: 1.8rem; padding-left: 5px; padding-right: 5px;">/</span>
-        <button
-                type="button"
-                id="defense-minus-forAll"
-                class="btn btn-sm btn-danger"
-                data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='defense-minus' %}"
-        >
-            -
-        </button>
-        <button
-                type="button"
-                id="defense-plus-forAll"
-                class="btn btn-sm btn-primary"
-                data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='defense-plus' %}"
-        >
-            +
-        </button>
-        <hr>
-         <!-- ------------- REINITIALIZE TOUTES LES CARTES ---------------------->
-        <button
-                id="reset_all_cards"
-                class="btn btn-sm btn-warning mt-4 mb-4"
-                data-reset-url="{% url 'playground_reset_all' deck_id=deck.pk %}"
-        >
-            Réinitialiser toutes les cartes
-        </button>
-        <hr>
-        <div class="row">
-            <div class="offset-1 col-10 custom_counter_wrapper">
-                <br><p>Compteur personnalisé</p>
-                <form id="custom_counter_form" method="post">
-                    {% csrf_token %}
-                    {{ form.non_field_errors }}
-
-                    {{ form.as_p }}
-                    <button class="btn btn-sm btn-primary" type="submit">Valider</button>
-                </form>
+                        {{ form.as_p }}
+                        <button class="btn btn-sm btn-primary" type="submit">Valider</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-
 {% endblock %}
