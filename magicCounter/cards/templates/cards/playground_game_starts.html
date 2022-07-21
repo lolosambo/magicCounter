@@ -38,9 +38,13 @@
               {% for card in deck.cards.all|dictsort:"name" %}
                     <div class="col-lg-2 col-md-2 col-sm-3 col-4 card-thumbnail">
                         <a
-                                href="{% url 'playground_add_card' deck_id=deck.pk card_id=card.pk %}"
                                 id="card-{{ card.pk }}"
                                 data-is-token="{% if 'Token' in card.description %}True{% else %}False{% endif %}"
+                                data-bs-toggle="collapse"
+                                href="#collapseCardForm-{{ card.pk}}"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="collapseExample"
                         >
                             {% if "Token" in card.description %}
                                 <img src="/media/token.png" style="width: 100%" alt="{{ card.name }}"/>
@@ -49,6 +53,21 @@
                             {% endif %}
                             <p class="mb-2">{{ card.name }}</p>
                         </a>
+                        <div class="collapse mb-3" id="collapseCardForm-{{ card.pk}}">
+                          <div class="card card-body formCardCollapse">
+                              <label for="cardForm-{{ card.pk}}">Nombre de cartes à ajouter </label>
+                              <input type="number" name="cardForm-{{ card.pk}}" id="cardForm-{{ card.pk}}" value="1"/>
+                              <button
+                                      id="cardFormValid-{{ card.pk}}"
+                                      type="button"
+                                      class="btn btn-sm btn-success"
+                                      data-card-id="{{ card.pk}}"
+                                      data-add-url = "{% url 'playground_add_card' deck_id=deck.pk card_id=card.pk number_of_cards='1' %}"
+                              >
+                                  Valider
+                              </button>
+                          </div>
+                        </div>
                     </div>
               {% endfor %}
             </div>

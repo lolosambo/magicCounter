@@ -434,43 +434,45 @@ def playground_game_starts(request, deck_id):
                 return render(request, "cards/playground_game_starts.html", context={"deck": deck, "json": json, "form": form})
 
 
-def playground_add_card(request, card_id, deck_id):
+def playground_add_card(request, card_id, deck_id, number_of_cards):
     user = request.user
     if not user.is_authenticated:
         return redirect("login")
     else:
         card = Card.objects.filter(pk=card_id)[0]
         deck = Deck.objects.filter(pk=deck_id)[0]
-        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
-        types = []
-        for type in card.types.all():
-            types.append(type.name)
 
-        colors = []
-        for color in card.colors.all():
-            colors.append(color.color)
+        for i in range(0, int(number_of_cards)):
+            playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+            types = []
+            for type in card.types.all():
+                types.append(type.name)
 
-        json = playground.config
+            colors = []
+            for color in card.colors.all():
+                colors.append(color.color)
 
-        index = len(json["cards"])
+            json = playground.config
 
-        json["cards"].append(
-            {
-                "pk": card.pk,
-                "index": index + 1,
-                "name": card.name,
-                "colors": colors,
-                "types": types,
-                "description": card.description,
-                "power": card.power,
-                "defense": card.defense,
-                "isFlying": card.isFlying,
-                "language": card.language,
-                "illustration": card.illustration,
-            }
-        )
-        playground.last_update_date = datetime.today()
-        playground.save()
+            index = len(json["cards"])
+
+            json["cards"].append(
+                {
+                    "pk": card.pk,
+                    "index": index + 1,
+                    "name": card.name,
+                    "colors": colors,
+                    "types": types,
+                    "description": card.description,
+                    "power": card.power,
+                    "defense": card.defense,
+                    "isFlying": card.isFlying,
+                    "language": card.language,
+                    "illustration": card.illustration,
+                }
+            )
+            playground.last_update_date = datetime.today()
+            playground.save()
         return redirect('playground_game_starts', deck_id=deck.pk)
 
 

@@ -35,7 +35,7 @@ urlpatterns = [
     path('playground/', playground, name="playground"),
 
     path('playground/starts/<str:deck_id>', playground_game_starts, name="playground_game_starts"),
-    path('playground/deck/<str:deck_id>/card/add/<str:card_id>', playground_add_card, name="playground_add_card"),
+    path('playground/deck/<str:deck_id>/card/add/<str:card_id>/<str:number_of_cards>', playground_add_card, name="playground_add_card"),
     path('playground/deck/<str:deck_id>/delete/<str:index>', playground_remove_creature, name="playground_remove_creature"),
     path('playground/deck/<str:deck_id>/card/<str:card_index>/save/<str:button>/<str:new_value>', playground_save, name="playground_save"),
     path('playground/deck/<str:deck_id>/save/<str:button>', playground_save_for_all, name="playground_save_for_all"),
