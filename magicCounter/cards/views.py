@@ -277,7 +277,6 @@ def tokenAddView(request):
                     else:
                         token.colors.add(color_to_add[0])
 
-                print(results)
                 # On associe les types de la carte Magic avec la carte en création
                 types = []
                 if "types" in results:
@@ -384,6 +383,8 @@ def playground_game_starts(request, deck_id):
             playground.deck = deck
             json = {
                 "life": 20,
+                "damages": 0,
+                "cemetery": [],
                 "cards": [],
             }
             playground.config = json
@@ -419,11 +420,11 @@ def playground_game_starts(request, deck_id):
                             to_be_incremented = True
                         if to_be_incremented:
                             if isinstance(card['power'], str) and ("*" in card['power'] or "*" in card['power']):
-                                card['power'] = 0 + int(power)
-                                card['defense'] = 0 + int(defense)
+                                card['power'] = str(0 + int(power))
+                                card['defense'] = str(0 + int(defense))
                             else:
-                                card['power'] = int(card['power']) + int(power)
-                                card['defense'] = int(card['defense']) + int(defense)
+                                card['power'] = str(int(card['power']) + int(power))
+                                card['defense'] = str(int(card['defense']) + int(defense))
 
                     playground.last_update_date = datetime.today()
                     playground.save()
@@ -469,6 +470,7 @@ def playground_add_card(request, card_id, deck_id, number_of_cards):
                     "isFlying": card.isFlying,
                     "language": card.language,
                     "illustration": card.illustration,
+                    "tapped":False
                 }
             )
             playground.last_update_date = datetime.today()
@@ -485,9 +487,17 @@ def playground_remove_creature(request, deck_id, index):
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]
         json = playground.config
         cards = []
+        count = 1
         for card in json['cards']:
             if card['index'] != int(index):
+                card['index'] = count
                 cards.append(card)
+                count += 1
+            else:
+                if "Token" not in card["description"]:
+                    json['cemetery'].append(card)
+                if card['tapped']:
+                    json['damages'] -= int(card['power'])
         json['cards'] = cards
         playground.config = json
         playground.last_update_date = datetime.today()
@@ -506,15 +516,19 @@ def playground_save(request, deck_id, card_index, button, new_value):
         json = playground.config
         for card in json['cards']:
             if card['index'] == int(card_index):
-                if button == "power-plus" or button == "power-minus":
-                    card['power'] = new_value
-                elif button == "defense-plus" or button == "defense-minus":
+                if button == "defense-plus" or button == "defense-minus":
                     card['defense'] = new_value
+                else:
+                    if card['tapped']:
+                        json['damages'] -= int(card['power'])
+                    card['power'] = new_value
+                    if card['tapped']:
+                        json['damages'] += int(new_value)
 
         playground.config = json
         playground.last_update_date = datetime.today()
         playground.save()
-        return redirect('playground_game_starts', deck_id=deck.pk)
+        return HttpResponse()
 
 
 def playground_save_for_all(request, deck_id, button):
@@ -527,34 +541,43 @@ def playground_save_for_all(request, deck_id, button):
         json = playground.config
 
         for card in json['cards']:
+            power = card['power']
+            defense = card['defense']
+            if "*" in card['power']:
+                power = 0
+            if "*" in card['defense']:
+                defense = 0
+            power = int(power)
+            defense = int(defense)
+
             if button == "power-plus":
-                if type(card['power']) == "str":
-                    card['power'] = 0
+                if card['tapped']:
+                    json['damages'] -= power
+                    power += 1
+                    json['damages'] += power
                 else:
-                    card['power'] = int(card['power']) + 1
+                    power += 1
             elif button == "power-minus":
-                if type(card['power']) == "str":
-                    card['power'] = 0
-                else:
-                    card['power'] = int(card['power']) - 1
+                if power != 0:
+                    if card['tapped']:
+                        json['damages'] -= power
+                        power -= 1
+                        json['damages'] += power
+                    else:
+                        power -= 1
             elif button == "defense-plus":
-                if type(card['defense']) == "str":
-                    card['defense'] = 0
-                else:
-                    card['defense'] = int(card['defense']) + 1
+                defense += 1
             elif button == "defense-minus":
-                if type(card['defense']) == "str":
-                    card['defense'] = 0
-                else:
-                    card['defense'] = int(card['defense']) - 1
-            else:
-                card['power'] = 0
-                card['defense'] = 0
+                if  defense != 0:
+                    defense -= 1
+
+            card['power'] = str(power)
+            card['defense'] = str(defense)
 
         playground.config = json
         playground.last_update_date = datetime.today()
         playground.save()
-        return redirect('playground_game_starts', deck_id=deck.pk)
+        return HttpResponse()
 
 
 def playground_reset_all(request, deck_id):
@@ -570,14 +593,14 @@ def playground_reset_all(request, deck_id):
             for original_card in deck.cards.all():
                 if card['pk'] == original_card.pk:
                     if "*" in original_card.power:
-                        card['power'] = 0
+                        card['power'] = str(0)
                     else:
-                        card['power'] = original_card.power
+                        card['power'] = str(original_card.power)
 
                     if "*" in original_card.defense:
-                        card['defense'] = 0
+                        card['defense'] = str(0)
                     else:
-                        card['defense'] = original_card.defense
+                        card['defense'] = str(original_card.defense)
 
         playground.last_update_date = datetime.today()
         playground.save()
@@ -611,5 +634,81 @@ def playground_life_save(request, deck_id, button):
         playground.last_update_date = datetime.today()
         playground.save()
         return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_attack(request, deck_id, card_index):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    json = playground.config
+    json['damages'] = 0
+    for card in json["cards"]:
+        power = card['power']
+        if "*" in card['power']:
+            power = 0
+        power = int(power)
+
+        if card['index'] == int(card_index):
+            card['tapped'] = True
+        if card['tapped']:
+            json['damages'] += power
+
+    playground.config = json
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_untap(request, deck_id, card_index):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    json = playground.config
+    for card in json["cards"]:
+        power = card['power']
+        if "*" in card['power']:
+            power = 0
+        power = int(power)
+        if card['index'] == int(card_index):
+            card['tapped'] = False
+            json['damages'] -= power
+
+    playground.config = json
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+def playground_attack_all(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    json = playground.config
+    json['damages'] = 0
+    for card in json["cards"]:
+        power = card['power']
+        if "*" in card['power']:
+            power = 0
+        power = int(power)
+        card['tapped'] = True
+        json['damages'] += power
+
+    playground.config = json
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+def playground_untap_all(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    json = playground.config
+    for card in json["cards"]:
+        power = card['power']
+        if "*" in card['power']:
+            power = 0
+        power = int(power)
+        card['tapped'] = False
+        json['damages'] -= power
+
+    playground.config = json
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
 
 

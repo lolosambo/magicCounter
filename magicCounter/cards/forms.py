@@ -336,12 +336,14 @@ class CustomCounterForm(forms.Form):
 
     power = forms.IntegerField(
         label="Attaque",
-        required=True
+        required=True,
+        initial=1
     )
 
     defense = forms.IntegerField(
         label="Defense",
-        required=True
+        required=True,
+        initial=1
     )
 
     forFlying = forms.BooleanField(

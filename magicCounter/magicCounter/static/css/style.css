@@ -26,6 +26,12 @@ h2 {
     color: RebeccaPurple;
 }
 
+h3 {
+    font-size: 1.2rem;
+    margin: 20px;
+    color: goldenrod;
+}
+
 ul > li{
     margin-top: 20px;
     font-size: 1.2rem;
@@ -308,7 +314,7 @@ form > button{
     display: flex;
     flex-direction: column;
     background-color: DarkRed;
-    height: 100%;
+    height: 500px;
     padding: 20px;
     line-height: 1.5rem;
     font-size: 0.8rem;
@@ -330,24 +336,14 @@ form > button{
     column-gap: 20px;
 }
 
-.action-menu-wrapper {
-    background-color: silver;
-    height: 100%;
-}
-
 .playground-card-wrapper {
     background-color: #252727;
-    height: 430px;
+    height: 440px;
     width: 225px;
     padding: 20px;
-    margin-left: 20px;
+    margin-left: 10px;
     margin-bottom: 20px;
-}
-
-.playground-card-wrapper .toAnimate {
-    z-index: 9999;
-    animation-duration: 1.5s;
-    animation-name: slidein;
+    border-radius: 5px;
 }
 
 .playground-card-wrapper p {
@@ -358,8 +354,6 @@ form > button{
 .death-button{
     background-color: black;
     color: white;
-    margin-left: 35px;
-    margin-top: 10px;
 }
 
 .playground-token-illustration{
@@ -395,7 +389,7 @@ form > button{
 }
 
 .action-menu-wrapper {
-    background-color: #242424;
+    background-color: #1d3458;
     height: 100%;
     text-align: center;
 }
@@ -454,6 +448,7 @@ form > button{
 }
 
 .life-wrapper {
+    margin-left: 14%;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -463,7 +458,7 @@ form > button{
 
 .formCardCollapse {
     background-color: #252727;
-    border: 4px solid goldenrod;
+    border: 4px solid black;
     border-radius: 5px;
     text-align: center
 }
@@ -478,14 +473,84 @@ form > button{
     height: 40px;
     text-align: center;
     font-size: 1.3rem;
-    margin: 10px auto 20px auto;
+    margin: 10px auto 20px 10px;
+    border: 4px solid black;
 
+}
+
+.playground-menu {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    background-color: #3c2915;
+}
+
+.cards-cemetery {
+    height: 300px !important;
+    background-color: #252727;
+}
+
+#library-link {
+   background-image: url('../../media/library.png');
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 90px;
+   padding-top: 90px;
+}
+
+#library-link:hover {
+   background-image: url('../../media/library-hover.png');
+}
+
+#graveyard-link {
+   background-image: url('../../media/graveyard.png');
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 90px;
+   padding-top: 90px;
+}
+
+#graveyard-link:hover {
+   background-image: url('../../media/graveyard-hover.png');
+}
+
+#action-link {
+   background-image: url('../../media/action.png');
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 90px;
+   padding-top: 90px;
+}
+
+#action-link:hover {
+   background-image: url('../../media/action-hover.png');
+}
+
+.tapped_card {
+  transform: rotate(90deg);
+}
+
+.btn-card {
+    margin: 10px 0 10px 5px !important;
+}
+
+#total-damage{
+    font-size: 4rem;
 }
 
 /* ------- ANIMATIONS -------------------- */
 @keyframes slidein {
   from {
-    margin-left: 600%;
+    margin-left: 300%;
     width: 100%;
   }
 

@@ -30,17 +30,18 @@
 <!--    MENU LISTE DES CARTES A JOUER-->
     <div class="offcanvas offcanvas-top cards-list-wrapper" tabindex="-1" id="bibliothequeCanvas" aria-labelledby="bibliothequeCanvasLabel">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="bibliothequeCanvasLabel">Bibliothèque</h5>
+            <h3 class="offcanvas-title" id="bibliothequeCanvasLabel">Bibliothèque</h3>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <div class="row">
               {% for card in deck.cards.all|dictsort:"name" %}
-                    <div class="col-lg-2 col-md-2 col-sm-3 col-4 card-thumbnail">
+                    <div class="col-xxl-1 col-lg-2 col-md-2 col-sm-3 col-4 card-thumbnail">
                         <a
                                 id="card-{{ card.pk }}"
                                 data-is-token="{% if 'Token' in card.description %}True{% else %}False{% endif %}"
-                                data-bs-toggle="collapse"
+                                data-bs-toggle="modal"
+                                data-bs-target="#cardModal-{{ card.pk }}"
                                 href="#collapseCardForm-{{ card.pk}}"
                                 role="button"
                                 aria-expanded="false"
@@ -53,19 +54,28 @@
                             {% endif %}
                             <p class="mb-2">{{ card.name }}</p>
                         </a>
-                        <div class="collapse mb-3" id="collapseCardForm-{{ card.pk}}">
-                          <div class="card card-body formCardCollapse">
-                              <label for="cardForm-{{ card.pk}}">Nombre de cartes à ajouter </label>
-                              <input type="number" name="cardForm-{{ card.pk}}" id="cardForm-{{ card.pk}}" value="1"/>
-                              <button
+
+                        <div class="modal" id="cardModal-{{ card.pk }}" tabindex="-1">
+                          <div class="modal-dialog modal-sm">
+                            <div class="modal-content formCardCollapse">
+                              <div class="modal-header">
+                                <h3 class="modal-title">Ajouter {{ card.name }}</h3>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                 <label for="cardForm-{{ card.pk}}">Nombre</label>
+                                 <input type="number" name="cardForm-{{ card.pk}}" id="cardForm-{{ card.pk}}" value="1"/>
+                              </div>
+                              <div class="modal-footer">
+                                <button
                                       id="cardFormValid-{{ card.pk}}"
                                       type="button"
-                                      class="btn btn-sm btn-success"
+                                      class="btn btn-success"
                                       data-card-id="{{ card.pk}}"
                                       data-add-url = "{% url 'playground_add_card' deck_id=deck.pk card_id=card.pk number_of_cards='1' %}"
-                              >
-                                  Valider
-                              </button>
+                                >Valider</button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                     </div>
@@ -75,45 +85,126 @@
     </div>
 
 <!-- ------- AIRE DE JEU -------->
-    <div class="col-12">
-        <button
-                class="btn btn-warning ms-2"
-                type="button"
+    <div class="col-12 playground-menu">
+        <div class="row">
+            <div class="col-lg-3">
+                <a
+                id="library-link"
+                class="ms-2"
                 data-bs-toggle="offcanvas"
                 data-bs-target="#bibliothequeCanvas"
                 aria-controls="bibliothequeCanvas"
-        >
-          Bibliothèque
-        </button>
-        <button
-                class="btn btn-warning ms-2"
-                type="button"
+            >
+                <p>Bibliothèque</p>
+            </a>
+            <a
+                id="graveyard-link"
+                class="ms-4"
                 data-bs-toggle="offcanvas"
-                data-bs-target="#counterCanvas"
-                aria-controls="counterCanvas"
-        >
-          Menu Actions
-        </button><br><br>
+                data-bs-target="#cemeteryCanvas"
+                aria-controls="cemeteryCanvas"
+            >
+              Cimetière
+            </a>
+            </div>
+            <div class="col-lg-3">
+                <div class="row" style="text-align: center">
+                    <div class="col-12">
+                        <h2 style="color: white">Points de vie</h2>
+                    </div>
+                    <div class="col-12">
+                        <div class="life-wrapper me-5">
+                            <button
+                                    type="button"
+                                    id="life-minus"
+                                    class="btn  btn-danger"
+                                    data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-minus' %}"
+                            >
+                                -
+                            </button>
+                            <span id="life-points" class="ms-3 me-3" style="font-size: 4rem; color:white;">{{ json.life }}</span>
+                            <button
+                                    type="button"
+                                    id="life-plus"
+                                    class="btn btn-primary"
+                                    data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-plus' %}"
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-3">
+                <div class="row" style="text-align: center">
+                    <div class="col-12">
+                        <h2 style="color: white">Points à parer</h2>
+                    </div>
+                    <div class="col-12">
+                        <span id="total-damage">{{ json.damages }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3" style="text-align: right">
+                {% if json.damages > 0 %}
+                    <button
+                            type="button"
+                            id="all-untap"
+                            class="btn btn-sm btn-secondary"
+                            data-untap-url="{% url 'playground_untap_all' deck_id=deck.pk %}"
+                    >
+                        Désengager tous
+                    </button>
+                {% else %}
+                    <button
+                            type="button"
+                            id="all-attack"
+                            class="btn btn-sm btn-warning"
+                            data-attack-url="{% url 'playground_attack_all' deck_id=deck.pk %}"
+                    >
+                        Attaquer avec tous
+                    </button>
+                {% endif %}
+
+                <a
+                    class="me-3 ms-2"
+                    id="action-link"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#counterCanvas"
+                    aria-controls="counterCanvas"
+                >
+                    Actions
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
         <div class="row playground-wrapper">
             {% for card in json.cards %}
                 <div class="col-3 playground-card-wrapper" id="{{ card.index }}">
-                    <p>{{ card.name }}</p>
+                    <p>{{ card.name }} </p>
                     <p><em>({% for type in card.types %} {{ type }} {% endfor%})</em></p>
-                    <p style="color: goldenrod;">{% if card.isFlying %}Volant{% else %}Non-volant{% endif %}</p>
-                    {% if card.description == "Token" %}
-                         <div class="playground-token-illustration">
-                             <div class="playground-token-name">{{ card.name }}</div>
-                             <div class="playground-token-description" style="text-align: center;">
-                                 {% for color in card.colors %}
-                                    <img class="token-colors" width="15" src="/media/{{ color|lower }}.png" alt="{{color.color}}"/>
-                                 {% endfor%}<br>
-                                 {{ card.description }}
+                    <p style="color: goldenrod;">
+                        {% if card.isFlying %}Volant{% else %}Non-volant{% endif %}
+                        {% if card.tapped %}<span style="color: white; background-color: red; padding: 5px;">Attaque !</span>{% endif %}
+                    </p>
+                     <div id="tapped-card-{{card.index}}"  class="{% if card.tapped %}tapped_card{% endif %}" >
+                        {% if card.description == "Token" %}
+                             <div class="playground-token-illustration">
+                                 <div class="playground-token-name">{{ card.name }}</div>
+                                 <div class="playground-token-description" style="text-align: center;">
+                                     {% for color in card.colors %}
+                                        <img class="token-colors" width="15" src="/media/{{ color|lower }}.png" alt="{{color.color}}"/>
+                                     {% endfor%}<br>
+                                     {{ card.description }}
+                                 </div>
+                                 <div class="playground-token-po-de">{{ card.power }} / {{ card.defense }}</div>
                              </div>
-                             <div class="playground-token-po-de">{{ card.power }} / {{ card.defense }}</div>
-                         </div>
-                    {% else %}
-                         <img src="{{ card.illustration }}" width="185" alt="{{ card.name }}"/>
-                    {% endif %}
+                        {% else %}
+                             <img src="{{ card.illustration }}" width="185" alt="{{ card.name }}"/>
+                        {% endif %}
+                    </div>
                     <div style="text-align: center">
                         <button
                                 type="button"
@@ -143,14 +234,35 @@
                             +
                         </button>
                     </div>
-                    <a href="#"
-                       id="death-{{ card.index }}"
-                       class="btn btn-sm death-button"
-                       data-deck-id="{{deck.pk}}"
-                       data-remove-url="{% url 'playground_remove_creature' deck_id=deck.pk index=card.index %}"
-                    >
-                        Tuer la créature
-                    </a>
+                    <div style="text-align: center">
+                        {% if not card.tapped %}
+                            <a href="#"
+                               id="attack-{{ card.index }}"
+                               class="btn btn-sm btn-warning btn-card"
+                               data-deck-id="{{deck.pk}}"
+                               data-attack-url="{% url 'playground_attack' deck_id=deck.pk card_index=card.index %}"
+                            >
+                                Attaquer
+                            </a>
+                        {% else %}
+                            <a href="#"
+                               id="untap-{{ card.index }}"
+                               class="btn btn-sm btn-secondary btn-card"
+                               data-deck-id="{{deck.pk}}"
+                               data-untap-url="{% url 'playground_untap' deck_id=deck.pk card_index=card.index %}"
+                            >
+                                Désengager
+                            </a>
+                        {% endif %}
+                        <a href="#"
+                           id="death-{{ card.index }}"
+                           class="btn btn-sm death-button btn-card"
+                           data-deck-id="{{deck.pk}}"
+                           data-remove-url="{% url 'playground_remove_creature' deck_id=deck.pk index=card.index %}"
+                        >
+                            Cimetière
+                        </a>
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -162,34 +274,18 @@
     <div class="offcanvas offcanvas-end action-menu-wrapper" tabindex="-1" id="counterCanvas" aria-labelledby="counterCanvasLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="counterCanvasLabel">MENU ACTION</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <div class="life-wrapper">
-                <button
-                        type="button"
-                        id="life-minus"
-                        class="btn btn-sm btn-danger"
-                        data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-minus' %}"
-                >
-                    -
-                </button>
-                <span id="life-points" style="font-size: 5rem; color:white;">{{ json.life }}</span>
-                <button
-                        type="button"
-                        id="life-plus"
-                        class="btn btn-sm btn-primary"
-                        data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-plus' %}"
-                >
-                    +
-                </button>
-            </div>
-            <hr>
-
-            <br><p>Compteur pour toutes les cartes</p><br>
             <button
                     type="button"
-                    id="power-minus-forAll"
+                    class="btn-close text-reset btn-close-white"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"
+            ></button>
+        </div>
+        <div class="offcanvas-body">
+            <p>Compteur pour toutes les cartes</p><br>
+            <button
+                    type="button"
+                    id="power-forAll-minus"
                     class="btn btn-sm btn-danger"
                     data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='power-minus' %}"
             >
@@ -197,7 +293,7 @@
             </button>
             <button
                     type="button"
-                    id="power-plus-forAll"
+                    id="power-forAll-plus"
                     class="btn btn-sm btn-primary"
                     data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='power-plus' %}"
             >
@@ -206,7 +302,7 @@
             <span style="font-size: 1.8rem; padding-left: 5px; padding-right: 5px;">/</span>
             <button
                     type="button"
-                    id="defense-minus-forAll"
+                    id="defense-forAll-minus"
                     class="btn btn-sm btn-danger"
                     data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='defense-minus' %}"
             >
@@ -214,7 +310,7 @@
             </button>
             <button
                     type="button"
-                    id="defense-plus-forAll"
+                    id="defense-forAll-plus"
                     class="btn btn-sm btn-primary"
                     data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='defense-plus' %}"
             >
@@ -241,6 +337,28 @@
                         <button class="btn btn-sm btn-primary" type="submit">Valider</button>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+
+<!--------------- CIMETIERE ------------------>
+    <div class="offcanvas offcanvas-bottom cards-cemetery" tabindex="-1" id="cemeteryCanvas" aria-labelledby="cemeteryCanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="cemeteryCanvasLabel">Cimetière ({{ json.cemetery|length }})</h5>
+            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="row">
+              {% for card in json.cemetery %}
+                    <div class="col-lg-1 col-md-2 col-sm-3 col-4 card-thumbnail">
+                        {% if "Token" in card.description %}
+                            <img src="/media/token.png" style="width: 100%" alt="{{ card.name }}"/>
+                        {% else %}
+                            <img src="{{ card.illustration }}" style="width: 100%" alt="{{ card.name }}"/>
+                        {% endif %}
+                        <p class="mb-2">{{ card.name }}</p>
+                    </div>
+              {% endfor %}
             </div>
         </div>
     </div>

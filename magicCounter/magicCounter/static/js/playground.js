@@ -1,37 +1,51 @@
 $(document).ready(function () {
 
 //    ------------------ POUR UNE SEULE CARTE ------------------------------
-    function savePlayground(valueElement, url){
-        let newValue= valueElement
-        if(url.charAt(url.length - 1) >= 0){
-            url = url.substring(0, url.length - 1) + newValue;
+    function formatUrl(valueElement, url){
+        if(valueElement != null){
+            let newValue= valueElement
+            if(url.charAt(url.length - 1) >= 0){
+                url = url.substring(0, url.length - 1) + newValue;
+            }
         }
-        $.ajax({ type: 'GET', url: url });
+        return url
     }
 
     $("button[id*='power-plus-']").on("click", function(){
         let id = $(this).attr("id").split('-')[2];
         $("#power-"+id).text(parseInt($("#power-"+id).text()) + 1) ;
-        savePlayground($("#power-"+id).text(), $(this).attr("data-save-url"))
+        if($("#tapped-card-" + id).hasClass("tapped_card")){
+            $("#total-damage").text(parseInt($("#total-damage").text()) + 1) ;
+        }
+        url = formatUrl($("#power-"+id).text(), $(this).attr("data-save-url"))
+        $.ajax({ type: 'GET', url: url});
     });
 
     $("button[id*='power-minus-']").on("click", function(){
         let id = $(this).attr("id").split('-')[2];
-        $("#power-"+id).text(parseInt($("#power-"+id).text()) - 1) ;
-        savePlayground($("#power-"+id).text(), $(this).attr("data-save-url"))
+        $("#power-"+id).text(parseInt($("#power-"+id).text()) - 1);
+        if($("#tapped-card-" + id).hasClass("tapped_card")){
+            $("#total-damage").text(parseInt($("#total-damage").text()) - 1) ;
+        }
+        url = formatUrl($("#power-"+id).text(), $(this).attr("data-save-url"))
+        $.ajax({ type: 'GET', url: url });
     });
 
     $("button[id*='defense-plus-']").on("click", function(){
         let id = $(this).attr("id").split('-')[2];
         $("#defense-"+id).text(parseInt($("#defense-"+id).text()) + 1) ;
-        savePlayground($("#defense-"+id).text(), $(this).attr("data-save-url"))
+        url = formatUrl($("#defense-"+id).text(), $(this).attr("data-save-url"))
+        $.ajax({ type: 'GET', url: url});
     });
 
     $("button[id*='defense-minus-']").on("click", function(){
         let id = $(this).attr("id").split('-')[2];
         $("#defense-"+id).text(parseInt($("#defense-"+id).text()) - 1) ;
-        savePlayground($("#defense-"+id).text(), $(this).attr("data-save-url"))
+        url = formatUrl($("#defense-"+id).text(), $(this).attr("data-save-url"))
+        $.ajax({ type: 'GET', url: url});
     });
+
+    // --------------------  DETRUIRE CREATURE ------------------------------------
 
     $("a[id*='death-']").on("click", function(){
         let url = $(this).attr("data-remove-url");
@@ -40,29 +54,38 @@ $(document).ready(function () {
 
     //    ------------------ POUR TOUTES LES CARTES ------------------------------
 
-    $("#power-plus-forAll").on("click", function(){
+    $("#power-forAll-plus").on("click", function(){
         $("span[id*='power-']").each(function(){
             $(this).text(parseInt($(this).text()) + 1);
         });
+        let url = $(this).attr("data-save-url");
+        $.ajax({ type: 'GET', url: url});
     });
 
-    $("#power-minus-forAll").on("click", function(){
+    $("#power-forAll-minus").on("click", function(){
         $("span[id*='power-']").each(function(){
             $(this).text(parseInt($(this).text()) -1);
         });
+        let url = $(this).attr("data-save-url");
+        $.ajax({ type: 'GET', url: url});
     });
 
-    $("#defense-plus-forAll").on("click", function(){
+    $("#defense-forAll-plus").on("click", function(){
         $("span[id*='defense-']").each(function(){
             $(this).text(parseInt($(this).text()) + 1);
         });
+        let url = $(this).attr("data-save-url");
+        $.ajax({ type: 'GET', url: url});
     });
 
-    $("#defense-minus-forAll").on("click", function(){
+    $("#defense-forAll-minus").on("click", function(){
         $("span[id*='defense-']").each(function(){
             $(this).text(parseInt($(this).text()) -1);
         });
+        let url = $(this).attr("data-save-url");
+        $.ajax({ type: 'GET', url: url});
     });
+
 
 //    ------ RESET TOUTES LES CARTES -------
     $("#reset_all_cards").on('click', function(){
@@ -96,4 +119,32 @@ $(document).ready(function () {
        $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
     });
 
+//    -------- POINTS DE DEGATS -----------
+    $("a[id*='attack-']").on("click", function(){
+        let url = $(this).attr("data-attack-url");
+        $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
+    });
+
+    $("a[id*='untap-']").on("click", function(){
+        let url = $(this).attr("data-untap-url");
+        $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
+    });
+
+//  --------------  ATTAQUE GENERALE -------------------
+     $("#all-attack").on("click", function(){
+        $("div[id*='tapped-card-']").each(function(){
+            $(this).addClass("tapped-card");
+        });
+        let url = $(this).attr("data-attack-url");
+         $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
+     });
+
+//  --------------  ATTAQUE GENERALE -------------------
+     $("#all-untap").on("click", function(){
+        $("div[id*='tapped-card-']").each(function(){
+            $(this).removeClass("tapped-card");
+        });
+        let url = $(this).attr("data-untap-url");
+         $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
+     });
 });
