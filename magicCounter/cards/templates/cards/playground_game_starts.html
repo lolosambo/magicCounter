@@ -87,27 +87,53 @@
 <!-- ------- AIRE DE JEU -------->
     <div class="col-12 playground-menu">
         <div class="row">
-            <div class="col-lg-3">
+            <div class="col-lg-6 col-12">
                 <a
                 id="library-link"
                 class="ms-2"
                 data-bs-toggle="offcanvas"
                 data-bs-target="#bibliothequeCanvas"
                 aria-controls="bibliothequeCanvas"
-            >
-                <p>Bibliothèque</p>
-            </a>
-            <a
-                id="graveyard-link"
-                class="ms-4"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#cemeteryCanvas"
-                aria-controls="cemeteryCanvas"
-            >
-              Cimetière
-            </a>
+                >
+                    <p>Bibliothèque</p>
+                </a>
+                <a
+                    id="graveyard-link"
+                    class="ms-4"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#cemeteryCanvas"
+                    aria-controls="cemeteryCanvas"
+                >
+                  Cimetière
+                </a>
+                {% if json.damages > 0 %}
+                    <a
+                        id="all-untap"
+                        class="untap-link ms-4"
+                        data-untap-url="{% url 'playground_untap_all' deck_id=deck.pk %}"
+                    >
+                        Désengager tous
+                    </a>
+                {% else %}
+                    <a
+                        id="all-attack"
+                        class="attack-link ms-4"
+                        data-attack-url="{% url 'playground_attack_all' deck_id=deck.pk %}"
+                    >
+                        Attaquer tous
+                    </a>
+                {% endif %}
+                <a
+                    class="me-3 ms-2"
+                    id="action-link"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#counterCanvas"
+                    aria-controls="counterCanvas"
+                >
+                    Actions
+                </a>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-6 col-6">
                 <div class="row" style="text-align: center">
                     <div class="col-12">
                         <h2 style="color: white">Points de vie</h2>
@@ -136,7 +162,7 @@
                 </div>
 
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-6 col-6">
                 <div class="row" style="text-align: center">
                     <div class="col-12">
                         <h2 style="color: white">Points à parer</h2>
@@ -145,37 +171,6 @@
                         <span id="total-damage">{{ json.damages }}</span>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3" style="text-align: right">
-                {% if json.damages > 0 %}
-                    <button
-                            type="button"
-                            id="all-untap"
-                            class="btn btn-sm btn-secondary"
-                            data-untap-url="{% url 'playground_untap_all' deck_id=deck.pk %}"
-                    >
-                        Désengager tous
-                    </button>
-                {% else %}
-                    <button
-                            type="button"
-                            id="all-attack"
-                            class="btn btn-sm btn-warning"
-                            data-attack-url="{% url 'playground_attack_all' deck_id=deck.pk %}"
-                    >
-                        Attaquer avec tous
-                    </button>
-                {% endif %}
-
-                <a
-                    class="me-3 ms-2"
-                    id="action-link"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#counterCanvas"
-                    aria-controls="counterCanvas"
-                >
-                    Actions
-                </a>
             </div>
         </div>
     </div>
