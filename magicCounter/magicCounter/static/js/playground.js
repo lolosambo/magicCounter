@@ -148,7 +148,7 @@ $(document).ready(function () {
          $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
      });
 
-//  --------------  ATTAQUE GENERALE -------------------
+//  --------------  DESENGAGEMENT GENERALE -------------------
      $("#all-untap").on("click", function(){
         $("div[id*='tapped-card-']").each(function(){
             $(this).removeClass("tapped-card");

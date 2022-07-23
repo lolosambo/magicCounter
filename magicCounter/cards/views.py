@@ -709,8 +709,10 @@ def playground_untap_all(request, deck_id):
         if "*" in card['power']:
             power = 0
         power = int(power)
+        if card['tapped']:
+            json['damages'] -= power
         card['tapped'] = False
-        json['damages'] -= power
+
 
     playground.config = json
     playground.last_update_date = datetime.today()
