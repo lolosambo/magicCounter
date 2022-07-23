@@ -57,12 +57,7 @@ $(document).ready(function () {
     $("#power-forAll-plus").on("click", function(){
         $("span[id*='power-']").each(function(){
             $(this).text(parseInt($(this).text()) + 1);
-            let id = $(this).attr("id").split('-')[1];
-            if($("#tapped-card-" + id).hasClass("tapped_card")){
-                $("#total-damage").text(parseInt($("#total-damage").text()) + 1) ;
-            }
         });
-
         let url = $(this).attr("data-save-url");
         $.ajax({ type: 'GET', url: url});
     });
@@ -70,10 +65,6 @@ $(document).ready(function () {
     $("#power-forAll-minus").on("click", function(){
         $("span[id*='power-']").each(function(){
             $(this).text(parseInt($(this).text()) -1);
-            let id = $(this).attr("id").split('-')[1];
-            if($("#tapped-card-" + id).hasClass("tapped_card")){
-                $("#total-damage").text(parseInt($("#total-damage").text()) - 1);
-            }
         });
         let url = $(this).attr("data-save-url");
         $.ajax({ type: 'GET', url: url});

@@ -1,0 +1,561 @@
+@import "reset.css";
+@import url('https://fonts.googleapis.com/css2?family=Philosopher&display=swap');
+
+/* ----- GLOBAL ZONE ----------- */
+body {
+    background-color: black;
+    background-image: url('../../media/background.png');
+    background-size: 100%;
+    color: white;
+    font-family: "Philosopher", sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+h1{
+    font-size: 2.5rem;
+    margin: 20px;
+    color: goldenrod;
+}
+
+h2 {
+    font-size: 1.9rem;
+    margin: 20px;
+    color: RebeccaPurple;
+}
+
+h3 {
+    font-size: 1.2rem;
+    margin: 20px;
+    color: goldenrod;
+}
+
+ul > li{
+    margin-top: 20px;
+    font-size: 1.2rem;
+}
+
+ul > li > span {
+ color: MediumPurple;
+ font-weight: bold;
+
+}
+
+/* --------- ARCHITECTURE-ZONE -----------------  */
+
+.nav-menu {
+    margin-top: 20px;
+    display: flex:
+    flex-direction: row;
+    text-align: right;
+}
+
+/* --------- BOOTSTRAP OVERRIDE ZONE -------*/
+.btn-success{
+    background-color: RebeccaPurple;
+    border: 1px solid RebeccaPurple;
+}
+
+.btn-danger{
+    background-color: maroon;
+    border: 1px solid maroon;
+
+}
+
+/*-- ------- TEXT-ZONE -----------*/
+.text-red {
+    color: red;
+}
+
+.page_title{
+    text-align: center;
+}
+
+
+/* ---------- FORMS SECTION -------*/
+.form-wrapper {
+    background-color: Goldenrod;
+    padding: 40px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border: 2px solid HoneyDew;
+    border-radius: 10px;
+}
+
+form > p {
+    margin-top: 10px;
+}
+
+form > ul {
+    margin-top: 10px !important;
+    margin-bottom: 20px;
+}
+
+.helptext {
+    color: RebeccaPurple;
+}
+
+form > ul >li {
+    color: RebeccaPurple;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+.fieldWrapper{
+    width: 100%;
+    display:flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+select {
+   width: 100%;
+   height: 3rem;
+   margin-top: 10px;
+   border-radius: 10px;
+   padding-left: 10px;
+}
+
+input {
+   width: 100%;
+   height: 3rem;
+   margin-top: 10px;
+   margin-bottom: 10px;
+   border-radius: 10px;
+}
+
+.checkboxInput > label {
+   height: 1.5rem;
+}
+
+.checkboxInput > input {
+   margin-top: 8px;
+}
+
+label {
+   font-size: 1.5rem !important;
+   color: black;
+   margin-bottom: 5px;
+}
+
+form > button{
+   margin-top: 20px;
+   width: 100%;
+   font-size: 1.5rem !important;
+}
+
+
+/*  --------- CARD SECTION --------*/
+.card-wrapper {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   text-align: center;
+}
+
+.card-illustration{
+   height: 300px;
+   width: 220px;
+   border: 2px solid white;
+   border-radius: 20px;
+   margin-top: 20px;
+   margin-bottom: 20px;
+   box-shadow: 10px 10px 5px black;
+}
+
+.card-info {
+   background-color: black;
+   margin: 30px;
+   padding: 15px;
+   border: 1px solid ;
+   border-radius: 10px;
+}
+
+.card-info-illustration{
+   max-width: 100%;
+   border: 2px solid white;
+   border-radius: 20px;
+   margin-top: 20px;
+   margin-bottom: 20px;
+   box-shadow: 10px 10px 5px black;
+}
+
+.token-illustration{
+   height: 300px;
+   width: 220px;
+   background-image: url('../../media/token.png');
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   border: 2px solid white;
+   border-radius: 20px;
+   margin-top: 20px;
+   margin-bottom: 20px;
+   box-shadow: 10px 10px 5px black;
+}
+
+.token-name {
+    margin-right: 35px;
+    margin-top: 15px;
+    color: black;
+    font-size: 1rem;
+}
+
+.token-description {
+    margin-top: 30px;
+    color: black;
+    font-size: 1rem;
+}
+
+.token-po-de {
+    margin-top: 39px;
+    margin-left: 145px;
+    color: black;
+    font-size: 1rem;
+}
+
+.token-colors{
+    margin-top: 136px;
+}
+
+.token-name-consult {
+    margin-left: 15px;
+    margin-top: 23px;
+    color: black;
+    font-size: 1rem;
+}
+
+.token-colors-consult {
+    margin-top: 188px;
+    display: flex;
+    flex-direction; row;
+    align-items: center;
+    justify-content: center;
+}
+
+.token-description-consult {
+    margin-top: 55px;
+    margin-left: 110px;
+    color: black;
+    font-size: 1rem;
+
+}
+
+.token-po-de-consult {
+    margin-top: 52px;
+    margin-left: 215px;
+    color: black;
+    font-size: 1rem;
+}
+
+.card-buttons {
+    display: flex;
+    flex-direction:row;
+    justify-content: space-around;
+    width: 55%;
+}
+
+/* -------- DECK SECTION ------------------*/
+.deck-wrapper {
+    background-image: url('../../media/card_verso.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 326px;
+    margin-top: 50px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction; row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+}
+
+.deck_colors {
+    margin-top: 100px;
+}
+
+.deck_name {
+    margin-top: -70px;
+    color: black;
+    font-size: 0.9rem;
+}
+
+.deck-info {
+   margin: 30px;
+   padding: 15px;
+   border: 1px solid ;
+   border-radius: 10px;
+}
+
+.deck-illustration{
+   border: 2px solid MediumPurple;
+   border-radius: 20px;
+   margin-top: 20px;
+   margin-bottom: 20px;
+}
+
+.token-wrapper-consult {
+    background-image: url('../../media/token.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left;
+    min-height: 400px;
+    margin-top: 18px;
+    margin-bottom: 15px;
+}
+
+/* ------------ PLAYGROUND SECTION ---------------*/
+
+.cards-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    background-color: DarkRed;
+    height: 500px;
+    padding: 20px;
+    line-height: 1.5rem;
+    font-size: 0.8rem;
+    text-align: left;
+}
+
+.cards-list-wrapper a {
+    color: white;
+}
+
+.cards-list-wrapper h2 {
+    color: goldenrod;
+    float: left;
+}
+
+.playground-wrapper {
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+}
+
+.playground-card-wrapper {
+    background-color: #252727;
+    height: 440px;
+    width: 225px;
+    padding: 20px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.playground-card-wrapper p {
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+.death-button{
+    background-color: black;
+    color: white;
+}
+
+.playground-token-illustration{
+   width: 185px;
+   height: 249px;
+   background-image: url('../../media/token.png');
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   border: 5px solid black;
+   margin-bottom: 10px;
+
+}
+
+.playground-token-name {
+    margin-left: 17px;
+    margin-top: 13px;
+    color: black;
+    font-size: 0.8rem;
+}
+
+.playground-token-description {
+    color: black;
+    font-size: 1rem;
+}
+
+.playground-token-po-de {
+    text-align: center;
+    margin-top: 25px;
+    margin-left: 117px;
+    color: black;
+    font-size: 0.6rem;
+}
+
+.action-menu-wrapper {
+    background-color: #1d3458;
+    height: 100%;
+    text-align: center;
+}
+
+.custom_counter_wrapper{
+    border: 1px solid white;
+    background-color: #100d12;
+    margin-bottom: 20px;
+}
+
+#custom_counter_form {
+    text-align: left;
+    font-size: 0.7rem;
+
+}
+
+#custom_counter_form > p > input{
+    text-align: left;
+    font-size: 0.7rem !important;
+    width: 50px;
+    height: 20px;
+}
+
+#custom_counter_form > p >label{
+    text-align: left;
+    font-size: 0.9rem !important;
+    color: goldenrod;
+}
+
+#custom_counter_form .form-check-inline > label {
+    font-size: 0.9rem !important;
+    color: white;
+}
+
+#custom_counter_form  #id_power, #custom_counter_form  #id_defense{
+    width: 50px !important;
+    height: 30px !important;
+    font-size: 1.5rem !important;
+    border-radius: 5px;
+}
+
+#custom_counter_form > button[type=submit] {
+    width: 100px;
+    height: 30px;
+    font-size: 1rem !important;
+    margin-left: 22%;
+    margin-bottom: 20px;
+}
+
+#id_forFlying {
+    height: 20px !important;
+}
+
+.card-thumbnail {
+    text-align: center;
+}
+
+.life-wrapper {
+    margin-left: 14%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+.formCardCollapse {
+    background-color: #252727;
+    border: 4px solid black;
+    border-radius: 5px;
+    text-align: center
+}
+
+.formCardCollapse label {
+    color: white;
+    font-size: 1rem !important;
+}
+
+.formCardCollapse input {
+    width: 70px;
+    height: 40px;
+    text-align: center;
+    font-size: 1.3rem;
+    margin: 10px auto 20px 10px;
+    border: 4px solid black;
+
+}
+
+.playground-menu {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    background-color: #3c2915;
+}
+
+.cards-cemetery {
+    height: 300px !important;
+    background-color: #252727;
+}
+
+#library-link {
+   background-image: url('../../media/library.png');
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 90px;
+   padding-top: 90px;
+}
+
+#library-link:hover {
+   background-image: url('../../media/library-hover.png');
+}
+
+#graveyard-link {
+   background-image: url('../../media/graveyard.png');
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 90px;
+   padding-top: 90px;
+}
+
+#graveyard-link:hover {
+   background-image: url('../../media/graveyard-hover.png');
+}
+
+#action-link {
+   background-image: url('../../media/action.png');
+   background-size: contain;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 90px;
+   padding-top: 90px;
+}
+
+#action-link:hover {
+   background-image: url('../../media/action-hover.png');
+}
+
+.tapped_card {
+  transform: rotate(90deg);
+}
+
+.btn-card {
+    margin: 10px 0 10px 5px !important;
+}
+
+#total-damage{
+    font-size: 4rem;
+}
+
+/* ------- ANIMATIONS -------------------- */
+@keyframes slidein {
+  from {
+    margin-left: 300%;
+    width: 100%;
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+  }
+}

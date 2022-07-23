@@ -419,12 +419,18 @@ def playground_game_starts(request, deck_id):
                         if card['isFlying'] and forFlying:
                             to_be_incremented = True
                         if to_be_incremented:
-                            if isinstance(card['power'], str) and ("*" in card['power'] or "*" in card['power']):
+                            if card['tapped']:
+                                json['damages'] -= int(card['power'])
+
+                            if "*" in card['power'] or "*" in card['defense']:
                                 card['power'] = str(0 + int(power))
                                 card['defense'] = str(0 + int(defense))
                             else:
                                 card['power'] = str(int(card['power']) + int(power))
                                 card['defense'] = str(int(card['defense']) + int(defense))
+
+                            if card['tapped']:
+                                json['damages'] += int(card['power'])
 
                     playground.last_update_date = datetime.today()
                     playground.save()
