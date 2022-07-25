@@ -11,10 +11,14 @@
 
 {% block page_menu %}
     <a href="{% url 'user_password_change' %}">
-        <button type="button" class="btn btn-warning">Changer le mot de passe</button>
+        <button type="button" class="btn btn-warning">
+            <i class="fa-solid fa-shield-halved"></i> Changer le mot de passe
+        </button>
     </a>
-    <a href="{% url 'decks_index' %}">
-        <button type="button" class="btn btn-success">Revenir à l'accueil</button>
+    <a href="{% url 'homepage' %}">
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-house"></i> Retour à l'accueil
+        </button>
     </a>
 {% endblock%}
 

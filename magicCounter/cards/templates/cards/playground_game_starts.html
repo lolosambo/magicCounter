@@ -9,19 +9,26 @@
 
 {% block page_menu %}
     <a href="{% url 'kill_game' deck_id=deck.pk %}">
-        <button class="btn btn-danger">Mettre fin à la partie</button>
+        <button class="btn btn-danger">
+            <i class="fa-solid fa-clapperboard"></i> Mettre fin à la partie</button>
     </a>
     <a href="{% url 'homepage' %}">
-        <button type="button" class="btn btn-success">Retour à l'accueil</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-house"></i> Retour à l'accueil</button>
     </a>
     <a href="{% url 'decks_index' %}">
-        <button type="button" class="btn btn-success">Liste des decks</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-layer-group"></i> Liste des decks</button>
     </a>
     <a href="{% url 'cards_index' %}">
-        <button type="button" class="btn btn-success">Liste des cartes</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-file"></i> Liste des cartes
+        </button>
     </a>
     <a href="{% url 'tokens_index' %}">
-        <button type="button" class="btn btn-success">Liste des Jetons</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-ring"></i> Liste des Jetons
+        </button>
     </a>
 {% endblock%}
 
@@ -192,7 +199,7 @@
                     <p>{{ card.name }} </p>
                     <p><em>({% for type in card.types %} {{ type }} {% endfor%})</em></p>
                     <p style="color: goldenrod;">
-                        {% if card.isFlying %}Volant{% else %}Non-volant{% endif %},
+                        {% if card.isFlying %}Volant, {% endif %}
                         {% if card.isLifeLink %}Lien de vie{% endif %}
                         {% if card.tapped %}<span style="color: white; background-color: red; padding: 5px;">Attaque !</span>{% endif %}
                     </p>

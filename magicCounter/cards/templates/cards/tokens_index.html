@@ -3,10 +3,14 @@
 
 {% block page_menu %}
     <a href="{% url 'homepage' %}">
-        <button type="button" class="btn btn-success">Retour à l'accueil</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-house"></i> Retour à l'accueil
+        </button>
     </a>
     <a href="{% url 'token_add' %}">
-        <button type="button" class="btn btn-success">Ajouter un Token</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-ring"></i>+ Ajouter un jeton
+        </button>
     </a>
 {% endblock%}
 

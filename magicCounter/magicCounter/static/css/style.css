@@ -54,7 +54,7 @@ ul > li > span {
 
 /* --------- BOOTSTRAP OVERRIDE ZONE -------*/
 .btn-success{
-    background-color: RebeccaPurple;
+    background-color: #39274a;
     border: 1px solid RebeccaPurple;
 }
 
@@ -62,6 +62,11 @@ ul > li > span {
     background-color: maroon;
     border: 1px solid maroon;
 
+}
+
+.btn-primary {
+    background-color: #265ea5;
+    border-color: #265ea5;
 }
 
 /*-- ------- TEXT-ZONE -----------*/

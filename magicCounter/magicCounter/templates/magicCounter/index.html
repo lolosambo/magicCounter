@@ -7,19 +7,27 @@
 
 {% block page_menu %}
     <a href="{% url 'playground' %}">
-        <button class="btn btn-primary">Aller sur l'aire de jeu</button>
+        <button class="btn btn-primary">
+            <i class="fa-solid fa-chess-board"></i> Aller sur l'aire de jeu</button>
     </a>
     <a href="{% url 'decks_index' %}">
-        <button type="button" class="btn btn-success">Liste des decks</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-layer-group"></i> Liste des decks</button>
     </a>
     <a href="{% url 'cards_index' %}">
-        <button type="button" class="btn btn-success">Liste des cartes</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-file"></i> Liste des cartes
+        </button>
     </a>
     <a href="{% url 'tokens_index' %}">
-        <button type="button" class="btn btn-success">Liste des Jetons</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-ring"></i> Liste des Jetons
+        </button>
     </a>
     <a href="{% url 'profile' %}">
-        <button type="button" class="btn btn-warning">Mon compte</button>
+        <button type="button" class="btn btn-warning">
+            <i class="fa-solid fa-user-gear"></i> Mon compte
+        </button>
     </a>
 {% endblock%}
 

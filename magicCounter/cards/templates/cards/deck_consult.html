@@ -3,16 +3,20 @@
 
 {% block page_menu %}
     <a href="{% url 'homepage' %}">
-        <button type="button" class="btn btn-success">Retour à l'accueil</button>
+        <button type="button" class="btn btn-success">*
+            <i class="fa-solid fa-house"></i> Retour à l'accueil</button>
     </a>
     <a href="{% url 'decks_index' %}">
-        <button type="button" class="btn btn-success">Revenir à la liste des decks</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-layer-group"></i>  Revenir à la liste des decks</button>
     </a>
     <a href="{% url 'card_add' %}">
-        <button type="button" class="btn btn-success">Créer une carte</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-file-circle-plus"></i> Créer une carte</button>
     </a>
     <a href="{% url 'token_add' %}">
-        <button type="button" class="btn btn-success">Créer un Jeton</button>
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-ring"></i>+ Créer un Jeton</button>
     </a>
 {% endblock%}
 
