@@ -4,7 +4,8 @@ from .views import index, card, addCard, CardEditView, CardDeleteView, \
     removeCardFromDeckView, token_index, tokenAddView, token, TokenEditView, TokenDeleteView, associateTokenToDeckView, \
     removeTokenFromDeckView, playground, playground_game_starts, playground_add_card, playground_remove_creature, \
     playground_save, playground_save_for_all, playground_reset_all, playground_kill_game, playground_life_save, \
-    playground_attack, playground_untap, playground_attack_all, playground_untap_all
+    playground_attack, playground_untap, playground_attack_all, playground_untap_all, playground_reorder_cards, \
+    playground_kill_all
 
 urlpatterns = [
     # CARD VIEWS
@@ -47,4 +48,6 @@ urlpatterns = [
     path('playground/deck/<str:deck_id>/card/<str:card_index>/untap', playground_untap, name="playground_untap"),
     path('playground/deck/<str:deck_id>/attack/all', playground_attack_all, name="playground_attack_all"),
     path('playground/deck/<str:deck_id>/untap/all', playground_untap_all, name="playground_untap_all"),
+    path('playground/deck/<str:deck_id>/kill/all', playground_kill_all, name="playground_kill_all"),
+    path('playground/deck/<str:deck_id>/reorder/<str:slug>', playground_reorder_cards, name="playground_reorder_cards"),
 ]

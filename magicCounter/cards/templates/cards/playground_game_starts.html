@@ -106,6 +106,13 @@
                 >
                   Cimetière
                 </a>
+                <a
+                    id="graveyard-all-link"
+                    href="{% url 'playground_kill_all' deck_id=deck.pk %}"
+                    class="graveyard-all-link ms-4"
+                >
+                  Tuez-les tous !
+                </a>
                 {% if json.damages > 0 %}
                     <a
                         id="all-untap"
@@ -177,7 +184,11 @@
     <div class="col-12">
         <div class="row playground-wrapper">
             {% for card in json.cards %}
-                <div class="col-3 playground-card-wrapper" id="{{ card.index }}">
+                <div
+                        class="col-3 playground-card-wrapper"
+                        id="{{ card.index }}"
+                        data-reorder-url="{% url 'playground_reorder_cards' deck_id=deck.pk slug='0' %}"
+                >
                     <p>{{ card.name }} </p>
                     <p><em>({% for type in card.types %} {{ type }} {% endfor%})</em></p>
                     <p style="color: goldenrod;">
@@ -261,8 +272,6 @@
                 </div>
             {% endfor %}
         </div>
-
-
     </div>
 
 <!-- ------- MENU ACTIONS -------->

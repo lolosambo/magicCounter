@@ -565,6 +565,21 @@ form > button{
    padding-top: 90px;
 }
 
+.graveyard-all-link:hover {
+   background-image: url('../../media/kill-all-hover.png');
+}
+
+.graveyard-all-link {
+   background-image: url('../../media/kill-all.png');
+   background-size: 70%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 90px;
+   padding-top: 90px;
+}
+
 .tapped_card {
   transform: rotate(90deg);
 }

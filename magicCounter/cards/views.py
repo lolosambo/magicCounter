@@ -7,6 +7,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, AddTokenForm, EditTokenForm,  \
      CustomCounterForm, EditCardForm
 from datetime import datetime
+import json
 
 
 def index(request):
@@ -718,5 +719,48 @@ def playground_untap_all(request, deck_id):
     playground.last_update_date = datetime.today()
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
+
+def playground_reorder_cards(request, deck_id, slug):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    config = playground.config
+    slug = json.loads(slug)
+
+    cards = []
+    for c in config['cards']:
+        cards.append({})
+
+    for card in config["cards"]:
+        card['index'] = int(slug.get(str(card['index'])))
+        cards[card['index'] - 1] = card
+
+    config['cards'] = cards
+    playground.config = config
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return HttpResponse()
+
+def playground_kill_all(request, deck_id):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        cards = []
+
+        for card in json['cards']:
+            if "Token" not in card["description"]:
+                json['cemetery'].append(card)
+            if card['tapped']:
+                json['damages'] -= int(card['power'])
+        json['cards'] = cards
+        playground.config = json
+        playground.last_update_date = datetime.today()
+        playground.save()
+
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
 
 

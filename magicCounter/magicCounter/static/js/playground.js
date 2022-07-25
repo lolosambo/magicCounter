@@ -1,6 +1,5 @@
 $(document).ready(function () {
 
-//    ------------------ POUR UNE SEULE CARTE ------------------------------
     function formatUrl(valueElement, url){
         if(valueElement != null){
             let newValue= valueElement
@@ -10,6 +9,25 @@ $(document).ready(function () {
         }
         return url
     }
+
+// --------------- DRAG N DROP ---------------
+    $(".playground-wrapper").sortable({
+        revert: false,
+        update: function() {
+            let indexes = {};
+            let url = "";
+            $(".playground-card-wrapper").each(function(){
+                 url = $(this).attr('data-reorder-url');
+                 indexes[$(this).attr('id')] = String($(".playground-card-wrapper").index($(this)) + 1);
+            });
+           indexes = JSON.stringify(indexes)
+           url = formatUrl(indexes, url);
+           $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
+        }
+    }).disableSelection();
+
+//    ------------------ POUR UNE SEULE CARTE ------------------------------
+
 
     $("button[id*='power-plus-']").on("click", function(){
         let id = $(this).attr("id").split('-')[2];
@@ -131,12 +149,12 @@ $(document).ready(function () {
 //    -------- POINTS DE DEGATS -----------
     $("a[id*='attack-']").on("click", function(){
         let url = $(this).attr("data-attack-url");
-        $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
+        $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
     });
 
     $("a[id*='untap-']").on("click", function(){
         let url = $(this).attr("data-untap-url");
-        $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
+        $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
     });
 
 //  --------------  ATTAQUE GENERALE -------------------
@@ -145,7 +163,7 @@ $(document).ready(function () {
             $(this).addClass("tapped-card");
         });
         let url = $(this).attr("data-attack-url");
-         $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
+         $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
      });
 
 //  --------------  DESENGAGEMENT GENERALE -------------------
@@ -154,6 +172,6 @@ $(document).ready(function () {
             $(this).removeClass("tapped-card");
         });
         let url = $(this).attr("data-untap-url");
-         $.ajax({ type: 'GET', url: url, success: window.location.reload(true) });
+         $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
      });
 });

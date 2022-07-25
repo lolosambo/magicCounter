@@ -535,6 +535,36 @@ form > button{
    background-image: url('../../media/action-hover.png');
 }
 
+.attack-link {
+   background-image: url('../../media/attack.png');
+   background-size: 60%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 50px;
+   padding-top: 85px;
+}
+
+.attack-link:hover {
+   background-image: url('../../media/attack-hover.png');
+}
+
+.untap-link:hover {
+   background-image: url('../../media/untap-hover.png');
+}
+
+.untap-link {
+   background-image: url('../../media/untap.png');
+   background-size: 70%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 90px;
+   padding-top: 90px;
+}
+
 .tapped_card {
   transform: rotate(90deg);
 }
