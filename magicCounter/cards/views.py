@@ -110,6 +110,8 @@ def addCard(request):
                     card.language = request.POST["language"]
                     if "flying" in mtgcard[0].text.lower() or "vol" in mtgcard[0].text.lower():
                         card.isFlying = True
+                    if "lifelink" in mtgcard[0].text.lower() or "lien de vie" in mtgcard[0].text.lower():
+                        card.isLifeLink = True
                     card.save()
 
                 # "commit=False", dans la fonction save() empêche la sauveagarde en BDD
@@ -300,6 +302,8 @@ def tokenAddView(request):
                 token.defense = results["defense"][0]
                 token.description = "Token"
                 token.language = results["language"][0]
+                token.isFlying = results["isFlying"][0]
+                token.isLifeLink = results["isLifeLink"][0]
 
                 for add_type in results["add_type"]:
                     if add_type != "" and add_type not in types:
@@ -449,9 +453,9 @@ def playground_add_card(request, card_id, deck_id, number_of_cards):
     else:
         card = Card.objects.filter(pk=card_id)[0]
         deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
 
         for i in range(0, int(number_of_cards)):
-            playground = Playground.objects.filter(user=request.user, deck=deck)[0]
             types = []
             for type in card.types.all():
                 types.append(type.name)
@@ -475,6 +479,7 @@ def playground_add_card(request, card_id, deck_id, number_of_cards):
                     "power": card.power,
                     "defense": card.defense,
                     "isFlying": card.isFlying,
+                    "isLifeLink": card.isLifeLink,
                     "language": card.language,
                     "illustration": card.illustration,
                     "tapped":False
@@ -658,6 +663,8 @@ def playground_attack(request, deck_id, card_index):
             card['tapped'] = True
         if card['tapped']:
             json['damages'] += power
+            if card['isLifeLink']:
+                json['life'] += int(card['power'])
 
     playground.config = json
     playground.last_update_date = datetime.today()
@@ -695,6 +702,8 @@ def playground_attack_all(request, deck_id):
         power = int(power)
         card['tapped'] = True
         json['damages'] += power
+        if card['isLifeLink']:
+            json['life'] += int(power)
 
     playground.config = json
     playground.last_update_date = datetime.today()

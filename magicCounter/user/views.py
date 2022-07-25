@@ -1,5 +1,5 @@
 from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetDoneView, \
-    PasswordChangeDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+    PasswordChangeDoneView, PasswordResetConfirmView, PasswordResetCompleteView, LoginView
 from django.shortcuts import render, redirect
 from datetime import datetime
 
@@ -13,19 +13,6 @@ class CustomSignupForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = UserCreationForm.Meta.fields
-
-# Formulaire d'inscription fait à la main'
-# def signup(request):
-#     if request.method == "POST":
-#         username = request.POST.get("username")
-#         password1 = request.POST.get("password1")
-#         password2 = request.POST.get("password2")
-#         email = request.POST.get("email")
-#         if password1 != password2:
-#             return render(request, 'user/signup.html', {"error": "Les mots de passe doivent correspondre."})
-#         user = CustomUser.objects.create_user(username=username, password=password1, email=email)
-#         return render(request, 'user/dashboard.html', {"user": user})
-#     return render(request, 'user/signup.html')
 
 
 def signup(request):
@@ -81,3 +68,6 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = "user/reset_password_complete.html"
+
+class CustomLoginResetView(LoginView):
+    success_url = reverse_lazy("homepage")

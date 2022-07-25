@@ -95,7 +95,8 @@ class EditCardForm(forms.ModelForm):
             "types",
             "power",
             "defense",
-            "isFlying"
+            "isFlying",
+            "isLifeLink"
         ]
         labels = {
             "name": "Nom de la carte",
@@ -103,7 +104,8 @@ class EditCardForm(forms.ModelForm):
             "types": "Type(s)",
             "power": "Attaque",
             "defense": "Défense",
-            "isFlying": "Vol"
+            "isFlying": "Vol",
+            "isLifeLink": "Lien de vie"
         }
         widgets = {
             "colors": HorizontalCheckboxSelectMultiple(),
@@ -221,6 +223,12 @@ class AddTokenForm(forms.Form):
         label="Vol"
     )
 
+    isLifeLink = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="Lien de vie"
+    )
+
     LANGUAGES = [
         ("english", "Anglais"),
         ("french", "Français"),
@@ -287,7 +295,8 @@ class EditTokenForm(forms.ModelForm):
             "types",
             "power",
             "defense",
-            "isFlying"
+            "isFlying",
+            "isLifeLink"
         ]
         labels = {
             "name": "Nom du jeton",
@@ -295,7 +304,8 @@ class EditTokenForm(forms.ModelForm):
             "types": "Type(s)",
             "power": "Attaque",
             "defense": "Défense",
-            "isFlying": "Vol"
+            "isFlying": "Vol",
+            "isLifLink": "Lien de vie"
         }
         widgets = {
             "colors": HorizontalCheckboxSelectMultiple(),

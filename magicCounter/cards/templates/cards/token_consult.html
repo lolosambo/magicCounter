@@ -53,6 +53,8 @@
                               <li><span>Types :</span> {% for type in token.types.all %} {{ type.name }} {% endfor %}</li>
                               <li><span>Force/Endurance :</span> {{ token.power }} / {{ token.defense }}</li>
                               <li><span>Description :</span> {{ token.description }}</li>
+                              <li><span>Vol :</span> {% if token.isFlying %} Oui {% else %} Non {% endif %}</li>
+                              <li><span>Lien de vie :</span> {% if token.isLifeLink %} Oui {% else %} Non {% endif %}</li>
                               <li><span>Actuellement dans le(s) deck(s) :</span> {% for deck in token.deck.all %} {{ deck.name }},  {% endfor %}</li>
                           </ul><br><br>
                           <a href="{% url 'token_delete' pk=token.pk %}">

@@ -36,6 +36,7 @@
                      {% csrf_token %}
 
                      {{ form.as_p}}
+                     <input name="next" type="hidden" value="{% url 'homepage' %}">
                      <button class="btn btn-success" type="submit">Se connecter</button><br><br>
                      <a class="btn btn-warning" href="{% url 'user_password_reset' %}">J'ai oublié mon mot de passe</a>
                      <a class="btn btn-success" href="{% url 'user_signup' %}">Créer un compte</a>
