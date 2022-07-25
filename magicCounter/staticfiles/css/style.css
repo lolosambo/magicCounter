@@ -573,7 +573,7 @@ form > button{
 
 .flying-link {
    background-image: url('../../media/make-flying.png');
-   background-size: 60%;
+   background-size: 100%;
    background-repeat: no-repeat;
    background-position: center;
    text-align: center;
