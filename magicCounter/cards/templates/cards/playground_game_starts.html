@@ -199,9 +199,9 @@
                     <p>{{ card.name }} </p>
                     <p><em>({% for type in card.types %} {{ type }} {% endfor%})</em></p>
                     <p style="color: goldenrod;">
-                        {% if card.isFlying %}Volant, {% endif %}
+                        {% if card.isFlying %}Volant, {% else %}Non-volant, {% endif %}
                         {% if card.isLifeLink %}Lien de vie{% endif %}
-                        {% if card.tapped %}<span style="color: white; background-color: red; padding: 5px;">Attaque !</span>{% endif %}
+                        {% if card.tapped %}<span class="badge-attack">Attaque</span>{% endif %}
                     </p>
                      <div id="tapped-card-{{card.index}}"  class="{% if card.tapped %}tapped_card{% endif %}" >
                         {% if card.description == "Token" %}

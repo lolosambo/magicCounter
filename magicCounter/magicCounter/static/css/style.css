@@ -597,6 +597,13 @@ form > button{
     font-size: 4rem;
 }
 
+.badge-attack{
+    color: white;
+    background-color: #a15200;
+    border-radius: 15px;
+    padding: 6px;
+}
+
 /* ------- ANIMATIONS -------------------- */
 @keyframes slidein {
   from {
