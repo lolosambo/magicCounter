@@ -381,6 +381,7 @@ def playground_game_starts(request, deck_id):
     if not user.is_authenticated:
         return redirect("login")
     else:
+        is_flying_deck = False
         deck = Deck.objects.filter(pk=deck_id)[0]
         if not Playground.objects.filter(user=request.user, deck=deck):
             # On crée et on stocke la partie
@@ -396,9 +397,13 @@ def playground_game_starts(request, deck_id):
             playground.creation_date = datetime.today()
             playground.last_update_date = datetime.today()
             playground.save()
-
             form = CustomCounterForm(deck=deck)
-            return render(request, "cards/playground_game_starts.html", context={"deck": deck, "json": json, "form": form})
+            return render(request, "cards/playground_game_starts.html", context={
+                "deck": deck,
+                "json": json,
+                "form": form,
+                "is_flying_deck": is_flying_deck
+            })
         else:
             playground = Playground.objects.filter(user=request.user, deck=deck)[0]
             json = playground.config
@@ -423,6 +428,8 @@ def playground_game_starts(request, deck_id):
                                 break
                         if card['isFlying'] and forFlying:
                             to_be_incremented = True
+                        if card['isFlying']:
+                            is_flying_deck = True
                         if to_be_incremented:
                             if card['tapped']:
                                 json['damages'] -= int(card['power'])
@@ -439,11 +446,18 @@ def playground_game_starts(request, deck_id):
 
                     playground.last_update_date = datetime.today()
                     playground.save()
-
                     return redirect("playground_game_starts", deck_id=deck.pk)
             else:
+                for card in json['cards']:
+                    if card['isFlying']:
+                        is_flying_deck = True
                 form = CustomCounterForm(deck=deck)
-                return render(request, "cards/playground_game_starts.html", context={"deck": deck, "json": json, "form": form})
+                return render(request, "cards/playground_game_starts.html", context={
+                    "deck": deck,
+                    "json": json,
+                    "form": form,
+                    "is_flying_deck": is_flying_deck
+                })
 
 
 def playground_add_card(request, card_id, deck_id, number_of_cards):
@@ -770,6 +784,74 @@ def playground_kill_all(request, deck_id):
         playground.save()
 
         return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_flying_creature(request, deck_id, index):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        cards = []
+        for card in json['cards']:
+            if card['index'] == int(index):
+               card["isFlying"] = True
+            cards.append(card)
+        json['cards'] = cards
+        playground.config = json
+        playground.last_update_date = datetime.today()
+        playground.save()
+
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
+def playground_non_flying_creature(request, deck_id, index):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        cards = []
+        for card in json['cards']:
+            if card['index'] == int(index):
+               card["isFlying"] = False
+            cards.append(card)
+        json['cards'] = cards
+        playground.config = json
+        playground.last_update_date = datetime.today()
+        playground.save()
+
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
+def playground_flying_all(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    json = playground.config
+
+    for card in json["cards"]:
+        card['isFlying'] = True
+
+    playground.config = json
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_non_flying_all(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    json = playground.config
+
+    for card in json["cards"]:
+        card['isFlying'] = False
+
+    playground.config = json
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
 
 
 

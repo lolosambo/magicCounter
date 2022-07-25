@@ -570,6 +570,41 @@ form > button{
    padding-top: 90px;
 }
 
+
+.flying-link {
+   background-image: url('../../media/make-flying.png');
+   background-size: 100%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 50px;
+   padding-top: 85px;
+}
+
+.flying-link:hover {
+   background-image: url('../../media/make-flying-hover.png');
+}
+
+.non-flying-link:hover {
+   background-image: url('../../media/make-non-flying-hover.png');
+}
+
+.non-flying-link {
+   background-image: url('../../media/make-non-flying.png');
+   background-size: 70%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   height: 90px;
+   padding-top: 90px;
+}
+
+
+
+
+
 .graveyard-all-link:hover {
    background-image: url('../../media/kill-all-hover.png');
 }
@@ -602,6 +637,13 @@ form > button{
     background-color: #a15200;
     border-radius: 15px;
     padding: 6px;
+}
+
+.becomeFlyingCheckbox{
+    width: 12px;
+    height: 12px !important;
+    margin-top:0 !important;
+    margin-bottom:0 !important;
 }
 
 /* ------- ANIMATIONS -------------------- */

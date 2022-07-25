@@ -5,7 +5,7 @@ from .views import index, card, addCard, CardEditView, CardDeleteView, \
     removeTokenFromDeckView, playground, playground_game_starts, playground_add_card, playground_remove_creature, \
     playground_save, playground_save_for_all, playground_reset_all, playground_kill_game, playground_life_save, \
     playground_attack, playground_untap, playground_attack_all, playground_untap_all, playground_reorder_cards, \
-    playground_kill_all
+    playground_kill_all, playground_flying_creature, playground_non_flying_creature, playground_flying_all, playground_non_flying_all
 
 urlpatterns = [
     # CARD VIEWS
@@ -50,4 +50,9 @@ urlpatterns = [
     path('playground/deck/<str:deck_id>/untap/all', playground_untap_all, name="playground_untap_all"),
     path('playground/deck/<str:deck_id>/kill/all', playground_kill_all, name="playground_kill_all"),
     path('playground/deck/<str:deck_id>/reorder/<str:slug>', playground_reorder_cards, name="playground_reorder_cards"),
+    path('playground/deck/<str:deck_id>/become_flying/<str:index>', playground_flying_creature, name="playground_flying_creature"),
+    path('playground/deck/<str:deck_id>/become_non_flying/<str:index>', playground_non_flying_creature, name="playground_non_flying_creature"),
+    path('playground/deck/<str:deck_id>/flying/all', playground_flying_all, name="playground_flying_all"),
+    path('playground/deck/<str:deck_id>/non-flying/all', playground_non_flying_all, name="playground_non_flying_all"),
+
 ]

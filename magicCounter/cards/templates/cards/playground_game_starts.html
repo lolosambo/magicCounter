@@ -137,6 +137,27 @@
                         Attaquer tous
                     </a>
                 {% endif %}
+
+                {% if is_flying_deck == False %}
+                    <a
+                        id="all-flying"
+                        class="flying-link ms-4"
+                        href="{% url 'playground_flying_all' deck_id=deck.pk %}"
+                        data-untap-url="{% url 'playground_flying_all' deck_id=deck.pk %}"
+                    >
+                        Vol à tous
+                    </a>
+                {% else %}
+                    <a
+                        id="all-non-flying"
+                        href="{% url 'playground_non_flying_all' deck_id=deck.pk %}"
+                        class="non-flying-link ms-4"
+                        data-attack-url="{% url 'playground_non_flying_all' deck_id=deck.pk %}"
+                    >
+                        Non-vol à tous
+                    </a>
+                {%endif%}
+
                 <a
                     class="me-3 ms-2"
                     id="action-link"
@@ -144,7 +165,7 @@
                     data-bs-target="#counterCanvas"
                     aria-controls="counterCanvas"
                 >
-                    Actions
+                    Compteur
                 </a>
             </div>
             <div class="col-lg-3 col-md-6 col-6">
@@ -199,8 +220,29 @@
                     <p>{{ card.name }} </p>
                     <p><em>({% for type in card.types %} {{ type }} {% endfor%})</em></p>
                     <p style="color: goldenrod;">
-                        {% if card.isFlying %}Volant, {% else %}Non-volant, {% endif %}
-                        {% if card.isLifeLink %}Lien de vie{% endif %}
+                        {% if card.isLifeLink %}Lien de vie, {% endif %}
+                        {% if card.isFlying %}
+                                <span>
+                                   <a
+                                       style="color:green; font-size: 0.9rem;"
+                                       href="{% url 'playground_non_flying_creature' deck_id=deck.pk index=card.index %}"
+                                   >
+                                      Vol <i class="fa-solid fa-circle-xmark"></i>
+                                   </a>
+                                </span>
+
+                        {% else %}
+                            <span>
+                               <a
+                                   style="color:red; font-size: 0.9rem;"
+                                   href="{% url 'playground_flying_creature' deck_id=deck.pk index=card.index %}"
+                               >
+                                  Vol <i class="fa-solid fa-circle-plus"></i>
+                               </a>
+                            </span>
+
+                        {% endif %}
+
                         {% if card.tapped %}<span class="badge-attack">Attaque</span>{% endif %}
                     </p>
                      <div id="tapped-card-{{card.index}}"  class="{% if card.tapped %}tapped_card{% endif %}" >
@@ -285,7 +327,7 @@
 <!-- ------- MENU ACTIONS -------->
     <div class="offcanvas offcanvas-end action-menu-wrapper" tabindex="-1" id="counterCanvas" aria-labelledby="counterCanvasLabel">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="counterCanvasLabel">MENU ACTION</h5>
+            <h5 class="offcanvas-title" id="counterCanvasLabel">MENU COMPTEUR PERSONALISE</h5>
             <button
                     type="button"
                     class="btn-close text-reset btn-close-white"

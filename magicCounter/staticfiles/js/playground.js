@@ -174,4 +174,5 @@ $(document).ready(function () {
         let url = $(this).attr("data-untap-url");
          $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
      });
+
 });
