@@ -1,9 +1,5 @@
 $(document).ready(function () {
 
-    $(function(){
-        $(".playground-card-wrapper").draggableTouch();
-    });
-
     function formatUrl(valueElement, url){
         if(valueElement != null){
             let newValue= valueElement
