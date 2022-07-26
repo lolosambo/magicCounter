@@ -1,231 +1,22 @@
 {% extends "magicCounter/base.html" %}
 {% load static %}
 
-
 {% block page_title%}
     <h1>Aire de jeu !</h1>
-
 {% endblock%}
 
 {% block page_menu %}
-    <a href="{% url 'kill_game' deck_id=deck.pk %}">
-        <button class="btn btn-danger">
-            <i class="fa-solid fa-clapperboard"></i> Mettre fin à la partie</button>
-    </a>
-    <a href="{% url 'homepage' %}">
-        <button type="button" class="btn btn-success">
-            <i class="fa-solid fa-house"></i> Retour à l'accueil</button>
-    </a>
-    <a href="{% url 'decks_index' %}">
-        <button type="button" class="btn btn-success">
-            <i class="fa-solid fa-layer-group"></i> Liste des decks</button>
-    </a>
-    <a href="{% url 'cards_index' %}">
-        <button type="button" class="btn btn-success">
-            <i class="fa-solid fa-file"></i> Liste des cartes
-        </button>
-    </a>
-    <a href="{% url 'tokens_index' %}">
-        <button type="button" class="btn btn-success">
-            <i class="fa-solid fa-ring"></i> Liste des Jetons
-        </button>
-    </a>
+    {% include "includes/main_menu.html" %}
 {% endblock%}
 
 {% block main_content %}
+    <!--    MENU LISTE DES CARTES A JOUER-->
+    {% include "includes/library.html" %}
 
-<!--    MENU LISTE DES CARTES A JOUER-->
-    <div class="offcanvas offcanvas-top cards-list-wrapper" tabindex="-1" id="bibliothequeCanvas" aria-labelledby="bibliothequeCanvasLabel">
-        <div class="offcanvas-header">
-            <h3 class="offcanvas-title" id="bibliothequeCanvasLabel">Bibliothèque</h3>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <div class="row">
-              {% for card in deck.cards.all|dictsort:"name" %}
-                    <div class="col-xxl-1 col-lg-2 col-md-2 col-sm-3 col-4 card-thumbnail">
-                        <a
-                                id="card-{{ card.pk }}"
-                                data-is-token="{% if 'Token' in card.description %}True{% else %}False{% endif %}"
-                                data-bs-toggle="modal"
-                                data-bs-target="#cardModal-{{ card.pk }}"
-                                href="#collapseCardForm-{{ card.pk}}"
-                                role="button"
-                                aria-expanded="false"
-                                aria-controls="collapseExample"
-                        >
-                            {% if "Token" in card.description %}
-                                <img src="/media/token.png" style="width: 100%" alt="{{ card.name }}"/>
-                            {% else %}
-                                <img src="{{ card.illustration }}" style="width: 100%" alt="{{ card.name }}"/>
-                            {% endif %}
-                            <p class="mb-2">{{ card.name }}</p>
-                        </a>
+    <!-- ------- AIRE DE JEU -------->
+    {% include "includes/playground_menu.html" %}
 
-                        <div class="modal" id="cardModal-{{ card.pk }}" tabindex="-1">
-                          <div class="modal-dialog modal-sm">
-                            <div class="modal-content formCardCollapse">
-                              <div class="modal-header">
-                                <h3 class="modal-title">Ajouter {{ card.name }}</h3>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <div class="modal-body">
-                                 <label for="cardForm-{{ card.pk}}">Nombre</label>
-                                 <input type="number" name="cardForm-{{ card.pk}}" id="cardForm-{{ card.pk}}" value="1"/>
-                              </div>
-                              <div class="modal-footer">
-                                <button
-                                      id="cardFormValid-{{ card.pk}}"
-                                      type="button"
-                                      class="btn btn-success"
-                                      data-card-id="{{ card.pk}}"
-                                      data-add-url = "{% url 'playground_add_card' deck_id=deck.pk card_id=card.pk number_of_cards='1' %}"
-                                >Valider</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
-              {% endfor %}
-            </div>
-        </div>
-    </div>
 
-<!-- ------- AIRE DE JEU -------->
-    <div class="col-12 playground-menu">
-        <div class="row">
-            <div class="col-lg-6 col-12">
-                <a
-                id="library-link"
-                class="menu-link ms-2"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#bibliothequeCanvas"
-                aria-controls="bibliothequeCanvas"
-                >
-                    <p>Bibliothèque</p>
-                </a>
-                <a
-                    id="graveyard-link"
-                    class="menu-link ms-4"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#cemeteryCanvas"
-                    aria-controls="cemeteryCanvas"
-                >
-                  Cimetière
-                </a>
-                <a
-                    id="graveyard-all-link"
-                    href="{% url 'playground_kill_all' deck_id=deck.pk %}"
-                    class="menu-link graveyard-all-link ms-4"
-                >
-                  Tuez-les tous !
-                </a>
-                {% if json.damages > 0 %}
-                    <a
-                        id="all-untap"
-                        class="menu-link untap-link ms-4"
-                        data-untap-url="{% url 'playground_untap_all' deck_id=deck.pk %}"
-                    >
-                        Désengager tous
-                    </a>
-                {% else %}
-                    <a
-                        id="all-attack"
-                        class="menu-link attack-link ms-4"
-                        data-attack-url="{% url 'playground_attack_all' deck_id=deck.pk %}"
-                    >
-                        Attaquer tous
-                    </a>
-                {% endif %}
-
-                {% if is_flying_deck == False %}
-                    <a
-                        id="all-flying"
-                        class="menu-link flying-link ms-4"
-                        href="{% url 'playground_flying_all' deck_id=deck.pk %}"
-                    >
-                        Vol à tous
-                    </a>
-                {% else %}
-                    <a
-                        id="all-non-flying"
-                        href="{% url 'playground_non_flying_all' deck_id=deck.pk %}"
-                        class="menu-link non-flying-link ms-4"
-                    >
-                        Non-vol à tous
-                    </a>
-                {%endif%}
-
-                {% if is_lifelink_deck == False %}
-                    <a
-                        id="all-lifelink"
-                        class="menu-link lifelink-link ms-4"
-                        href="{% url 'playground_lifelink_all' deck_id=deck.pk %}"
-
-                    >
-                        Lien de vie
-                    </a>
-                {% else %}
-                    <a
-                        id="all-non-lifelink"
-                        href="{% url 'playground_non_lifelink_all' deck_id=deck.pk %}"
-                        class="menu-link non-lifelink-link ms-4"
-                    >
-                        Supprimer lien de vie
-                    </a>
-                {%endif%}
-
-                <a
-                    class="menu-link me-3 ms-2"
-                    id="action-link"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#counterCanvas"
-                    aria-controls="counterCanvas"
-                >
-                    Compteur
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-6 col-6">
-                <div class="row" style="text-align: center">
-                    <div class="col-12">
-                        <h2 style="color: white">Points de vie</h2>
-                    </div>
-                    <div class="col-12">
-                        <div class="life-wrapper me-5">
-                            <button
-                                    type="button"
-                                    id="life-minus"
-                                    class="btn  btn-danger"
-                                    data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-minus' %}"
-                            >
-                                -
-                            </button>
-                            <span id="life-points" class="ms-3 me-3" style="font-size: 4rem; color:white;">{{ json.life }}</span>
-                            <button
-                                    type="button"
-                                    id="life-plus"
-                                    class="btn btn-primary"
-                                    data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-plus' %}"
-                            >
-                                +
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="col-lg-3 col-md-6 col-6">
-                <div class="row" style="text-align: center">
-                    <div class="col-12">
-                        <h2 style="color: white">Points à parer</h2>
-                    </div>
-                    <div class="col-12">
-                        <span id="total-damage">{{ json.damages }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="col-12">
         <div class="row playground-wrapper">
             {% for card in json.cards %}
@@ -361,96 +152,10 @@
         </div>
     </div>
 
-<!-- ------- MENU ACTIONS -------->
-    <div class="offcanvas offcanvas-end action-menu-wrapper" tabindex="-1" id="counterCanvas" aria-labelledby="counterCanvasLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="counterCanvasLabel">MENU COMPTEUR PERSONNALISE</h5>
-            <button
-                    type="button"
-                    class="btn-close text-reset btn-close-white"
-                    data-bs-dismiss="offcanvas"
-                    aria-label="Close"
-            ></button>
-        </div>
-        <div class="offcanvas-body">
-            <p>Compteur pour toutes les cartes</p><br>
-            <button
-                    type="button"
-                    id="power-forAll-minus"
-                    class="btn btn-sm btn-danger"
-                    data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='power-minus' %}"
-            >
-                -
-            </button>
-            <button
-                    type="button"
-                    id="power-forAll-plus"
-                    class="btn btn-sm btn-primary"
-                    data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='power-plus' %}"
-            >
-                +
-            </button>
-            <span style="font-size: 1.8rem; padding-left: 5px; padding-right: 5px;">/</span>
-            <button
-                    type="button"
-                    id="defense-forAll-minus"
-                    class="btn btn-sm btn-danger"
-                    data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='defense-minus' %}"
-            >
-                -
-            </button>
-            <button
-                    type="button"
-                    id="defense-forAll-plus"
-                    class="btn btn-sm btn-primary"
-                    data-save-url="{% url 'playground_save_for_all' deck_id=deck.pk button='defense-plus' %}"
-            >
-                +
-            </button>
-            <hr>
-             <!-- ------------- REINITIALIZE TOUTES LES CARTES ---------------------->
-            <button
-                    id="reset_all_cards"
-                    class="btn btn-sm btn-warning mt-4 mb-4"
-                    data-reset-url="{% url 'playground_reset_all' deck_id=deck.pk %}"
-            >
-                Réinitialiser toutes les cartes
-            </button>
-            <hr>
-            <div class="row">
-                <div class="offset-1 col-10 custom_counter_wrapper">
-                    <br><p>Compteur personnalisé</p>
-                    <form id="custom_counter_form" method="post">
-                        {% csrf_token %}
-                        {{ form.non_field_errors }}
+    <!-- ------- MENU ACTIONS -------->
+    {% include "includes/counter_menu.html" %}
 
-                        {{ form.as_p }}
-                        <button class="btn btn-sm btn-primary" type="submit">Valider</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!--------------- CIMETIERE ------------------>
+    {% include "includes/graveyard.html" %}
 
-<!--------------- CIMETIERE ------------------>
-    <div class="offcanvas offcanvas-bottom cards-cemetery" tabindex="-1" id="cemeteryCanvas" aria-labelledby="cemeteryCanvasLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="cemeteryCanvasLabel">Cimetière ({{ json.cemetery|length }})</h5>
-            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <div class="row">
-              {% for card in json.cemetery %}
-                    <div class="col-lg-1 col-md-2 col-sm-3 col-4 card-thumbnail">
-                        {% if "Token" in card.description %}
-                            <img src="/media/token.png" style="width: 100%" alt="{{ card.name }}"/>
-                        {% else %}
-                            <img src="{{ card.illustration }}" style="width: 100%" alt="{{ card.name }}"/>
-                        {% endif %}
-                        <p class="mb-2">{{ card.name }}</p>
-                    </div>
-              {% endfor %}
-            </div>
-        </div>
-    </div>
 {% endblock %}

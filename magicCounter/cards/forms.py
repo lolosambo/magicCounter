@@ -46,6 +46,7 @@ class AddCardForm(forms.Form):
         required=True
     )
 
+
     # Validation des éléments de formulaire après soumission.
     # ATTENTION au nommage "clean_" + "NomDuChamp" obligatoire
     def clean_name(self):

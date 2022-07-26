@@ -1,0 +1,134 @@
+<div class="col-12 playground-menu">
+    <div class="row">
+        <div class="col-lg-6 col-12">
+            <a
+            id="library-link"
+            class="menu-link ms-2"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#bibliothequeCanvas"
+            aria-controls="bibliothequeCanvas"
+            >
+                <p>Bibliothèque</p>
+            </a>
+            <a
+                id="graveyard-link"
+                class="menu-link ms-4"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#cemeteryCanvas"
+                aria-controls="cemeteryCanvas"
+            >
+              Cimetière
+            </a>
+            <a
+                id="graveyard-all-link"
+                href="{% url 'playground_kill_all' deck_id=deck.pk %}"
+                class="menu-link graveyard-all-link ms-4"
+            >
+              Tuez-les tous !
+            </a>
+            {% if json.damages > 0 %}
+                <a
+                    id="all-untap"
+                    class="menu-link untap-link ms-4"
+                    data-untap-url="{% url 'playground_untap_all' deck_id=deck.pk %}"
+                >
+                    Désengager tous
+                </a>
+            {% else %}
+                <a
+                    id="all-attack"
+                    class="menu-link attack-link ms-4"
+                    data-attack-url="{% url 'playground_attack_all' deck_id=deck.pk %}"
+                >
+                    Attaquer tous
+                </a>
+            {% endif %}
+
+            {% if is_flying_deck == False %}
+                <a
+                    id="all-flying"
+                    class="menu-link flying-link ms-4"
+                    href="{% url 'playground_flying_all' deck_id=deck.pk %}"
+                >
+                    Vol à tous
+                </a>
+            {% else %}
+                <a
+                    id="all-non-flying"
+                    href="{% url 'playground_non_flying_all' deck_id=deck.pk %}"
+                    class="menu-link non-flying-link ms-4"
+                >
+                    Non-vol à tous
+                </a>
+            {%endif%}
+
+            {% if is_lifelink_deck == False %}
+                <a
+                    id="all-lifelink"
+                    class="menu-link lifelink-link ms-4"
+                    href="{% url 'playground_lifelink_all' deck_id=deck.pk %}"
+
+                >
+                    Lien de vie
+                </a>
+            {% else %}
+                <a
+                    id="all-non-lifelink"
+                    href="{% url 'playground_non_lifelink_all' deck_id=deck.pk %}"
+                    class="menu-link non-lifelink-link ms-4"
+                >
+                    Supprimer lien de vie
+                </a>
+            {%endif%}
+
+            <a
+                class="menu-link me-3 ms-2"
+                id="action-link"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#counterCanvas"
+                aria-controls="counterCanvas"
+            >
+                Compteur
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-6 col-6">
+            <div class="row" style="text-align: center">
+                <div class="col-12">
+                    <h2 style="color: white">Points de vie</h2>
+                </div>
+                <div class="col-12">
+                    <div class="life-wrapper me-5">
+                        <button
+                                type="button"
+                                id="life-minus"
+                                class="btn  btn-danger"
+                                data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-minus' %}"
+                        >
+                            -
+                        </button>
+                        <span id="life-points" class="ms-3 me-3" style="font-size: 4rem; color:white;">{{ json.life }}</span>
+                        <button
+                                type="button"
+                                id="life-plus"
+                                class="btn btn-primary"
+                                data-save-url="{% url 'playground_life_save' deck_id=deck.pk button='life-plus' %}"
+                        >
+                            +
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-3 col-md-6 col-6">
+            <div class="row" style="text-align: center">
+                <div class="col-12">
+                    <h2 style="color: white">Points à parer</h2>
+                </div>
+                <div class="col-12">
+                    <span id="total-damage">{{ json.damages }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

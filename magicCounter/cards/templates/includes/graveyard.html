@@ -1,0 +1,20 @@
+<div class="offcanvas offcanvas-bottom cards-cemetery" tabindex="-1" id="cemeteryCanvas" aria-labelledby="cemeteryCanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="cemeteryCanvasLabel">Cimetière ({{ json.cemetery|length }})</h5>
+        <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="row">
+          {% for card in json.cemetery %}
+                <div class="col-lg-1 col-md-2 col-sm-3 col-4 card-thumbnail">
+                    {% if "Token" in card.description %}
+                        <img src="/media/token.png" style="width: 100%" alt="{{ card.name }}"/>
+                    {% else %}
+                        <img src="{{ card.illustration }}" style="width: 100%" alt="{{ card.name }}"/>
+                    {% endif %}
+                    <p class="mb-2">{{ card.name }}</p>
+                </div>
+          {% endfor %}
+        </div>
+    </div>
+</div>

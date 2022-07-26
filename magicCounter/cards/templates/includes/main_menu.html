@@ -1,0 +1,25 @@
+<a href="{% url 'kill_game' deck_id=deck.pk %}">
+    <button class="btn btn-danger">
+        <i class="fa-solid fa-clapperboard"></i> Mettre fin à la partie
+    </button>
+</a>
+<a href="{% url 'homepage' %}">
+    <button type="button" class="btn btn-success">
+        <i class="fa-solid fa-house"></i> Retour à l'accueil
+    </button>
+</a>
+<a href="{% url 'decks_index' %}">
+    <button type="button" class="btn btn-success">
+        <i class="fa-solid fa-layer-group"></i> Liste des decks
+    </button>
+</a>
+<a href="{% url 'cards_index' %}">
+    <button type="button" class="btn btn-success">
+        <i class="fa-solid fa-file"></i> Liste des cartes
+    </button>
+</a>
+<a href="{% url 'tokens_index' %}">
+    <button type="button" class="btn btn-success">
+        <i class="fa-solid fa-ring"></i> Liste des Jetons
+    </button>
+</a>

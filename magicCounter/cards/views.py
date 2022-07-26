@@ -506,6 +506,7 @@ def playground_add_card(request, card_id, deck_id, number_of_cards):
                     "tapped":False
                 }
             )
+
             playground.last_update_date = datetime.today()
             playground.save()
         return redirect('playground_game_starts', deck_id=deck.pk)
@@ -522,6 +523,10 @@ def playground_remove_creature(request, deck_id, index):
         cards = []
         count = 1
         for card in json['cards']:
+            if "*" in str(card['power']):
+                card['power'] = 0
+            if "*" in str(card['defense']):
+                card['defense'] = 0
             if card['index'] != int(index):
                 card['index'] = count
                 cards.append(card)
@@ -676,7 +681,7 @@ def playground_attack(request, deck_id, card_index):
     json['damages'] = 0
     for card in json["cards"]:
         power = card['power']
-        if "*" in card['power']:
+        if "*" in str(card['power']):
             power = 0
         power = int(power)
 
