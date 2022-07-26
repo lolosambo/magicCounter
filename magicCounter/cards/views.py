@@ -723,7 +723,7 @@ def playground_attack_all(request, deck_id):
     json['damages'] = 0
     for card in json["cards"]:
         power = card['power']
-        if "*" in card['power']:
+        if "*" in str(card['power']):
             power = 0
         power = int(power)
         card['tapped'] = True
@@ -742,7 +742,7 @@ def playground_untap_all(request, deck_id):
     json = playground.config
     for card in json["cards"]:
         power = card['power']
-        if "*" in card['power']:
+        if "*" in str(card['power']):
             power = 0
         power = int(power)
         if card['tapped']:
