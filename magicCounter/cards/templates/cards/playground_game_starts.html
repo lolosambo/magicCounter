@@ -97,7 +97,7 @@
             <div class="col-lg-6 col-12">
                 <a
                 id="library-link"
-                class="ms-2"
+                class="menu-link ms-2"
                 data-bs-toggle="offcanvas"
                 data-bs-target="#bibliothequeCanvas"
                 aria-controls="bibliothequeCanvas"
@@ -106,7 +106,7 @@
                 </a>
                 <a
                     id="graveyard-link"
-                    class="ms-4"
+                    class="menu-link ms-4"
                     data-bs-toggle="offcanvas"
                     data-bs-target="#cemeteryCanvas"
                     aria-controls="cemeteryCanvas"
@@ -116,14 +116,14 @@
                 <a
                     id="graveyard-all-link"
                     href="{% url 'playground_kill_all' deck_id=deck.pk %}"
-                    class="graveyard-all-link ms-4"
+                    class="menu-link graveyard-all-link ms-4"
                 >
                   Tuez-les tous !
                 </a>
                 {% if json.damages > 0 %}
                     <a
                         id="all-untap"
-                        class="untap-link ms-4"
+                        class="menu-link untap-link ms-4"
                         data-untap-url="{% url 'playground_untap_all' deck_id=deck.pk %}"
                     >
                         Désengager tous
@@ -131,7 +131,7 @@
                 {% else %}
                     <a
                         id="all-attack"
-                        class="attack-link ms-4"
+                        class="menu-link attack-link ms-4"
                         data-attack-url="{% url 'playground_attack_all' deck_id=deck.pk %}"
                     >
                         Attaquer tous
@@ -141,9 +141,8 @@
                 {% if is_flying_deck == False %}
                     <a
                         id="all-flying"
-                        class="flying-link ms-4"
+                        class="menu-link flying-link ms-4"
                         href="{% url 'playground_flying_all' deck_id=deck.pk %}"
-                        data-untap-url="{% url 'playground_flying_all' deck_id=deck.pk %}"
                     >
                         Vol à tous
                     </a>
@@ -151,15 +150,33 @@
                     <a
                         id="all-non-flying"
                         href="{% url 'playground_non_flying_all' deck_id=deck.pk %}"
-                        class="non-flying-link ms-4"
-                        data-attack-url="{% url 'playground_non_flying_all' deck_id=deck.pk %}"
+                        class="menu-link non-flying-link ms-4"
                     >
                         Non-vol à tous
                     </a>
                 {%endif%}
 
+                {% if is_lifelink_deck == False %}
+                    <a
+                        id="all-lifelink"
+                        class="menu-link lifelink-link ms-4"
+                        href="{% url 'playground_lifelink_all' deck_id=deck.pk %}"
+
+                    >
+                        Lien de vie
+                    </a>
+                {% else %}
+                    <a
+                        id="all-non-lifelink"
+                        href="{% url 'playground_non_lifelink_all' deck_id=deck.pk %}"
+                        class="menu-link non-lifelink-link ms-4"
+                    >
+                        Supprimer lien de vie
+                    </a>
+                {%endif%}
+
                 <a
-                    class="me-3 ms-2"
+                    class="menu-link me-3 ms-2"
                     id="action-link"
                     data-bs-toggle="offcanvas"
                     data-bs-target="#counterCanvas"
@@ -220,7 +237,27 @@
                     <p>{{ card.name }} </p>
                     <p><em>({% for type in card.types %} {{ type }} {% endfor%})</em></p>
                     <p style="color: goldenrod;">
-                        {% if card.isLifeLink %}Lien de vie, {% endif %}
+                        {% if card.isLifeLink %}
+                                <span>
+                                   <a
+                                       style="color:green; font-size: 0.9rem;"
+                                       href="{% url 'playground_non_lifelink_creature' deck_id=deck.pk index=card.index %}"
+                                   >
+                                      Lien de vie <i class="fa-solid fa-circle-xmark"></i>
+                                   </a>
+                                </span>
+
+                        {% else %}
+                            <span>
+                               <a
+                                   style="color:red; font-size: 0.9rem;"
+                                   href="{% url 'playground_lifelink_creature' deck_id=deck.pk index=card.index %}"
+                               >
+                                  Lien de vie <i class="fa-solid fa-circle-plus"></i>
+                               </a>
+                            </span>
+
+                        {% endif %}
                         {% if card.isFlying %}
                                 <span>
                                    <a
@@ -327,7 +364,7 @@
 <!-- ------- MENU ACTIONS -------->
     <div class="offcanvas offcanvas-end action-menu-wrapper" tabindex="-1" id="counterCanvas" aria-labelledby="counterCanvasLabel">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="counterCanvasLabel">MENU COMPTEUR PERSONALISE</h5>
+            <h5 class="offcanvas-title" id="counterCanvasLabel">MENU COMPTEUR PERSONNALISE</h5>
             <button
                     type="button"
                     class="btn-close text-reset btn-close-white"

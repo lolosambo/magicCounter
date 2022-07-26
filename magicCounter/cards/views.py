@@ -382,6 +382,7 @@ def playground_game_starts(request, deck_id):
         return redirect("login")
     else:
         is_flying_deck = False
+        is_lifelink_deck = False
         deck = Deck.objects.filter(pk=deck_id)[0]
         if not Playground.objects.filter(user=request.user, deck=deck):
             # On crée et on stocke la partie
@@ -402,7 +403,8 @@ def playground_game_starts(request, deck_id):
                 "deck": deck,
                 "json": json,
                 "form": form,
-                "is_flying_deck": is_flying_deck
+                "is_flying_deck": is_flying_deck,
+                "is_lifelink_deck": is_lifelink_deck
             })
         else:
             playground = Playground.objects.filter(user=request.user, deck=deck)[0]
@@ -430,6 +432,8 @@ def playground_game_starts(request, deck_id):
                             to_be_incremented = True
                         if card['isFlying']:
                             is_flying_deck = True
+                        if card['isLifeLink']:
+                            is_lifelink_deck = True
                         if to_be_incremented:
                             if card['tapped']:
                                 json['damages'] -= int(card['power'])
@@ -451,12 +455,15 @@ def playground_game_starts(request, deck_id):
                 for card in json['cards']:
                     if card['isFlying']:
                         is_flying_deck = True
+                    if card['isLifeLink']:
+                        is_lifelink_deck = True
                 form = CustomCounterForm(deck=deck)
                 return render(request, "cards/playground_game_starts.html", context={
                     "deck": deck,
                     "json": json,
                     "form": form,
-                    "is_flying_deck": is_flying_deck
+                    "is_flying_deck": is_flying_deck,
+                    "is_lifelink_deck": is_lifelink_deck
                 })
 
 
@@ -852,6 +859,74 @@ def playground_non_flying_all(request, deck_id):
     playground.last_update_date = datetime.today()
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
+
+def playground_lifelink_all(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    json = playground.config
+
+    for card in json["cards"]:
+        card['isLifeLink'] = True
+
+    playground.config = json
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_non_lifelink_all(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    json = playground.config
+
+    for card in json["cards"]:
+        card['isLifeLink'] = False
+
+    playground.config = json
+    playground.last_update_date = datetime.today()
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_lifelink_creature(request, deck_id, index):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        cards = []
+        for card in json['cards']:
+            if card['index'] == int(index):
+               card["isLifeLink"] = True
+            cards.append(card)
+        json['cards'] = cards
+        playground.config = json
+        playground.last_update_date = datetime.today()
+        playground.save()
+
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
+def playground_non_lifelink_creature(request, deck_id, index):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        cards = []
+        for card in json['cards']:
+            if card['index'] == int(index):
+               card["isLifeLink"] = False
+            cards.append(card)
+        json['cards'] = cards
+        playground.config = json
+        playground.last_update_date = datetime.today()
+        playground.save()
+
+        return redirect('playground_game_starts', deck_id=deck.pk)
 
 
 

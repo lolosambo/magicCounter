@@ -495,6 +495,11 @@ form > button{
     background-color: #252727;
 }
 
+.menu-link {
+    height: 100px;
+    width: 80px;
+}
+
 #library-link {
    background-image: url('../../media/library.png');
    background-size: contain;
@@ -502,7 +507,6 @@ form > button{
    background-position: center;
    text-align: center;
    display: inline-block;
-   height: 90px;
    padding-top: 90px;
 }
 
@@ -517,7 +521,6 @@ form > button{
    background-position: center;
    text-align: center;
    display: inline-block;
-   height: 90px;
    padding-top: 90px;
 }
 
@@ -527,12 +530,11 @@ form > button{
 
 #action-link {
    background-image: url('../../media/action.png');
-   background-size: contain;
+   background-size: 80%;
    background-repeat: no-repeat;
    background-position: center;
    text-align: center;
    display: inline-block;
-   height: 90px;
    padding-top: 90px;
 }
 
@@ -547,8 +549,7 @@ form > button{
    background-position: center;
    text-align: center;
    display: inline-block;
-   height: 50px;
-   padding-top: 85px;
+   padding-top: 80px;
 }
 
 .attack-link:hover {
@@ -566,10 +567,8 @@ form > button{
    background-position: center;
    text-align: center;
    display: inline-block;
-   height: 90px;
-   padding-top: 90px;
+   padding-top: 80px;
 }
-
 
 .flying-link {
    background-image: url('../../media/make-flying.png');
@@ -578,7 +577,6 @@ form > button{
    background-position: center;
    text-align: center;
    display: inline-block;
-   height: 50px;
    padding-top: 85px;
 }
 
@@ -597,13 +595,36 @@ form > button{
    background-position: center;
    text-align: center;
    display: inline-block;
-   height: 90px;
-   padding-top: 90px;
+   padding-top: 80px;
 }
 
+.lifelink-link {
+   background-image: url('../../media/make-lifelink.png');
+   background-size: 87%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   padding-top: 85px;
+}
 
+.lifelink-link:hover {
+   background-image: url('../../media/make-lifelink-hover.png');
+}
 
+.non-lifelink-link:hover {
+   background-image: url('../../media/make-non-lifelink-hover.png');
+}
 
+.non-lifelink-link {
+   background-image: url('../../media/make-non-lifelink.png');
+   background-size: 75%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   padding-top: 75px;
+}
 
 .graveyard-all-link:hover {
    background-image: url('../../media/kill-all-hover.png');
@@ -617,7 +638,7 @@ form > button{
    text-align: center;
    display: inline-block;
    height: 90px;
-   padding-top: 90px;
+   padding-top: 75px;
 }
 
 .tapped_card {
