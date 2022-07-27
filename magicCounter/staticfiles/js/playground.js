@@ -11,12 +11,16 @@ $(document).ready(function () {
     }
 
 // --------------- DRAG N DROP ---------------
+
     $(".playground-wrapper").sortable({
         revert: false,
         update: function() {
             let indexes = {};
             let url = "";
             $(".playground-card-wrapper").each(function(){
+                 $(this).draggabilly({
+                    containment: '.playground-wrapper'
+                 });
                  url = $(this).attr('data-reorder-url');
                  indexes[$(this).attr('id')] = String($(".playground-card-wrapper").index($(this)) + 1);
             });
@@ -145,6 +149,18 @@ $(document).ready(function () {
        url = url + numberOfCards;
        $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
     });
+
+//    $("button[id*='dependencyFormValid-']").on("click", function(e){
+//       cardId = $(this).attr("data-card-id");
+//       numberOfCards = $("#cardForm-" + cardId).val();
+//       urlToArray = $(this).attr("data-add-url").split("/");
+//       url = "";
+//       for (let i = 0; i < urlToArray.length -1 ; i++){
+//           url += urlToArray[i] + "/";
+//       }
+//       url = url + numberOfCards;
+//       $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
+//    });
 
 //    -------- POINTS DE DEGATS -----------
     $("a[id*='attack-']").on("click", function(){
