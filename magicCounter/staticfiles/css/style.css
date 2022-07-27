@@ -641,6 +641,21 @@ form > button{
    padding-top: 75px;
 }
 
+#history-link {
+   background-image: url('../../media/history.png');
+   background-size: 90%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   padding-top: 85px;
+   height: 90px;
+}
+
+#history-link:hover {
+   background-image: url('../../media/history-hover.png');
+}
+
 .tapped_card {
   transform: rotate(90deg);
 }
