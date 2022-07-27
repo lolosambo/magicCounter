@@ -397,6 +397,12 @@ def playground_game_starts(request, deck_id):
             playground.config = json
             playground.creation_date = datetime.today()
             playground.last_update_date = datetime.today()
+            playground.history = { "logs" : [
+                    {
+                        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S') : request.user.username + " a débuté une partie."
+                    }
+                ]
+            }
             playground.save()
             form = CustomCounterForm(deck=deck)
             return render(request, "cards/playground_game_starts.html", context={
@@ -404,7 +410,8 @@ def playground_game_starts(request, deck_id):
                 "json": json,
                 "form": form,
                 "is_flying_deck": is_flying_deck,
-                "is_lifelink_deck": is_lifelink_deck
+                "is_lifelink_deck": is_lifelink_deck,
+                "history": list(reversed(playground.history["logs"]))
             })
         else:
             playground = Playground.objects.filter(user=request.user, deck=deck)[0]
@@ -418,15 +425,32 @@ def playground_game_starts(request, deck_id):
                     types = request.POST.get("types")
                     colors = request.POST.get("colors")
 
+                    if forFlying:
+                        flyingToAddInLogs = "volantes"
+                    else:
+                        flyingToAddInLogs = ""
+
+                    if types is not None:
+                        typesToAddInLogs = types
+                    else:
+                        typesToAddInLogs = ""
+
+                    if colors is not None:
+                        colorsToAddInLogs = colors
+                    else:
+                        colorsToAddInLogs = ""
+
                     for card in json['cards']:
                         to_be_incremented = False
                         for type in card['types']:
                             if types is not None and type in types:
                                 to_be_incremented = True
+                                typesToAddInLogs = type
                                 break
                         for color in card['colors']:
                             if colors is not None and color in colors:
                                 to_be_incremented = True
+                                colorsToAddInLogs = color
                                 break
                         if card['isFlying'] and forFlying:
                             to_be_incremented = True
@@ -449,6 +473,15 @@ def playground_game_starts(request, deck_id):
                                 json['damages'] += int(card['power'])
 
                     playground.last_update_date = datetime.today()
+                    playground.history['logs'].append(
+                        {
+                            playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+                            "Toutes les creatures " + typesToAddInLogs + " " + colorsToAddInLogs + " "
+                            + flyingToAddInLogs + " ont reçu " + power + "/" + defense + "."
+                        }
+                    )
+
+                    playground.last_update_date = datetime.today()
                     playground.save()
                     return redirect("playground_game_starts", deck_id=deck.pk)
             else:
@@ -463,7 +496,8 @@ def playground_game_starts(request, deck_id):
                     "json": json,
                     "form": form,
                     "is_flying_deck": is_flying_deck,
-                    "is_lifelink_deck": is_lifelink_deck
+                    "is_lifelink_deck": is_lifelink_deck,
+                    "history": list(reversed(playground.history["logs"]))
                 })
 
 
@@ -508,6 +542,7 @@ def playground_add_card(request, card_id, deck_id, number_of_cards):
             )
 
             playground.last_update_date = datetime.today()
+            playground.history['logs'].append({ playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S') : card.name + " a été invoqué !"})
             playground.save()
         return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -536,9 +571,15 @@ def playground_remove_creature(request, deck_id, index):
                     json['cemetery'].append(card)
                 if card['tapped']:
                     json['damages'] -= int(card['power'])
+                playground.last_update_date = datetime.today()
+                playground.history['logs'].append(
+                    {
+                        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name']
+                        + " a été mise au cimetière !"
+                    }
+                )
         json['cards'] = cards
         playground.config = json
-        playground.last_update_date = datetime.today()
         playground.save()
 
         return redirect('playground_game_starts', deck_id=deck.pk)
@@ -556,15 +597,45 @@ def playground_save(request, deck_id, card_index, button, new_value):
             if card['index'] == int(card_index):
                 if button == "defense-plus" or button == "defense-minus":
                     card['defense'] = new_value
+                    if button == "defense-plus":
+                        playground.last_update_date = datetime.today()
+                        playground.history['logs'].append(
+                            {
+                                playground.last_update_date.strftime(
+                                    '%d-%m-%Y %H:%M:%S'): card['name'] + " a gagné +1 en défense."
+                            }
+                        )
+                    else:
+                        playground.last_update_date = datetime.today()
+                        playground.history['logs'].append(
+                            {
+                                playground.last_update_date.strftime(
+                                    '%d-%m-%Y %H:%M:%S'): card['name'] + " a perdu -1 en défense."
+                            }
+                        )
                 else:
+                    if button == "power-plus":
+                        playground.last_update_date = datetime.today()
+                        playground.history['logs'].append(
+                            {
+                                playground.last_update_date.strftime(
+                                    '%d-%m-%Y %H:%M:%S'): card['name'] + " a gagné +1 en attaque."
+                            }
+                        )
+                    else:
+                        playground.last_update_date = datetime.today()
+                        playground.history['logs'].append(
+                            {
+                                playground.last_update_date.strftime(
+                                    '%d-%m-%Y %H:%M:%S'): card['name'] + " a perdu -1 en attaque."
+                            }
+                        )
                     if card['tapped']:
                         json['damages'] -= int(card['power'])
                     card['power'] = new_value
                     if card['tapped']:
                         json['damages'] += int(new_value)
-
         playground.config = json
-        playground.last_update_date = datetime.today()
         playground.save()
         return HttpResponse()
 
@@ -612,8 +683,40 @@ def playground_save_for_all(request, deck_id, button):
             card['power'] = str(power)
             card['defense'] = str(defense)
 
+        if button == "power-plus":
+            playground.last_update_date = datetime.today()
+            playground.history['logs'].append(
+                {
+                    playground.last_update_date.strftime(
+                        '%d-%m-%Y %H:%M:%S'): "toutes les cartes ont gagné +1 en attaque."
+                }
+            )
+        elif button == "power-minus":
+            playground.last_update_date = datetime.today()
+            playground.history['logs'].append(
+                {
+                    playground.last_update_date.strftime(
+                        '%d-%m-%Y %H:%M:%S'): "toutes les cartes ont perdu -1 en attaque."
+                }
+            )
+        elif button == "defense-plus":
+            playground.last_update_date = datetime.today()
+            playground.history['logs'].append(
+                {
+                    playground.last_update_date.strftime(
+                        '%d-%m-%Y %H:%M:%S'): "toutes les cartes ont gagné +1 en défense."
+                }
+            )
+        else:
+            playground.last_update_date = datetime.today()
+            playground.history['logs'].append(
+                {
+                    playground.last_update_date.strftime(
+                        '%d-%m-%Y %H:%M:%S'): "toutes les cartes ont perdu -1 en défense."
+                }
+            )
         playground.config = json
-        playground.last_update_date = datetime.today()
+
         playground.save()
         return HttpResponse()
 
@@ -641,6 +744,11 @@ def playground_reset_all(request, deck_id):
                         card['defense'] = str(original_card.defense)
 
         playground.last_update_date = datetime.today()
+        playground.history['logs'].append(
+            {
+                playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): "Toutes les cartes ont été réinitialisées."
+            }
+        )
         playground.save()
         return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -666,10 +774,19 @@ def playground_life_save(request, deck_id, button):
         json = playground.config
         if button == "life-plus":
             json['life'] = int(json['life']) + 1
+            playground.last_update_date = datetime.today()
+            playground.history['logs'].append({
+                playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+                request.user.username + " a gagné 1 point de vie ! Total des points de vies : " + str(json['life'])}
+            )
         elif button == "life-minus":
             json['life'] = int(json['life']) - 1
+            playground.last_update_date = datetime.today()
+            playground.history['logs'].append({
+                playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): request.user.username
+                + " a perdu 1 point de vie ! Total des points de vies : " + str(json['life'])}
+            )
         playground.config = json
-        playground.last_update_date = datetime.today()
         playground.save()
         return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -687,13 +804,27 @@ def playground_attack(request, deck_id, card_index):
 
         if card['index'] == int(card_index):
             card['tapped'] = True
+            playground.last_update_date = datetime.today()
+            playground.history['logs'].append({
+                playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name']
+                + " attaque et inflige "
+                + str(power) + " points de dégats !"}
+            )
         if card['tapped']:
             json['damages'] += power
             if card['isLifeLink']:
                 json['life'] += int(card['power'])
+                playground.last_update_date = datetime.today()
+                playground.history['logs'].append({
+                    playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+                    "Durant l'attaque, "
+                    + card['name']
+                    + " donne " + str(power) + " points de vie à " + request.user.username
+                    + " grâce à son lien de vie. Nouveau total de points de vie : "
+                    + str(json['life'])}
+                )
 
     playground.config = json
-    playground.last_update_date = datetime.today()
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -728,11 +859,27 @@ def playground_attack_all(request, deck_id):
         power = int(power)
         card['tapped'] = True
         json['damages'] += power
+        playground.last_update_date = datetime.today()
+        playground.history['logs'].append({
+            playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name']
+            + " attaque et inflige "
+            + str(power) + " points de dégats !"}
+        )
         if card['isLifeLink']:
             json['life'] += int(power)
+            playground.last_update_date = datetime.today()
+            playground.history['logs'].append({
+                playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+                "Durant l'attaque, "
+                + card['name']
+                + " donne " + str(power) + " points de vie à " + request.user.username
+                + " grâce à son lien de vie. Nouveau total de points de vie : "
+                + str(json['life'])}
+            )
 
     playground.config = json
-    playground.last_update_date = datetime.today()
+
+
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -793,6 +940,10 @@ def playground_kill_all(request, deck_id):
         json['cards'] = cards
         playground.config = json
         playground.last_update_date = datetime.today()
+        playground.last_update_date = datetime.today()
+        playground.history['logs'].append({
+            playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): "Toutes les créatures ont été mises au cimetière !"
+        })
         playground.save()
 
         return redirect('playground_game_starts', deck_id=deck.pk)
@@ -810,10 +961,14 @@ def playground_flying_creature(request, deck_id, index):
         for card in json['cards']:
             if card['index'] == int(index):
                card["isFlying"] = True
+               playground.last_update_date = datetime.today()
+               playground.history['logs'].append({
+                   playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name']
+                   + " a maintenant le vol"}
+               )
             cards.append(card)
         json['cards'] = cards
         playground.config = json
-        playground.last_update_date = datetime.today()
         playground.save()
 
         return redirect('playground_game_starts', deck_id=deck.pk)
@@ -830,10 +985,14 @@ def playground_non_flying_creature(request, deck_id, index):
         for card in json['cards']:
             if card['index'] == int(index):
                card["isFlying"] = False
+               playground.last_update_date = datetime.today()
+               playground.history['logs'].append({
+                   playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name'] + " a perdu le vol"}
+               )
             cards.append(card)
+
         json['cards'] = cards
         playground.config = json
-        playground.last_update_date = datetime.today()
         playground.save()
 
         return redirect('playground_game_starts', deck_id=deck.pk)
@@ -846,8 +1005,11 @@ def playground_flying_all(request, deck_id):
     for card in json["cards"]:
         card['isFlying'] = True
 
-    playground.config = json
     playground.last_update_date = datetime.today()
+    playground.history['logs'].append({
+        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): "Toutes les créatures ont maintenant le vol"}
+    )
+    playground.config = json
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -860,8 +1022,12 @@ def playground_non_flying_all(request, deck_id):
     for card in json["cards"]:
         card['isFlying'] = False
 
-    playground.config = json
     playground.last_update_date = datetime.today()
+    playground.history['logs'].append({
+        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): "Toutes les créatures ont perdu le vol"}
+    )
+
+    playground.config = json
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -873,8 +1039,12 @@ def playground_lifelink_all(request, deck_id):
     for card in json["cards"]:
         card['isLifeLink'] = True
 
-    playground.config = json
     playground.last_update_date = datetime.today()
+    playground.history['logs'].append({
+        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): "Toutes les créatures ont maintenant le lien de vie."}
+    )
+
+    playground.config = json
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -887,8 +1057,12 @@ def playground_non_lifelink_all(request, deck_id):
     for card in json["cards"]:
         card['isLifeLink'] = False
 
-    playground.config = json
     playground.last_update_date = datetime.today()
+    playground.history['logs'].append({
+        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): "Toutes les créatures ont perdu le lien de vie."}
+    )
+
+    playground.config = json
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -905,10 +1079,14 @@ def playground_lifelink_creature(request, deck_id, index):
         for card in json['cards']:
             if card['index'] == int(index):
                card["isLifeLink"] = True
+               playground.last_update_date = datetime.today()
+               playground.history['logs'].append({
+                   playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name']
+                   + " a maintenant le lien de vie"
+               })
             cards.append(card)
         json['cards'] = cards
         playground.config = json
-        playground.last_update_date = datetime.today()
         playground.save()
 
         return redirect('playground_game_starts', deck_id=deck.pk)
@@ -925,10 +1103,14 @@ def playground_non_lifelink_creature(request, deck_id, index):
         for card in json['cards']:
             if card['index'] == int(index):
                card["isLifeLink"] = False
+               playground.last_update_date = datetime.today()
+               playground.history['logs'].append({
+                   playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name']
+                   + " a perdu le lien de vie"
+               })
             cards.append(card)
         json['cards'] = cards
         playground.config = json
-        playground.last_update_date = datetime.today()
         playground.save()
 
         return redirect('playground_game_starts', deck_id=deck.pk)

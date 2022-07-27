@@ -1,0 +1,27 @@
+<div class="offcanvas offcanvas-start action-menu-wrapper" tabindex="-1" id="historyCanvas" aria-labelledby="historyCanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="counterCanvasLabel">HISTORIQUE DE LA PARTIE</h5>
+        <button
+                type="button"
+                class="btn-close text-reset btn-close-white"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+        ></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul style="text-align: left;">
+            {% for historic in history %}
+                {% for time, log in historic.items %}
+                    <li style="font-size: 0.9rem;
+                        {% if 'perdu' in log or '-' in log %} color: #f94f33;
+                        {% elif '+' in log or 'maintenant' in log %}color: #79ff79;
+                        {% endif %}"
+                    >
+                        <span style="font-size: 0.9rem; color: #1b95a3;">{{ time }} :</span> {{ log }}
+                    </li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+
+    </div>
+ </div>

@@ -71,6 +71,7 @@ class Playground(models.Model):
     config = models.JSONField(blank=True, null=True)
     creation_date = models.DateField(blank=True, null=True)
     last_update_date = models.DateField(blank=True, null=True)
+    history = models.JSONField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Aire de jeu"

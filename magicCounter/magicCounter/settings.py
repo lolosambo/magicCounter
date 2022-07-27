@@ -117,6 +117,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'fr-FR'
 
+DATE_INPUT_FORMATS = ['%d-%m-%Y %H:%i:%s']
+
 TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
