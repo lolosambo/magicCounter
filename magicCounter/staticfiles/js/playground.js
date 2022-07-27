@@ -12,15 +12,47 @@ $(document).ready(function () {
 
 // --------------- DRAG N DROP ---------------
 
+    function touchHandler(event)
+    {
+        let touches = event.changedTouches,
+            first = touches[0],
+            type = "";
+        switch(event.type)
+        {
+            case "touchstart": type = "mousedown"; break;
+            case "touchmove":  type = "mousemove"; break;
+            case "touchend":   type = "mouseup";   break;
+            default:           return;
+        }
+
+        // initMouseEvent(type, canBubble, cancelable, view, clickCount,
+        //                screenX, screenY, clientX, clientY, ctrlKey,
+        //                altKey, shiftKey, metaKey, button, relatedTarget);
+
+        let simulatedEvent = document.createEvent("MouseEvent");
+        simulatedEvent.initMouseEvent(type, true, true, window, 1,
+                                      first.screenX, first.screenY,
+                                      first.clientX, first.clientY, false,
+                                      false, false, false, 0/*left*/, null);
+
+        first.target.dispatchEvent(simulatedEvent);
+        event.preventDefault();
+    }
+
+    function init()
+    {
+        document.addEventListener("touchstart", touchHandler, true);
+        document.addEventListener("touchmove", touchHandler, true);
+        document.addEventListener("touchend", touchHandler, true);
+        document.addEventListener("touchcancel", touchHandler, true);
+    }
+
     $(".playground-wrapper").sortable({
         revert: false,
         update: function() {
             let indexes = {};
             let url = "";
             $(".playground-card-wrapper").each(function(){
-                 $(this).draggabilly({
-                    containment: '.playground-wrapper'
-                 });
                  url = $(this).attr('data-reorder-url');
                  indexes[$(this).attr('id')] = String($(".playground-card-wrapper").index($(this)) + 1);
             });
