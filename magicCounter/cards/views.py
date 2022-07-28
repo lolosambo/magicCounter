@@ -391,6 +391,10 @@ def playground_game_starts(request, deck_id):
             json = {
                 "life": 20,
                 "damages": 0,
+                "turn": {
+                    "count": 1,
+                    "state": "open"
+                },
                 "cemetery": [],
                 "cards": [],
             }
@@ -403,6 +407,10 @@ def playground_game_starts(request, deck_id):
                     }
                 ]
             }
+            playground.history['logs'].append({
+                playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+                    "Le tour " + str(playground.config["turn"]['count']) + " commence."
+            })
             playground.save()
             form = CustomCounterForm(deck=deck)
             return render(request, "cards/playground_game_starts.html", context={
@@ -490,7 +498,12 @@ def playground_game_starts(request, deck_id):
                         is_flying_deck = True
                     if card['isLifeLink']:
                         is_lifelink_deck = True
+                    if card["invokation"]["turn"] != json["turn"]["count"]:
+                        card["invokation"]["state"] = False
+                        playground.last_update_date = datetime.today()
+                        playground.save()
                 form = CustomCounterForm(deck=deck)
+
                 return render(request, "cards/playground_game_starts.html", context={
                     "deck": deck,
                     "json": json,
@@ -537,7 +550,11 @@ def playground_add_card(request, card_id, deck_id, number_of_cards):
                     "isLifeLink": card.isLifeLink,
                     "language": card.language,
                     "illustration": card.illustration,
-                    "tapped":False
+                    "tapped":False,
+                    "invokation": {
+                        "state":True,
+                        "turn": json['turn']['count']
+                    }
                 }
             )
 
@@ -819,11 +836,17 @@ def playground_attack(request, deck_id, card_index):
                     playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
                     "Durant l'attaque, "
                     + card['name']
-                    + " donne " + str(power) + " points de vie à " + request.user.username
+                    + " donne +" + str(power) + " points de vie à " + request.user.username
                     + " grâce à son lien de vie. Nouveau total de points de vie : "
                     + str(json['life'])}
                 )
 
+    playground.last_update_date = datetime.today()
+    playground.history['logs'].append({
+        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+            "Le tour " + str(playground.config["turn"]['count']) + " a pris fin."
+    })
+    json['turn']["state"] = "close"
     playground.config = json
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
@@ -872,11 +895,17 @@ def playground_attack_all(request, deck_id):
                 playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
                 "Durant l'attaque, "
                 + card['name']
-                + " donne " + str(power) + " points de vie à " + request.user.username
+                + " donne +" + str(power) + " points de vie à " + request.user.username
                 + " grâce à son lien de vie. Nouveau total de points de vie : "
                 + str(json['life'])}
             )
 
+    playground.last_update_date = datetime.today()
+    playground.history['logs'].append({
+        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+            "Le tour " + str(playground.config["turn"]['count']) + " a pris fin."
+    })
+    json['turn']["state"] = "close"
     playground.config = json
 
 
@@ -896,9 +925,14 @@ def playground_untap_all(request, deck_id):
             json['damages'] -= power
         card['tapped'] = False
 
-
+    json['turn']["count"] += 1
+    json['turn']["state"] = "open"
     playground.config = json
     playground.last_update_date = datetime.today()
+    playground.history['logs'].append({
+        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+            "Le tour " + str(playground.config["turn"]['count']) + " commence."
+    })
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -1111,6 +1145,41 @@ def playground_non_lifelink_creature(request, deck_id, index):
             cards.append(card)
         json['cards'] = cards
         playground.config = json
+        playground.save()
+
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
+def playground_turn_off(request, deck_id):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        playground.config["turn"]["state"] = "close"
+        playground.last_update_date = datetime.today()
+        playground.history['logs'].append({
+            playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+                "Le tour " + str(playground.config["turn"]['count']) + " a pris fin."
+        })
+        playground.save()
+
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
+def playground_turn_on(request, deck_id):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        playground.config["turn"]["count"] += 1
+        playground.config["turn"]["state"] = "open"
+        playground.last_update_date = datetime.today()
+        playground.history['logs'].append({
+            playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+                "Le tour " + str(playground.config["turn"]['count']) + " commence."
+        })
         playground.save()
 
         return redirect('playground_game_starts', deck_id=deck.pk)

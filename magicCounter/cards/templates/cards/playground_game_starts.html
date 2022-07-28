@@ -122,24 +122,26 @@
                         </button>
                     </div>
                     <div style="text-align: center">
-                        {% if not card.tapped %}
-                            <a href="#"
-                               id="attack-{{ card.index }}"
-                               class="btn btn-sm btn-warning btn-card"
-                               data-deck-id="{{deck.pk}}"
-                               data-attack-url="{% url 'playground_attack' deck_id=deck.pk card_index=card.index %}"
-                            >
-                                Attaquer
-                            </a>
-                        {% else %}
-                            <a href="#"
-                               id="untap-{{ card.index }}"
-                               class="btn btn-sm btn-secondary btn-card"
-                               data-deck-id="{{deck.pk}}"
-                               data-untap-url="{% url 'playground_untap' deck_id=deck.pk card_index=card.index %}"
-                            >
-                                Désengager
-                            </a>
+                        {% if not card.invokation.state %}
+                            {% if not card.tapped %}
+                                <a href="#"
+                                   id="attack-{{ card.index }}"
+                                   class="btn btn-sm btn-warning btn-card"
+                                   data-deck-id="{{deck.pk}}"
+                                   data-attack-url="{% url 'playground_attack' deck_id=deck.pk card_index=card.index %}"
+                                >
+                                    Attaquer
+                                </a>
+                            {% else %}
+                                <a href="#"
+                                   id="untap-{{ card.index }}"
+                                   class="btn btn-sm btn-secondary btn-card"
+                                   data-deck-id="{{deck.pk}}"
+                                   data-untap-url="{% url 'playground_untap' deck_id=deck.pk card_index=card.index %}"
+                                >
+                                    Désengager
+                                </a>
+                            {% endif %}
                         {% endif %}
                         <a href="#"
                            id="death-{{ card.index }}"

@@ -12,13 +12,19 @@
         <ul style="text-align: left;">
             {% for historic in history %}
                 {% for time, log in historic.items %}
-                    <li style="font-size: 0.9rem;
-                        {% if 'perdu' in log or '-' in log %} color: #f94f33;
-                        {% elif '+' in log or 'maintenant' in log %}color: #79ff79;
-                        {% endif %}"
-                    >
-                        <span style="font-size: 0.9rem; color: #1b95a3;">{{ time }} :</span> {{ log }}
-                    </li>
+                    {% if "tour" in log %}
+                        <li style="font-size: 0.9rem;" >
+                            <span style="font-size: 0.9rem; color: #ffa701;">---- {{ time }} : {{ log }} ----</span>
+                        </li>
+                    {% else %}
+                        <li style="font-size: 0.9rem;
+                            {% if 'perdu' in log or '-' in log %} color: #f94f33;
+                            {% elif '+' in log or 'maintenant' in log %}color: #79ff79;
+                            {% endif %}"
+                        >
+                            <span style="font-size: 0.9rem; color: #1b95a3;">{{ time }} :</span> {{ log }}
+                        </li>
+                    {% endif %}
                 {% endfor %}
             {% endfor %}
         </ul>

@@ -656,6 +656,40 @@ form > button{
    background-image: url('../../media/history-hover.png');
 }
 
+#turn-on-link {
+   background-image: url('../../media/turn-vert.png');
+   background-size: 100%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   padding-top: 30px;
+   height: 50px;
+   margin-left: 0 !important;
+   width: 50px !important;
+}
+
+#turn-on-link:hover {
+   background-image: url('../../media/turn-vert-hover.png');
+}
+
+#turn-off-link {
+   background-image: url('../../media/turn-rouge.png');
+   background-size: 100%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   padding-top: 30px;
+   height: 50px;
+   margin-left: 0 !important;
+   width: 50px !important;
+}
+
+#turn-off-link:hover {
+   background-image: url('../../media/turn-rouge-hover.png');
+}
+
 .tapped_card {
   transform: rotate(90deg);
 }
