@@ -67,6 +67,7 @@
                               <li><span>Force/Endurance :</span> {{ card.power }} / {{ card.defense }}</li>
                               <li><span>Vol :</span> {% if card.isFlying %} Oui {% else %} Non {% endif %}</li>
                               <li><span>Lien de vie :</span> {% if card.isLifeLink %} Oui {% else %} Non {% endif %}</li>
+                              <li><span>Célérité :</span> {% if card.hasHaste %} Oui {% else %} Non {% endif %}</li>
                               <li><span>Description :</span> {{ card.description }}</li>
                               <li><span>Actuellement dans le(s) deck(s) :</span> {% for deck in card.deck.all %} {{ deck.name }},  {% endfor %}</li>
                           </ul><br><br>

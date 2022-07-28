@@ -112,6 +112,8 @@ def addCard(request):
                         card.isFlying = True
                     if "lifelink" in mtgcard[0].text.lower() or "lien de vie" in mtgcard[0].text.lower():
                         card.isLifeLink = True
+                    if "haste" in mtgcard[0].text.lower() or "Célérité" in mtgcard[0].text.lower():
+                        card.hasHaste = True
                     card.save()
 
                 # "commit=False", dans la fonction save() empêche la sauveagarde en BDD
@@ -304,6 +306,8 @@ def tokenAddView(request):
                 token.language = results["language"][0]
                 token.isFlying = results["isFlying"][0]
                 token.isLifeLink = results["isLifeLink"][0]
+                token.hasHaste = results["hasHaste"][0]
+
 
                 for add_type in results["add_type"]:
                     if add_type != "" and add_type not in types:
@@ -383,6 +387,7 @@ def playground_game_starts(request, deck_id):
     else:
         is_flying_deck = False
         is_lifelink_deck = False
+        is_haste_deck = False
         deck = Deck.objects.filter(pk=deck_id)[0]
         if not Playground.objects.filter(user=request.user, deck=deck):
             # On crée et on stocke la partie
@@ -419,6 +424,7 @@ def playground_game_starts(request, deck_id):
                 "form": form,
                 "is_flying_deck": is_flying_deck,
                 "is_lifelink_deck": is_lifelink_deck,
+                "is_haste_deck": is_haste_deck,
                 "history": list(reversed(playground.history["logs"]))
             })
         else:
@@ -498,6 +504,8 @@ def playground_game_starts(request, deck_id):
                         is_flying_deck = True
                     if card['isLifeLink']:
                         is_lifelink_deck = True
+                    if card['hasHaste']:
+                        is_haste_deck = True
                     if card["invokation"]["turn"] != json["turn"]["count"]:
                         card["invokation"]["state"] = False
                         playground.last_update_date = datetime.today()
@@ -510,6 +518,7 @@ def playground_game_starts(request, deck_id):
                     "form": form,
                     "is_flying_deck": is_flying_deck,
                     "is_lifelink_deck": is_lifelink_deck,
+                    "is_haste_deck": is_haste_deck,
                     "history": list(reversed(playground.history["logs"]))
                 })
 
@@ -536,6 +545,10 @@ def playground_add_card(request, card_id, deck_id, number_of_cards):
 
             index = len(json["cards"])
 
+            invokation = True
+            if card.hasHaste:
+                invokation = False
+
             json["cards"].append(
                 {
                     "pk": card.pk,
@@ -548,13 +561,15 @@ def playground_add_card(request, card_id, deck_id, number_of_cards):
                     "defense": card.defense,
                     "isFlying": card.isFlying,
                     "isLifeLink": card.isLifeLink,
+                    "hasHaste": card.hasHaste,
                     "language": card.language,
                     "illustration": card.illustration,
                     "tapped":False,
                     "invokation": {
-                        "state":True,
+                        "state":invokation,
                         "turn": json['turn']['count']
-                    }
+                    },
+                    "isDefended": False
                 }
             )
 
@@ -841,12 +856,6 @@ def playground_attack(request, deck_id, card_index):
                     + str(json['life'])}
                 )
 
-    playground.last_update_date = datetime.today()
-    playground.history['logs'].append({
-        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
-            "Le tour " + str(playground.config["turn"]['count']) + " a pris fin."
-    })
-    json['turn']["state"] = "close"
     playground.config = json
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
@@ -880,35 +889,27 @@ def playground_attack_all(request, deck_id):
         if "*" in str(card['power']):
             power = 0
         power = int(power)
-        card['tapped'] = True
-        json['damages'] += power
-        playground.last_update_date = datetime.today()
-        playground.history['logs'].append({
-            playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name']
-            + " attaque et inflige "
-            + str(power) + " points de dégats !"}
-        )
-        if card['isLifeLink']:
-            json['life'] += int(power)
+        if not card['invokation']['state']:
+            card['tapped'] = True
+            json['damages'] += power
             playground.last_update_date = datetime.today()
             playground.history['logs'].append({
-                playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
-                "Durant l'attaque, "
-                + card['name']
-                + " donne +" + str(power) + " points de vie à " + request.user.username
-                + " grâce à son lien de vie. Nouveau total de points de vie : "
-                + str(json['life'])}
+                playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name']
+                + " attaque et inflige "
+                + str(power) + " points de dégats !"}
             )
-
-    playground.last_update_date = datetime.today()
-    playground.history['logs'].append({
-        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
-            "Le tour " + str(playground.config["turn"]['count']) + " a pris fin."
-    })
-    json['turn']["state"] = "close"
+            if card['isLifeLink']:
+                json['life'] += int(power)
+                playground.last_update_date = datetime.today()
+                playground.history['logs'].append({
+                    playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+                    "Durant l'attaque, "
+                    + card['name']
+                    + " donne +" + str(power) + " points de vie à " + request.user.username
+                    + " grâce à son lien de vie. Nouveau total de points de vie : "
+                    + str(json['life'])}
+                )
     playground.config = json
-
-
     playground.save()
     return redirect('playground_game_starts', deck_id=deck.pk)
 
@@ -921,7 +922,7 @@ def playground_untap_all(request, deck_id):
         if "*" in str(card['power']):
             power = 0
         power = int(power)
-        if card['tapped']:
+        if card['tapped'] and not card['isDefended']:
             json['damages'] -= power
         card['tapped'] = False
 
@@ -1149,6 +1150,92 @@ def playground_non_lifelink_creature(request, deck_id, index):
 
         return redirect('playground_game_starts', deck_id=deck.pk)
 
+
+def playground_haste_all(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    json = playground.config
+
+    for card in json["cards"]:
+        card['hasHaste'] = True
+
+    playground.last_update_date = datetime.today()
+    playground.history['logs'].append({
+        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): "Toutes les créatures ont maintenant la célérité."}
+    )
+
+    playground.config = json
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_non_haste_all(request, deck_id):
+    deck = Deck.objects.filter(pk=deck_id)[0]
+    playground = Playground.objects.filter(deck=deck, user=request.user)[0]
+    json = playground.config
+
+    for card in json["cards"]:
+        card['hasHaste'] = False
+
+    playground.last_update_date = datetime.today()
+    playground.history['logs'].append({
+        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): "Toutes les créatures ont perdu la célérité."}
+    )
+
+    playground.config = json
+    playground.save()
+    return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_haste_creature(request, deck_id, index):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        cards = []
+        for card in json['cards']:
+            if card['index'] == int(index):
+               card["hasHaste"] = True
+               playground.last_update_date = datetime.today()
+               playground.history['logs'].append({
+                   playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name']
+                   + " a maintenant la célérité."
+               })
+            cards.append(card)
+        json['cards'] = cards
+        playground.config = json
+        playground.save()
+
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
+def playground_non_haste_creature(request, deck_id, index):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        cards = []
+        for card in json['cards']:
+            if card['index'] == int(index):
+               card["hasHaste"] = False
+               playground.last_update_date = datetime.today()
+               playground.history['logs'].append({
+                   playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name']
+                   + " a perdu la célérité"
+               })
+            cards.append(card)
+        json['cards'] = cards
+        playground.config = json
+        playground.save()
+
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
+
 def playground_turn_off(request, deck_id):
     user = request.user
     if not user.is_authenticated:
@@ -1175,6 +1262,10 @@ def playground_turn_on(request, deck_id):
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]
         playground.config["turn"]["count"] += 1
         playground.config["turn"]["state"] = "open"
+        for card in playground.config['cards']:
+            card['isDefended'] = False
+            card['tapped'] = False
+        playground.config['damages'] = 0
         playground.last_update_date = datetime.today()
         playground.history['logs'].append({
             playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
@@ -1185,4 +1276,28 @@ def playground_turn_on(request, deck_id):
         return redirect('playground_game_starts', deck_id=deck.pk)
 
 
+def playground_defend(request, deck_id, card_index):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        for card in json["cards"]:
+            power = card['power']
+            if "*" in str(card['power']):
+                power = 0
+            power = int(power)
+
+            if card['index'] == int(card_index):
+                json['damages'] -= power
+                card['isDefended'] = True
+                playground.last_update_date = datetime.today()
+                playground.history['logs'].append({
+                    playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): card['name'] + " a été paré."}
+                )
+        playground.config = json
+        playground.save()
+        return redirect('playground_game_starts', deck_id=deck.pk)
 

@@ -343,8 +343,8 @@ form > button{
 
 .playground-card-wrapper {
     background-color: #252727;
-    height: 440px;
-    width: 225px;
+    height: 460px;
+    width: 240px;
     padding: 20px;
     margin-left: 10px;
     margin-bottom: 20px;
@@ -705,8 +705,17 @@ form > button{
 .badge-attack{
     color: white;
     background-color: #a15200;
-    border-radius: 15px;
-    padding: 6px;
+    border-radius: 10px;
+    padding: 4px;
+    float: right;
+}
+
+.badge-defend{
+    color: white;
+    background-color: purple;
+    border-radius: 10px;
+    padding: 4px;
+    float: right;
 }
 
 .becomeFlyingCheckbox{

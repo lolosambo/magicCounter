@@ -169,6 +169,11 @@ $(document).ready(function () {
         $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
     });
 
+    $("a[id*='defend-']").on("click", function(){
+        let url = $(this).attr("data-defend-url");
+        $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
+    });
+
 //  --------------  ATTAQUE GENERALE -------------------
      $("#all-attack").on("click", function(){
         $("div[id*='tapped-card-']").each(function(){

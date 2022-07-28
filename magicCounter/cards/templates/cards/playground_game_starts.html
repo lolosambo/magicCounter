@@ -29,8 +29,15 @@
                         data-reorder-url="{% url 'playground_reorder_cards' deck_id=deck.pk slug='0' %}"
                 >
                     <p>{{ card.name }} </p>
-                    <p><em>({% for type in card.types %} {{ type }} {% endfor%})</em></p>
-                    <p style="color: goldenrod;">
+                    <p>
+                        <em>({% for type in card.types %} {{ type }} {% endfor%})</em>
+                        {% if card.tapped and not card.isDefended %}
+                            <span id="badge-attack-{{card.index}}" class="badge-attack ms-5"> Attaque </span>
+                        {% elif card.isDefended %}
+                            <span id="badge-defended-{{card.index}}" class="badge-defend ms-5"> Paré ! </span>
+                        {% endif %}
+                    </p><br>
+                    <p>
                         {% if card.isLifeLink %}
                                 <span>
                                    <a
@@ -48,6 +55,27 @@
                                    href="{% url 'playground_lifelink_creature' deck_id=deck.pk index=card.index %}"
                                >
                                   Lien de vie <i class="fa-solid fa-circle-plus"></i>
+                               </a>
+                            </span>
+
+                        {% endif %}
+                        {% if card.hasHaste %}
+                                <span>
+                                   <a
+                                       style="color:green; font-size: 0.9rem;"
+                                       href="{% url 'playground_non_haste_creature' deck_id=deck.pk index=card.index %}"
+                                   >
+                                      Célérité <i class="fa-solid fa-circle-xmark"></i>
+                                   </a>
+                                </span>
+
+                        {% else %}
+                            <span>
+                               <a
+                                   style="color:red; font-size: 0.9rem;"
+                                   href="{% url 'playground_haste_creature' deck_id=deck.pk index=card.index %}"
+                               >
+                                  Célérité <i class="fa-solid fa-circle-plus"></i>
                                </a>
                             </span>
 
@@ -73,12 +101,10 @@
                             </span>
 
                         {% endif %}
-
-                        {% if card.tapped %}<span class="badge-attack">Attaque</span>{% endif %}
                     </p>
                      <div id="tapped-card-{{card.index}}"  class="{% if card.tapped %}tapped_card{% endif %}" >
                         {% if card.description == "Token" %}
-                             <div class="playground-token-illustration">
+                             <div class="playground-token-illustration ms-2">
                                  <div class="playground-token-name">{{ card.name }}</div>
                                  <div class="playground-token-description" style="text-align: center;">
                                      {% for color in card.colors %}
@@ -89,7 +115,7 @@
                                  <div class="playground-token-po-de">{{ card.power }} / {{ card.defense }}</div>
                              </div>
                         {% else %}
-                             <img src="{{ card.illustration }}" width="185" alt="{{ card.name }}"/>
+                             <img src="{{ card.illustration }}" class="ms-2" width="185" alt="{{ card.name }}"/>
                         {% endif %}
                     </div>
                     <div style="text-align: center">
@@ -122,8 +148,8 @@
                         </button>
                     </div>
                     <div style="text-align: center">
-                        {% if not card.invokation.state %}
-                            {% if not card.tapped %}
+                        {% if not card.invokation.state or card.hasHaste %}
+                            {% if not card.tapped and json.turn.state == "open" %}
                                 <a href="#"
                                    id="attack-{{ card.index }}"
                                    class="btn btn-sm btn-warning btn-card"
@@ -132,7 +158,7 @@
                                 >
                                     Attaquer
                                 </a>
-                            {% else %}
+                            {% elif json.turn.state != "close" %}
                                 <a href="#"
                                    id="untap-{{ card.index }}"
                                    class="btn btn-sm btn-secondary btn-card"
@@ -140,6 +166,15 @@
                                    data-untap-url="{% url 'playground_untap' deck_id=deck.pk card_index=card.index %}"
                                 >
                                     Désengager
+                                </a>
+                            {% elif json.turn.state == "close" and card.tapped and not card.isDefended %}
+                                <a href="#"
+                                   id="defend-{{ card.index }}"
+                                   class="btn btn-sm btn-success btn-card"
+                                   data-deck-id="{{deck.pk}}"
+                                   data-defend-url="{% url 'playground_defend' deck_id=deck.pk card_index=card.index %}"
+                                >
+                                    Marquer "Paré"
                                 </a>
                             {% endif %}
                         {% endif %}

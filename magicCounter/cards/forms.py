@@ -70,10 +70,6 @@ class CardForm(forms.ModelForm):
             "defense": "Défense"
 
         }
-        # widgets = {
-        #     "colors": forms.CheckboxSelectMultiple(choices=COLORS),
-        #     "types": forms.CheckboxSelectMultiple()
-        # }
 
     # Validation des éléments de formulaire après soumission.
     # ATTENTION au nommage "clean_" + "NomDuChamp" obligatoire
@@ -97,7 +93,8 @@ class EditCardForm(forms.ModelForm):
             "power",
             "defense",
             "isFlying",
-            "isLifeLink"
+            "isLifeLink",
+            "hasHaste",
         ]
         labels = {
             "name": "Nom de la carte",
@@ -106,7 +103,8 @@ class EditCardForm(forms.ModelForm):
             "power": "Attaque",
             "defense": "Défense",
             "isFlying": "Vol",
-            "isLifeLink": "Lien de vie"
+            "isLifeLink": "Lien de vie",
+            "hasHaste": "Célérité"
         }
         widgets = {
             "colors": HorizontalCheckboxSelectMultiple(),
@@ -230,6 +228,12 @@ class AddTokenForm(forms.Form):
         label="Lien de vie"
     )
 
+    hasHaste = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="Célérité"
+    )
+
     LANGUAGES = [
         ("english", "Anglais"),
         ("french", "Français"),
@@ -297,7 +301,8 @@ class EditTokenForm(forms.ModelForm):
             "power",
             "defense",
             "isFlying",
-            "isLifeLink"
+            "isLifeLink",
+            "hasHaste"
         ]
         labels = {
             "name": "Nom du jeton",
@@ -306,7 +311,8 @@ class EditTokenForm(forms.ModelForm):
             "power": "Attaque",
             "defense": "Défense",
             "isFlying": "Vol",
-            "isLifLink": "Lien de vie"
+            "isLifLink": "Lien de vie",
+            "hasHaste": "Célérité"
         }
         widgets = {
             "colors": HorizontalCheckboxSelectMultiple(),

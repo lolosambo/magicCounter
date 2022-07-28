@@ -52,6 +52,7 @@ class Card(models.Model):
     defense = models.CharField(max_length=4)
     isFlying = models.BooleanField(default=False)
     isLifeLink = models.BooleanField(default=False)
+    hasHaste = models.BooleanField(default=False)
     illustration = models.URLField(blank=True)
     language = models.CharField(max_length=50, default="English")
 
