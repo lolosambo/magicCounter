@@ -21,7 +21,7 @@ def signup(request):
         form = CustomSignupForm(request.POST)
         if form.is_valid():
             user = form.save()
-            return render(request, 'magicCounteur/index.html', {"user": user})
+            return render(request, 'magicCounter/index.html', {"user": user})
         else:
             context["errors"] = form.errors
     form = CustomSignupForm()
