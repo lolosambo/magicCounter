@@ -24,7 +24,7 @@
         <div class="row playground-wrapper">
             {% for card in json.cards %}
                 <div
-                        class="col-3 playground-card-wrapper"
+                        class="col-3 {% if card.isDefended %} playground-defended-card-wrapper {% else %} playground-card-wrapper {% endif %}"
                         id="{{ card.index }}"
                         data-reorder-url="{% url 'playground_reorder_cards' deck_id=deck.pk slug='0' %}"
                 >
@@ -123,12 +123,18 @@
                                 type="button"
                                 id="power-minus-{{ card.index }}"
                                 class="btn btn-sm btn-danger"
-                                data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='power-minus' new_value=0 %}">-</button>
-                        <span id="power-{{ card.index }}">{% if "*" in card.power %} 0 {% else %} {{ card.power }} {% endif %}</span>
+                                data-lifelink="{{card.isLifeLink}}"
+                                data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='power-minus' new_value=0 %}">
+                            -
+                        </button>
+                        <span id="power-{{ card.index }}" data-lifelink="{{card.isLifeLink}}">
+                            {% if "*" in card.power %} 0 {% else %} {{ card.power }} {% endif %}
+                        </span>
                         <button
                                 type="button"
                                 id="power-plus-{{ card.index }}"
                                 class="btn btn-sm btn-primary"
+                                data-lifelink="{{card.isLifeLink}}"
                                 data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='power-plus' new_value=0 %}">
                             +
                         </button>
@@ -138,7 +144,9 @@
                                 id="defense-minus-{{ card.index }}"
                                 class="btn btn-sm btn-danger"
                                 data-save-url="{% url 'playground_save' deck_id=deck.pk card_index=card.index button='defense-minus' new_value=0 %}">-</button>
-                        <span id="defense-{{ card.index }}">{% if "*" in card.defense %} 0 {% else %} {{ card.defense }} {% endif %}</span>
+                        <span id="defense-{{ card.index }}" data-lifelink="{{card.isLifeLink}}">
+                            {% if "*" in card.defense %} 0 {% else %} {{ card.defense }} {% endif %}
+                        </span>
                         <button
                                 type="button"
                                 id="defense-plus-{{ card.index }}"
@@ -149,7 +157,7 @@
                     </div>
                     <div style="text-align: center">
                         {% if not card.invokation.state or card.hasHaste %}
-                            {% if not card.tapped and json.turn.state == "open" %}
+                            {% if not card.tapped and json.turn.state != "close" and "Wall" not in card.types  %}
                                 <a href="#"
                                    id="attack-{{ card.index }}"
                                    class="btn btn-sm btn-warning btn-card"
@@ -158,16 +166,16 @@
                                 >
                                     Attaquer
                                 </a>
-                            {% elif json.turn.state != "close" %}
+                            {% elif json.turn.state == "open" and "Wall" not in card.types %}
                                 <a href="#"
                                    id="untap-{{ card.index }}"
                                    class="btn btn-sm btn-secondary btn-card"
                                    data-deck-id="{{deck.pk}}"
                                    data-untap-url="{% url 'playground_untap' deck_id=deck.pk card_index=card.index %}"
                                 >
-                                    Désengager
+                                    Annuler
                                 </a>
-                            {% elif json.turn.state == "close" and card.tapped and not card.isDefended %}
+                            {% elif json.turn.state == "attack" and card.tapped and not card.isDefended and "Wall" not in card.types  %}
                                 <a href="#"
                                    id="defend-{{ card.index }}"
                                    class="btn btn-sm btn-success btn-card"

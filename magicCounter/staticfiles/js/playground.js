@@ -33,7 +33,11 @@ $(document).ready(function () {
         let id = $(this).attr("id").split('-')[2];
         $("#power-"+id).text(parseInt($("#power-"+id).text()) + 1) ;
         if($("#tapped-card-" + id).hasClass("tapped_card")){
-            $("#total-damage").text(parseInt($("#total-damage").text()) + 1) ;
+            $("#total-damage").text(parseInt($("#total-damage").text()) + 1);
+            console.log("yolo");
+            if ($(this).attr('data-lifelink') == "True"){
+                $("#life-points").text(parseInt($("#life-points").text()) + 1);
+            }
         }
         url = formatUrl($("#power-"+id).text(), $(this).attr("data-save-url"))
         $.ajax({ type: 'GET', url: url});
@@ -146,17 +150,6 @@ $(document).ready(function () {
        $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
     });
 
-//    $("button[id*='dependencyFormValid-']").on("click", function(e){
-//       cardId = $(this).attr("data-card-id");
-//       numberOfCards = $("#cardForm-" + cardId).val();
-//       urlToArray = $(this).attr("data-add-url").split("/");
-//       url = "";
-//       for (let i = 0; i < urlToArray.length -1 ; i++){
-//           url += urlToArray[i] + "/";
-//       }
-//       url = url + numberOfCards;
-//       $.ajax({ type: 'GET', url: url, success: window.location.reload.bind(window.location) });
-//    });
 
 //    -------- POINTS DE DEGATS -----------
     $("a[id*='attack-']").on("click", function(){

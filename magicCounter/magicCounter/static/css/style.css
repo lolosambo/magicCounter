@@ -356,6 +356,21 @@ form > button{
     margin-bottom: 10px;
 }
 
+.playground-defended-card-wrapper {
+    background-color: #24162e;
+    height: 460px;
+    width: 240px;
+    padding: 20px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.playground-defended-card-wrapper p {
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
 .death-button{
     background-color: black;
     color: white;
@@ -487,7 +502,7 @@ form > button{
     margin-top: 20px;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    background-color: #3c2915;
+    background-color: rgb(36 34 31 / 89%);
 }
 
 .cards-cemetery {
@@ -671,6 +686,23 @@ form > button{
 
 #turn-on-link:hover {
    background-image: url('../../media/turn-vert-hover.png');
+}
+
+#turn-attack-link {
+   background-image: url('../../media/turn-orange.png');
+   background-size: 100%;
+   background-repeat: no-repeat;
+   background-position: center;
+   text-align: center;
+   display: inline-block;
+   padding-top: 30px;
+   height: 50px;
+   margin-left: 0 !important;
+   width: 50px !important;
+}
+
+#turn-attack-link:hover {
+   background-image: url('../../media/turn-orange-hover.png');
 }
 
 #turn-off-link {

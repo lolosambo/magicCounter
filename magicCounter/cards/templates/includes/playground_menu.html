@@ -49,15 +49,15 @@
                     >
                       Tuez-les tous !
                     </a>
-                    {% if json.damages > 0 %}
+                    {% if json.turn.state == "attack" %}
                         <a
                             id="all-untap"
                             class="menu-link untap-link ms-4"
                             data-untap-url="{% url 'playground_untap_all' deck_id=deck.pk %}"
                         >
-                            Désengager tous
+                            Annuler attaques
                         </a>
-                    {% else %}
+                    {% elif  json.turn.state == "open" %}
                         <a
                             id="all-attack"
                             class="menu-link attack-link ms-4"
@@ -108,9 +108,20 @@
                 <div class="col-lg-4 col-12">
                     <div class="row" style="text-align: center">
                         <div class="col-12">
-                            <h2 style="color: white">
-                                {% if json.turn.state == "open" %}Tour actif {% else %} Tour inactif {% endif %}
-                            </h2>
+
+                            {% if json.turn.state == "open" %}
+                                <h2 style="color: #0fea00;">
+                                    Tour actif
+                                </h2>
+                            {% elif json.turn.state == "attack" %}
+                                <h2 style="color: #f1c317;">
+                                    Phase d'attaque
+                                </h2>
+                            {% else %}
+                                <h2 style="color: #ed1515;">
+                                    Tour inactif
+                                </h2>
+                            {% endif %}
                         </div>
                         <div class="col-12">
                             <span id="total-turn" class="ms-3 me-3" style="font-size: 4rem; color:white;">
@@ -118,8 +129,15 @@
                                 {% if json.turn.state == "open" %}
                                     <a
                                         id="turn-on-link"
-                                        href="{% url 'playground_turn_off' deck_id=deck.pk %}"
+                                        href="{% url 'playground_turn_attack' deck_id=deck.pk %}"
                                         class="menu-link turn-on-link ms-4"
+                                    >
+                                    </a>
+                                {% elif json.turn.state == "attack" %}
+                                    <a
+                                        id="turn-attack-link"
+                                        href="{% url 'playground_turn_off' deck_id=deck.pk %}"
+                                        class="menu-link turn-attack-link ms-4"
                                     >
                                     </a>
                                 {% else %}
@@ -168,7 +186,7 @@
         <div class="col-lg-2 col-md-6 col-6">
             <div class="row" style="text-align: center">
                 <div class="col-12">
-                    <h2 style="color: white">Points à parer</h2>
+                    <h2 style="color: white">Dommages</h2>
                 </div>
                 <div class="col-12">
                     <span id="total-damage">{{ json.damages }}</span>

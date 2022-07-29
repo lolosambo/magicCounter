@@ -19,7 +19,7 @@
                     {% else %}
                         <li style="font-size: 0.9rem;
                             {% if 'perdu' in log or '-' in log %} color: #f94f33;
-                            {% elif '+' in log or 'maintenant' in log %}color: #79ff79;
+                            {% elif '+' in log or 'maintenant' in log or 'gagne' in log%}color: #79ff79;
                             {% endif %}"
                         >
                             <span style="font-size: 0.9rem; color: #1b95a3;">{{ time }} :</span> {{ log }}

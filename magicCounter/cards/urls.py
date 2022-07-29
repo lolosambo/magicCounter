@@ -8,7 +8,7 @@ from .views import index, card, addCard, CardEditView, CardDeleteView, \
     playground_kill_all, playground_flying_creature, playground_non_flying_creature, playground_flying_all, \
     playground_non_flying_all, playground_non_lifelink_all, playground_lifelink_all, playground_lifelink_creature, \
     playground_non_lifelink_creature, playground_non_haste_all, playground_haste_all, playground_haste_creature, \
-    playground_non_haste_creature,playground_turn_on, playground_turn_off, playground_defend
+    playground_non_haste_creature,playground_turn_on, playground_turn_off, playground_turn_attack, playground_defend
 
 urlpatterns = [
     # CARD VIEWS
@@ -67,5 +67,6 @@ urlpatterns = [
     path('playground/deck/<str:deck_id>/non-haste/all', playground_non_haste_all, name="playground_non_haste_all"),
     path('playground/deck/<str:deck_id>/turn-off', playground_turn_off, name="playground_turn_off"),
     path('playground/deck/<str:deck_id>/turn-on', playground_turn_on, name="playground_turn_on"),
+    path('playground/deck/<str:deck_id>/turn-attack', playground_turn_attack, name="playground_turn_attack"),
     path('playground/deck/<str:deck_id>/card/<str:card_index>/defend', playground_defend, name="playground_defend"),
 ]
