@@ -34,7 +34,6 @@ $(document).ready(function () {
         $("#power-"+id).text(parseInt($("#power-"+id).text()) + 1) ;
         if($("#tapped-card-" + id).hasClass("tapped_card")){
             $("#total-damage").text(parseInt($("#total-damage").text()) + 1);
-            console.log("yolo");
             if ($(this).attr('data-lifelink') == "True"){
                 $("#life-points").text(parseInt($("#life-points").text()) + 1);
             }
@@ -47,7 +46,10 @@ $(document).ready(function () {
         let id = $(this).attr("id").split('-')[2];
         $("#power-"+id).text(parseInt($("#power-"+id).text()) - 1);
         if($("#tapped-card-" + id).hasClass("tapped_card")){
-            $("#total-damage").text(parseInt($("#total-damage").text()) - 1) ;
+            $("#total-damage").text(parseInt($("#total-damage").text()) - 1);
+            if ($(this).attr('data-lifelink') == "True"){
+                $("#life-points").text(parseInt($("#life-points").text()) - 1);
+            }
         }
         url = formatUrl($("#power-"+id).text(), $(this).attr("data-save-url"))
         $.ajax({ type: 'GET', url: url });
@@ -82,6 +84,9 @@ $(document).ready(function () {
             let id = $(this).attr("id").split('-')[1];
             if($("#tapped-card-" + id).hasClass("tapped_card")){
                 $("#total-damage").text(parseInt($("#total-damage").text()) + 1) ;
+                if ($(this).attr('data-lifelink') == "True"){
+                    $("#life-points").text(parseInt($("#life-points").text()) + 1);
+                }
             }
         });
 
@@ -95,6 +100,9 @@ $(document).ready(function () {
             let id = $(this).attr("id").split('-')[1];
             if($("#tapped-card-" + id).hasClass("tapped_card")){
                 $("#total-damage").text(parseInt($("#total-damage").text()) - 1);
+                if ($(this).attr('data-lifelink') == "True"){
+                    $("#life-points").text(parseInt($("#life-points").text()) - 1);
+                }
             }
         });
         let url = $(this).attr("data-save-url");
