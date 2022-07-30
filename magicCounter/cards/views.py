@@ -776,7 +776,7 @@ def playground_remove_plainswalker(request, deck_id, index):
         for plainswalker in json['plainswalkers']:
             if plainswalker['index'] != int(index):
                 plainswalker['index'] = count
-                plainswalkers.append(card)
+                plainswalkers.append(plainswalker)
                 count += 1
             else:
                 playground.last_update_date = datetime.today()

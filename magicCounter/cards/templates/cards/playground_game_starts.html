@@ -18,8 +18,7 @@
 
     <!-- ------- AIRE DE JEU -------->
     {% include "includes/playground_menu.html" %}
-
-    <div class="col-12">
+    <div class="col-2">
         <div class="row">
             {% for plainswalker in json.plainswalkers %}
                 <div
@@ -29,7 +28,7 @@
                     <p>{{ plainswalker.name }} </p><br>
 
                      <div id="tapped-card-{{plainswalker.index}}">
-                         <img src="{{ plainswalker.illustration }}" class="ms-2" width="185" alt="{{ plainswalker.name }}"/>
+                         <img src="{{ plainswalker.illustration }}" width="220" alt="{{ plainswalker.name }}"/>
                     </div>
                     <div style="text-align: center">
                         <button
@@ -42,10 +41,17 @@
                         <span id="loyalty-{{ plainswalker.index }}" >
                             {{ plainswalker.loyalty }}
                         </span>
+                        <button
+                                type="button"
+                                id="loyalty-plus-{{ plainswalker.index }}"
+                                class="btn btn-sm btn-primary"
+                                data-save-url="{% url 'playground_save_plainswalker' deck_id=deck.pk plainswalker_index=plainswalker.index button='loyalty-plus' new_value=0 %}">
+                            +
+                        </button>
                     </div>
                     <div style="text-align: center">
                         <a href="#"
-                           id="death-{{ plainswalker.index }}"
+                           id="plainswalker-death-{{ plainswalker.index }}"
                            class="btn btn-sm death-button btn-card"
                            data-deck-id="{{deck.pk}}"
                            data-remove-url="{% url 'playground_remove_plainswalker' deck_id=deck.pk index=plainswalker.index %}"
@@ -56,6 +62,9 @@
                 </div>
             {% endfor %}
         </div>
+    </div>
+    <div class="col-10 ps-4">
+
         <div class="row playground-wrapper">
             {% for card in json.cards %}
                 <div
