@@ -71,7 +71,6 @@ $(document).ready(function () {
 
     $("button[id*='loyalty-minus-']").on("click", function(){
         let id = $(this).attr("id").split('-')[2];
-        console.log(id)
         $("#loyalty-"+id).text(parseInt($("#loyalty-"+id).text()) - 1) ;
         url = formatUrl($("#loyalty-"+id).text(), $(this).attr("data-save-url"))
         $.ajax({ type: 'GET', url: url});

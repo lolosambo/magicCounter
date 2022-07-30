@@ -352,13 +352,15 @@ form > button{
 }
 
 .playground-plainswalker-wrapper {
-    background-color: #252727;
-    height: 460px;
+    background-color: #2d2e56;
+    height: 400px;
     width: 240px;
-    padding: 20px;
+    padding: 20px 20px 20px 10px;
     margin-left: 10px;
     margin-bottom: 20px;
     border-radius: 5px;
+    text-align: center;
+    font-size: 1.2rem;
 }
 
 .playground-card-wrapper p {
