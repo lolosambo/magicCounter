@@ -779,6 +779,7 @@ def playground_remove_plainswalker(request, deck_id, index):
                 plainswalkers.append(plainswalker)
                 count += 1
             else:
+                json['cemetery'].append(plainswalker)
                 playground.last_update_date = datetime.today()
                 playground.history['logs'].append(
                     {
