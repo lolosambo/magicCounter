@@ -18,7 +18,7 @@
 
     <!-- ------- AIRE DE JEU -------->
     {% include "includes/playground_menu.html" %}
-    <div class="col-2">
+    <div class="{% if json.plainswalkers|length > 0 %}col-2{% else %}d-none{% endif %}">
         <div class="row">
             {% for plainswalker in json.plainswalkers %}
                 <div
@@ -63,8 +63,7 @@
             {% endfor %}
         </div>
     </div>
-    <div class="col-10 ps-4">
-
+    <div class="{% if json.plainswalkers|length > 0 %}col-10 ps-4{% else %}col-12{% endif %}">
         <div class="row playground-wrapper">
             {% for card in json.cards %}
                 <div
