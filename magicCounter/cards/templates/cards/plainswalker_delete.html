@@ -1,0 +1,23 @@
+{% extends "magicCounter/base.html" %}
+{% load static %}
+
+{% block page_menu %}
+     <a href="{% url 'homepage' %}">
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-house"></i> Retour à l'accueil</button>
+    </a>
+    <a href="{% url 'plainswalkers_index' %}">
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-file"></i> Revenir à la liste des plainswalkers</button>
+    </a>
+{% endblock%}
+
+{% block main_content %}
+    <h1>Supprimer {{ plainswalker.name }}</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Oui je veux supprimer</button>
+    </form>
+
+{% endblock %}

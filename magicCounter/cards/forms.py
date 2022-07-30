@@ -1,5 +1,5 @@
 from django import forms
-from cards.models import Card, Deck, CardType, Playground
+from cards.models import Card, Deck, CardType, Playground, PlainsWalker
 from magicCounter.form.widgets.HorizontalCheckboxSelectMultiple import HorizontalCheckboxSelectMultiple
 
 
@@ -367,3 +367,51 @@ class CustomCounterForm(forms.Form):
         label="Vol",
         required=False
     )
+
+
+class AddPlainswalkerForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(AddPlainswalkerForm, self).__init__(*args, **kwargs)
+        if user:
+            formatted_decks = []
+            for deck in Deck.objects.filter(user=user):
+                formatted_decks.append((deck.name, deck.name))
+            self.fields["deck"] = forms.MultipleChoiceField(
+                label="Deck(s)",
+                choices=formatted_decks,
+                widget=HorizontalCheckboxSelectMultiple()
+            )
+
+    name = forms.CharField(
+        label="Nom du Plainswalker",
+        required=True
+    )
+
+    LANGUAGES = [
+        ("english", "Anglais"),
+        ("french", "Français"),
+    ]
+    language = forms.ChoiceField(
+        label="Langue",
+        choices=LANGUAGES,
+        required=True
+    )
+
+    # Validation des éléments de formulaire après soumission.
+    # ATTENTION au nommage "clean_" + "NomDuChamp" obligatoire
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+        if "$" in name:
+            raise forms.ValidationError('Le nom ne peut pas contenir de "$"')
+        return name
+
+class EditPlainswalkerForm(forms.ModelForm):
+    class Meta:
+        model = PlainsWalker
+        fields = [
+            "name",
+        ]
+        labels = {
+            "name": "Nom du plainswalker",
+        }

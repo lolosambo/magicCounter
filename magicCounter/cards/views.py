@@ -1,13 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect, QueryDict, HttpResponse
-from cards.models import Card, Color, CardType, Deck, Playground
+from cards.models import Card, Color, CardType, Deck, Playground, PlainsWalker
 from mtgsdk import Card as MtgCard
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 from cards.forms import AddCardForm, DeckForm, EditDeckForm, AssociationForm, AddTokenForm, EditTokenForm,  \
-     CustomCounterForm, EditCardForm
+     CustomCounterForm, EditCardForm, AddPlainswalkerForm, EditPlainswalkerForm
 from datetime import datetime
 import json
+
+
+
 
 
 def index(request):
@@ -370,6 +373,149 @@ def removeTokenFromDeckView(request, deck_id, token_id):
         return redirect(deck)
 
 
+def plainswalkers_index(request):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        plainswalkers = PlainsWalker.objects.all().order_by('name')
+        filteredCards = []
+        for card in plainswalkers:
+            for deck in card.deck.all():
+                if deck.user == request.user and plainswalker not in filteredCards:
+                    filteredCards.append(plainswalker)
+        return render(request, "cards/plainswalkers_index.html", {"plainswalkers": plainswalkers})
+
+
+def plainswalker(request, plainswalker_id):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        plainswalker = get_object_or_404(PlainsWalker, pk=plainswalker_id)
+        form = AssociationForm(user=request.user)
+        return render(request, 'cards/plainswalker_consult.html', {"plainswalker": plainswalker, "form": form})
+
+
+def plainswalkerAddView(request):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        if request.method == "POST":
+            # request.POST = les données récupérées du formulaire (dictionnaire)
+            form = AddPlainswalkerForm(request.POST, user=request.user)
+            if form.is_valid():
+                mtgcard = MtgCard \
+                    .where(name=request.POST["name"]) \
+                    .where(language=request.POST["language"]) \
+                    .all()
+                if not mtgcard:
+                    mtgcard = MtgCard \
+                        .where(name=request.POST["name"]) \
+                        .all()
+                if not mtgcard:
+                    error = "Le plainswalker n'existe pas !"
+                    return render(request, 'cards/plainswalker_add.html', context={
+                        "form": form,
+                        "error": error
+                    })
+                else:
+                    plainswalker = PlainsWalker(name=request.POST["name"])
+                    illustration = mtgcard[0].image_url
+                    if illustration:
+                        plainswalker.illustration = illustration
+                    else:
+                        for i in range(1, len(mtgcard)):
+                            illustration = mtgcard[i].image_url
+                            if illustration:
+                                plainswalker.illustration = illustration
+                                break
+                            else:
+                                "Aucune illustration trouvée"
+                    plainswalker.save()
+
+                    # On associe les couleur de la carte Magic avec la carte en création
+                    for color in mtgcard[0].colors:
+                        color_to_add = Color.objects.filter(color=color)
+                        if not color_to_add:
+                            new_color = Color(color=color)
+                            new_color.save()
+                            plainswalker.colors.add(new_color)
+                        else:
+                            plainswalker.colors.add(color_to_add[0])
+
+                    # On associe les decks avec la carte en création
+                    results = dict(QueryDict.lists(request.POST))
+                    for deck in results["deck"]:
+                        deck_to_add = Deck.objects.filter(name=deck)
+                        plainswalker.deck.add(deck_to_add[0])
+
+                    # plainswalker.loyalty = mtgcard[0].power
+                    plainswalker.description = mtgcard[0].text
+                    plainswalker.loyalty= mtgcard[0].loyalty
+                    plainswalker.language = request.POST["language"]
+                    plainswalker.save()
+
+                # "commit=False", dans la fonction save() empêche la sauveagarde en BDD
+                # Cela permet de traiter l'objet Card hydraté
+                # form.save()
+                # On redirige vers la même page pour éviter la ressoumission des données par erreur
+                return HttpResponseRedirect(request.path)
+        else:
+            form = AddPlainswalkerForm(user=request.user)
+
+        return render(request, 'cards/plainswalker_add.html', context={"form": form})
+
+
+class PlainswalkerEditView(UpdateView):
+    model = PlainsWalker
+    context_object_name = "plainswalker"
+    form_class = EditPlainswalkerForm
+    template_name = "cards/plainswalker_add.html"
+
+
+class PlainswalkerDeleteView(DeleteView):
+    model = PlainsWalker
+    context_object_name = "plainswalker"
+    template_name = "cards/plainswalker_delete.html"
+    success_url = reverse_lazy("plainswalkers_index")
+
+
+def associatePlainswalkerToDeckView(request, plainswalker_id):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        plainswalker = PlainsWalker.objects.filter(pk=plainswalker_id)[0]
+        if request.method == "POST":
+            form = AssociationForm(request.POST, user=request.user)
+            if form.is_valid():
+                for deck in plainswalker.deck.all():
+                    plainswalker.deck.remove(deck)
+                for deck in form.cleaned_data["deck"]:
+                    deck_to_associate = Deck.objects.filter(name=deck)[0]
+                    plainswalker.deck.add(deck_to_associate)
+                plainswalker.save()
+                return render(request, "cards/plainswalker_consult.html", context={"plainswalker": plainswalker, "form": form})
+        else:
+            form = AssociationForm(user=request.user)
+        return render(request, "cards/plainswalker_consult.html", context={"plainswalker": plainswalker, "form": form})
+
+
+def removePlainswalkerFromDeckView(request, deck_id, plainswalker_id):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        plainswalker = PlainsWalker.objects.filter(pk=plainswalker_id)[0]
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        plainswalker.deck.remove(deck)
+        plainswalker.save()
+
+        return redirect(deck)
+
+
 def playground(request):
     user = request.user
     if not user.is_authenticated:
@@ -402,6 +548,7 @@ def playground_game_starts(request, deck_id):
                 },
                 "cemetery": [],
                 "cards": [],
+                "plainswalkers": []
             }
             playground.config = json
             playground.creation_date = datetime.today()
@@ -616,6 +763,35 @@ def playground_remove_creature(request, deck_id, index):
 
         return redirect('playground_game_starts', deck_id=deck.pk)
 
+def playground_remove_plainswalker(request, deck_id, index):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        plainswalkers = []
+        count = 1
+        for plainswalker in json['plainswalkers']:
+            if plainswalker['index'] != int(index):
+                plainswalker['index'] = count
+                plainswalkers.append(card)
+                count += 1
+            else:
+                playground.last_update_date = datetime.today()
+                playground.history['logs'].append(
+                    {
+                        playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): "Le planeswalker "
+                        + plainswalker['name'] + " a été mise au cimetière !"
+                    }
+                )
+        json['plainswalkers'] = plainswalkers
+        playground.config = json
+        playground.save()
+
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
 
 def playground_save(request, deck_id, card_index, button, new_value):
     user = request.user
@@ -685,6 +861,37 @@ def playground_save(request, deck_id, card_index, button, new_value):
                     card['power'] = new_value
                     if card['tapped']:
                         json['damages'] += int(new_value)
+        playground.config = json
+        playground.save()
+        return HttpResponse()
+
+def playground_save_plainswalker(request, deck_id, plainswalker_index, button, new_value):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+        json = playground.config
+        for plainswalker in json['plainswalkers']:
+            if plainswalker['index'] == int(plainswalker_index):
+                if button == "loyalty-plus" or button == "loyalty-minus":
+                    playground.last_update_date = datetime.today()
+                    plainswalker['loyalty'] = new_value
+                    if button == "loyalty-plus":
+                        playground.history['logs'].append(
+                            {
+                                playground.last_update_date.strftime(
+                                    '%d-%m-%Y %H:%M:%S'): "La loyauté de " + plainswalker['name'] + " a gagné +1."
+                            }
+                        )
+                    else:
+                        playground.history['logs'].append(
+                            {
+                                playground.last_update_date.strftime(
+                                    '%d-%m-%Y %H:%M:%S'): "La loyauté de " + plainswalker['name'] + " a perdu -1."
+                            }
+                        )
         playground.config = json
         playground.save()
         return HttpResponse()
@@ -793,6 +1000,10 @@ def playground_reset_all(request, deck_id):
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]
         json = playground.config
 
+        for plainswalker in json['plainswalkers']:
+            for original_plainswalker in deck.plainswalkers.all():
+                if plainswalker['pk'] == original_plainswalker.pk:
+                    plainswalker['loyalty'] = str(original_plainswalker.loyalty)
         for card in json['cards']:
             for original_card in deck.cards.all():
                 if card['pk'] == original_card.pk:
@@ -1020,6 +1231,7 @@ def playground_reorder_cards(request, deck_id, slug):
     playground.save()
     return HttpResponse()
 
+
 def playground_kill_all(request, deck_id):
     user = request.user
     if not user.is_authenticated:
@@ -1028,8 +1240,13 @@ def playground_kill_all(request, deck_id):
         deck = Deck.objects.filter(pk=deck_id)[0]
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]
         json = playground.config
-        cards = []
 
+        plainswalkers = []
+        for plainswalker in json['plainswalkers']:
+            json['cemetery'].append(plainswalker)
+        json['plainswalkers'] = plainswalkers
+
+        cards = []
         for card in json['cards']:
             if "Token" not in card["description"]:
                 json['cemetery'].append(card)
@@ -1037,7 +1254,6 @@ def playground_kill_all(request, deck_id):
                 json['damages'] -= int(card['power'])
         json['cards'] = cards
         playground.config = json
-        playground.last_update_date = datetime.today()
         playground.last_update_date = datetime.today()
         playground.history['logs'].append({
             playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'): "Toutes les créatures ont été mises au cimetière !"
@@ -1326,6 +1542,13 @@ def playground_turn_on(request, deck_id):
         playground = Playground.objects.filter(user=request.user, deck=deck)[0]
         playground.config["turn"]["count"] += 1
         playground.config["turn"]["state"] = "open"
+        for plainswalker in playground.config['plainswalkers']:
+            plainswalker['loyalty'] = str(int(plainswalker['loyalty']) + 1)
+            playground.last_update_date = datetime.today()
+            playground.history['logs'].append({
+                playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S'):
+                    "Le planeswalker " + plainswalker["name"] + " gagne +1 en loyauté."
+            })
         for card in playground.config['cards']:
             card['isDefended'] = False
             card['tapped'] = False
@@ -1405,6 +1628,47 @@ def playground_defend(request, deck_id, card_index):
             json['turn']['state'] = "close"
 
         playground.config = json
+        playground.save()
+        return redirect('playground_game_starts', deck_id=deck.pk)
+
+
+def playground_add_plainswalker(request, plainswalker_id, deck_id):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+    else:
+        plainswalker = PlainsWalker.objects.filter(pk=plainswalker_id)[0]
+        deck = Deck.objects.filter(pk=deck_id)[0]
+        playground = Playground.objects.filter(user=request.user, deck=deck)[0]
+
+        colors = []
+        for color in plainswalker.colors.all():
+            colors.append(color.color)
+
+        json = playground.config
+
+        index = len(json["plainswalkers"])
+
+        json["plainswalkers"].append(
+            {
+                "pk": plainswalker.pk,
+                "index": index + 1,
+                "name": plainswalker.name,
+                "colors": colors,
+                "description": plainswalker.description,
+                "loyalty": plainswalker.loyalty,
+                "language": plainswalker.language,
+                "illustration": plainswalker.illustration,
+                "tapped":False,
+                "invokation": {
+                    "state":True,
+                    "turn": json['turn']['count']
+                },
+            }
+        )
+
+        playground.last_update_date = datetime.today()
+        playground.history['logs'].append({ playground.last_update_date.strftime('%d-%m-%Y %H:%M:%S') : "le Planeswalker " + plainswalker.name + " a été invoqué !"})
         playground.save()
         return redirect('playground_game_starts', deck_id=deck.pk)
 

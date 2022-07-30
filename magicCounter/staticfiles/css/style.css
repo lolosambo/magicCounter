@@ -351,6 +351,16 @@ form > button{
     border-radius: 5px;
 }
 
+.playground-plainswalker-wrapper {
+    background-color: #252727;
+    height: 460px;
+    width: 240px;
+    padding: 20px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
 .playground-card-wrapper p {
     font-size: 0.8rem;
     margin-bottom: 10px;

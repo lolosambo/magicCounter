@@ -66,6 +66,25 @@ class Card(models.Model):
         return reverse("card_consult", kwargs={"card_id": self.pk})
 
 
+class PlainsWalker(models.Model):
+    deck = models.ManyToManyField(Deck, related_name="plainswalkers")
+    name = models.CharField(max_length=100)
+    colors = models.ManyToManyField(Color, blank=True)
+    description = models.TextField(blank=True)
+    loyalty = models.CharField(max_length=4)
+    illustration = models.URLField(blank=True)
+    language = models.CharField(max_length=50, default="English")
+
+    class Meta:
+        verbose_name = "Plainswalker"
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("plainswalker_consult", kwargs={"plainswalker_id": self.pk})
+
+
 class Playground(models.Model):
     user = models.ForeignKey(CustomUser, editable=False, on_delete=models.CASCADE, blank=True, null=True, default=0)
     deck = models.ForeignKey(Deck, editable=False, on_delete=models.CASCADE, blank=True, null=True, default=0)

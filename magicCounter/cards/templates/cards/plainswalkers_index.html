@@ -1,0 +1,50 @@
+{% extends "magicCounter/base.html" %}
+{% load static %}
+
+{% block page_title%}
+    <h1>Liste des Plainswalkers</h1>
+{% endblock%}
+
+{% block page_menu %}
+    <a href="{% url 'homepage' %}">
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-house"></i> Retour à l'accueil</button>
+    </a>
+    <a href="{% url 'plainswalker_add' %}">
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-file-circle-plus"></i> Ajouter un Plainswalker</button>
+    </a>
+{% endblock%}
+
+{% block main_content %}
+ <div class="col-12">
+     <div class="row">
+         {% for plainswalker in plainswalkers %}
+         <div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
+             <a href="{% url 'plainswalker_consult' plainswalker_id=plainswalker.pk %}">
+                 <div class="card-wrapper">
+                     {% if plainswalker.description == "Token" %}
+                     <div class="token-illustration">
+                         <div class="token-name">{{ plainswalker.name }}</div>
+                         {% for color in plainswalker.colors.all %}
+                            <img class="token-colors" width="15" src="/media/{{ color.color|lower }}.png" alt="{{color.color}}"/>
+                         {% endfor %}
+                         <div class="token-description">{{ plainswalker.description }}</div>
+                     </div>
+                     {% else %}
+                         <img class="card-illustration" src="{{ plainswalker.illustration }}" alt="{{ plainswalker.name }}"/>
+                     {% endif %}
+
+                     <p style="margin-bottom: 10px;">{{ plainswalker.name }}</p>
+                     <div class="card-buttons">
+                         <a class="btn btn-sm btn-warning" href="{% url 'plainswalker_edit' pk=plainswalker.pk %}">Editer</a>
+                         <a class="btn btn-sm btn-danger" href="{% url 'plainswalker_delete' pk=plainswalker.pk %}">Supprimer</a>
+                     </div>
+                 </div>
+             </a>
+        </div>
+        {% endfor%}
+     </div>
+ </div>
+
+{% endblock %}

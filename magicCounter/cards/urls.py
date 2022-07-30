@@ -8,7 +8,10 @@ from .views import index, card, addCard, CardEditView, CardDeleteView, \
     playground_kill_all, playground_flying_creature, playground_non_flying_creature, playground_flying_all, \
     playground_non_flying_all, playground_non_lifelink_all, playground_lifelink_all, playground_lifelink_creature, \
     playground_non_lifelink_creature, playground_non_haste_all, playground_haste_all, playground_haste_creature, \
-    playground_non_haste_creature,playground_turn_on, playground_turn_off, playground_turn_attack, playground_defend
+    playground_non_haste_creature,playground_turn_on, playground_turn_off, playground_turn_attack, playground_defend, \
+    plainswalkers_index, plainswalkerAddView, plainswalker, PlainswalkerEditView, PlainswalkerDeleteView, \
+    associatePlainswalkerToDeckView, removePlainswalkerFromDeckView, playground_add_plainswalker, \
+    playground_save_plainswalker, playground_remove_plainswalker
 
 urlpatterns = [
     # CARD VIEWS
@@ -18,6 +21,13 @@ urlpatterns = [
     path('card/<str:pk>/edit', CardEditView.as_view(), name="card_edit"),
     path('card/<str:pk>/delete', CardDeleteView.as_view(), name="card_delete"),
 
+    # PLAINSWALKER VIEWS
+    path('plainswalkers/', plainswalkers_index, name="plainswalkers_index"),
+    path('plainswalker/add', plainswalkerAddView, name="plainswalker_add"),
+    path('plainswalker/<str:plainswalker_id>', plainswalker, name="plainswalker_consult"),
+    path('plainswalker/<str:pk>/edit', PlainswalkerEditView.as_view(), name="plainswalker_edit"),
+    path('plainswalker/<str:pk>/delete', PlainswalkerDeleteView.as_view(), name="plainswalker_delete"),
+
     # DECK VIEWS
     path('decks/', deck_index, name="decks_index"),
     path('deck/add', deckAddView, name="deck_add"),
@@ -26,6 +36,8 @@ urlpatterns = [
     path('deck/<str:pk>/delete', DeckDeleteView.as_view(), name="deck_delete"),
     path('deck/associate/card/<str:card_id>', associateCardToDeckView, name="associate_card_to_deck"),
     path('deck/dissociate/deck/<str:deck_id>/card/<str:card_id>', removeCardFromDeckView, name="remove_card_from_deck"),
+    path('deck/associate/plainswalker/<str:plainswalker_id>', associatePlainswalkerToDeckView, name="associate_plainswalker_to_deck"),
+    path('deck/dissociate/deck/<str:deck_id>/plainswalker/<str:plainswalker_id>', removePlainswalkerFromDeckView, name="remove_plainswalker_from_deck"),
 
     # TOKEN VIEWS
     path('tokens/', token_index, name="tokens_index"),
@@ -36,13 +48,16 @@ urlpatterns = [
     path('deck/associate/token/<str:card_id>', associateTokenToDeckView, name="associate_token_to_deck"),
     path('deck/dissociate/deck/<str:deck_id>/token/<str:card_id>', removeTokenFromDeckView, name="remove_token_from_deck"),
 
-    # PLAYGROUN VIEWS
+    # PLAYGROUND VIEWS
     path('playground/', playground, name="playground"),
 
     path('playground/starts/<str:deck_id>', playground_game_starts, name="playground_game_starts"),
     path('playground/deck/<str:deck_id>/card/add/<str:card_id>/<str:number_of_cards>', playground_add_card, name="playground_add_card"),
+    path('playground/deck/<str:deck_id>/plainswalker/add/<str:plainswalker_id>', playground_add_plainswalker, name="playground_add_plainswalker"),
     path('playground/deck/<str:deck_id>/delete/<str:index>', playground_remove_creature, name="playground_remove_creature"),
+    path('playground/deck/<str:deck_id>/plainswalker/delete/<str:index>', playground_remove_plainswalker, name="playground_remove_plainswalker"),
     path('playground/deck/<str:deck_id>/card/<str:card_index>/save/<str:button>/<str:new_value>', playground_save, name="playground_save"),
+    path('playground/deck/<str:deck_id>/plainswalker/<str:plainswalker_index>/save/<str:button>/<str:new_value>', playground_save_plainswalker, name="playground_save_plainswalker"),
     path('playground/deck/<str:deck_id>/save/<str:button>', playground_save_for_all, name="playground_save_for_all"),
     path('playground/deck/<str:deck_id>/reset', playground_reset_all, name="playground_reset_all"),
     path('playground/deck/<str:deck_id>/kill_game', playground_kill_game, name="kill_game"),

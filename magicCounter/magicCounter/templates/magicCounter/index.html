@@ -8,20 +8,24 @@
 {% block page_menu %}
     <a href="{% url 'playground' %}">
         <button class="btn btn-primary">
-            <i class="fa-solid fa-dragon"></i> Aller sur l'aire de jeu</button>
+            <i class="fa-solid fa-dragon"></i> Arène de combat</button>
     </a>
     <a href="{% url 'decks_index' %}">
         <button type="button" class="btn btn-success">
-            <i class="fa-solid fa-layer-group"></i> Liste des decks</button>
+            <i class="fa-solid fa-layer-group"></i> Decks</button>
     </a>
     <a href="{% url 'cards_index' %}">
         <button type="button" class="btn btn-success">
-            <i class="fa-solid fa-file"></i> Liste des cartes
+            <i class="fa-solid fa-file"></i> Cartes
         </button>
+    </a>
+    <a href="{% url 'plainswalkers_index' %}">
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-file"></i> Plainswalkers</button>
     </a>
     <a href="{% url 'tokens_index' %}">
         <button type="button" class="btn btn-success">
-            <i class="fa-solid fa-ring"></i> Liste des Jetons
+            <i class="fa-solid fa-ring"></i> Jetons
         </button>
     </a>
     <a href="{% url 'profile' %}">

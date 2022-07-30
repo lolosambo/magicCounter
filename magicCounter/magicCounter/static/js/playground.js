@@ -69,6 +69,13 @@ $(document).ready(function () {
         $.ajax({ type: 'GET', url: url});
     });
 
+    $("button[id*='loyalty-minus-']").on("click", function(){
+        let id = $(this).attr("id").split('-')[2];
+        $("#loyalty-"+id).text(parseInt($("#loyalty-"+id).text()) - 1) ;
+        url = formatUrl($("#loyalty-"+id).text(), $(this).attr("data-save-url"))
+        $.ajax({ type: 'GET', url: url});
+    });
+
     // --------------------  DETRUIRE CREATURE ------------------------------------
 
     $("a[id*='death-']").on("click", function(){

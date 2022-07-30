@@ -5,6 +5,18 @@
     </div>
     <div class="offcanvas-body">
         <div class="row">
+            {% for plainswalker in deck.plainswalkers.all|dictsort:"name" %}
+                <div class="col-xxl-1 col-lg-2 col-md-2 col-sm-3 col-4 card-thumbnail">
+                    <a
+                            id="plainswalker-{{ plainswalker.pk }}"
+                            href="{% url 'playground_add_plainswalker' deck_id=deck.pk plainswalker_id=plainswalker.pk %}"
+                            role="button"
+                    >
+                        <img src="{{ plainswalker.illustration }}" style="width: 100%" alt="{{ plainswalker.name }}"/>
+                        <p class="mb-2">{{ plainswalker.name }}</p>
+                    </a>
+                </div>
+          {% endfor %}
           {% for card in deck.cards.all|dictsort:"name" %}
                 <div class="col-xxl-1 col-lg-2 col-md-2 col-sm-3 col-4 card-thumbnail">
                     <a

@@ -1,0 +1,69 @@
+{% extends "magicCounter/base.html" %}
+{% load static %}
+
+{% block page_menu %}
+    <a href="{% url 'homepage' %}">
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-house"></i> Retour à l'accueil</button>
+    </a>
+    <a href="{% url 'plainswalkers_index' %}">
+        <button type="button" class="btn btn-success">
+            <i class="fa-solid fa-file"></i> Revenir à la liste des plainswalkers</button>
+    </a>
+{% endblock%}
+
+{% block page_title %}
+    {% if plainswalker %}
+        <h1>Modifier {{ plainswalker.name }}</h1>
+    {% else %}
+        <h1>Ajouter un Plainswalker</h1>
+    {% endif %}
+
+{% endblock %}
+
+{% block main_content %}
+     <div class="offset-lg-4 col-lg-4 offset-md-3 col-md-6 col-12 form-wrapper">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="fieldWrapper">
+                {{ form.name.errors }}
+                <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                {{ form.name }}
+            </div>
+
+            <div class="row">
+                <div class="col-5">
+                     <div class="fieldWrapper">
+                        {{ form.loyalty.errors }}
+                        <label for="{{ form.power.id_for_label }}">{{ form.loyalty.label }}</label>
+                        {{ form.loyalty }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="fieldWrapper">
+                {{ form.language.errors }}
+                <label for="{{ form.language.id_for_label }}">{{ form.language.label }}</label>
+                {{ form.language }}
+            </div>
+
+            <div class="fieldWrapper">
+                {{ form.deck.errors }}
+                <label for="{{ form.deck.id_for_label }}">{{ form.deck.label }}</label>
+                {{ form.deck }}
+            </div>
+
+            <div class="fieldWrapper">
+                {{ form.colors.errors }}
+                <label for="{{ form.colors.id_for_label }}">{{ form.colors.label }}</label>
+                {{ form.colors }}
+            </div>
+
+            {% if error %} <div class="text-red">{{error}}</div> {% endif %}
+            <button class="btn btn-success" type="submit">Valider</button>
+        </form>
+     </div>
+
+{% endblock %}

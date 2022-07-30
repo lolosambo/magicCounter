@@ -41,6 +41,24 @@
                               <li>
                                   <span>Cartes :</span>
                                   <div class="row">
+                                      {% for plainswalker in deck.plainswalkers.all %}
+                                          <div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
+                                             <a href="{% url 'plainswalker_consult' plainswalker_id=plainswalker.pk %}">
+                                                 <div class="card-wrapper">
+                                                     <img class="card-illustration" src="{{ plainswalker.illustration }}" alt="{{ plainswalker.name }}"/><br>
+
+                                                      <div class="card-buttons">
+                                                          <a class="btn btn-sm btn-warning" href="{% url 'plainswalker_edit' pk=plainswalker.pk %}">Editer</a>
+                                                          <a
+                                                              class="btn btn-sm btn-danger"
+                                                              href="{% url 'remove_plainswalker_from_deck' deck_id=deck.pk plainswalker_id=plainswalker.pk %}"
+                                                          >Dissocier
+                                                          </a>
+                                                      </div>
+                                                 </div>
+                                             </a>
+                                          </div>
+                                      {% endfor %}
                                       {% for card in deck.cards.all %}
                                           <div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
                                              <a href="{% url 'card_consult' card_id=card.pk %}">
