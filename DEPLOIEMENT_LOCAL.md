@@ -186,6 +186,29 @@ python3 manage.py shell
 ### Erreur "SECRET_KEY" non définie
 Assurez-vous que le fichier `.env` existe dans `magicCounter/magicCounter/.env` et contient une valeur pour SECRET_KEY.
 
+Utilisez le script de configuration pour générer automatiquement le fichier :
+```bash
+python3 setup_env.py
+```
+
+### Erreur "ModuleNotFoundError: No module named 'mtgsdk'"
+Cette erreur indique que la dépendance mtgsdk n'est pas installée. Assurez-vous d'avoir installé toutes les dépendances :
+```bash
+pip install -r requirements.txt
+```
+
+Si le problème persiste, installez mtgsdk directement :
+```bash
+pip install mtgsdk==1.3.1
+```
+
+### Erreur "no such table" lors de la migration
+Si vous rencontrez l'erreur `no such table: cards_cardtype` ou similaire, c'est que la base de données n'a pas encore été créée. Assurez-vous d'exécuter les migrations :
+```bash
+cd magicCounter
+python3 manage.py migrate
+```
+
 ### Erreur d'import Django
 Vérifiez que votre environnement virtuel est activé et que les dépendances sont installées :
 ```bash

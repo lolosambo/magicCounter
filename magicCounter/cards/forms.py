@@ -187,18 +187,6 @@ class AssociationForm(forms.ModelForm):
 
 
 class AddTokenForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
-        super(AddTokenForm, self).__init__(*args, **kwargs)
-        if user:
-            formatted_decks = []
-            for deck in Deck.objects.filter(user=user):
-                formatted_decks.append((deck.name, deck.name))
-            self.fields["deck"] = forms.MultipleChoiceField(
-                label="Deck(s)",
-                choices=formatted_decks,
-                widget=HorizontalCheckboxSelectMultiple()
-            )
     name = forms.CharField(
         label="Nom de la carte",
         required=True
@@ -260,24 +248,39 @@ class AddTokenForm(forms.Form):
         widget=HorizontalCheckboxSelectMultiple()
     )
 
-    types = CardType.objects.all().order_by("name")
-    formatted_types = []
-
-    for type in types:
-        formatted_types.append((type.name, type.name))
-
-    formatted_types.sort()
-    types = forms.MultipleChoiceField(
-        label="Type(s)",
-        choices=formatted_types,
-        required=False,
-        widget=HorizontalCheckboxSelectMultiple()
-    )
-
     add_type = forms.CharField(
         label="Ajouter des types (séparés par une virgule)",
         required=False
     )
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(AddTokenForm, self).__init__(*args, **kwargs)
+
+        # Initialiser les decks
+        if user:
+            formatted_decks = []
+            for deck in Deck.objects.filter(user=user):
+                formatted_decks.append((deck.name, deck.name))
+            self.fields["deck"] = forms.MultipleChoiceField(
+                label="Deck(s)",
+                choices=formatted_decks,
+                widget=HorizontalCheckboxSelectMultiple()
+            )
+
+        # Initialiser les types (déplacé ici pour éviter la requête à l'import)
+        types = CardType.objects.all().order_by("name")
+        formatted_types = []
+        for card_type in types:
+            formatted_types.append((card_type.name, card_type.name))
+        formatted_types.sort()
+
+        self.fields["types"] = forms.MultipleChoiceField(
+            label="Type(s)",
+            choices=formatted_types,
+            required=False,
+            widget=HorizontalCheckboxSelectMultiple()
+        )
 
     # Validation des éléments de formulaire après soumission.
     # ATTENTION au nommage "clean_" + "NomDuChamp" obligatoire
