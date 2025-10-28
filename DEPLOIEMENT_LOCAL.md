@@ -8,7 +8,44 @@ Ce guide vous explique comment déployer et exécuter le projet Magic Counter su
 - pip (gestionnaire de paquets Python)
 - Git
 
-## Étapes d'installation
+## Installation Rapide (Recommandé)
+
+Pour une installation automatique, utilisez le script de configuration :
+
+```bash
+# Après avoir cloné le projet
+cd magicCounter
+
+# Créer l'environnement virtuel
+python3 -m venv venv
+source venv/bin/activate  # ou venv\Scripts\activate sur Windows
+
+# Installer les dépendances
+pip install -r requirements.txt
+
+# Configurer automatiquement le .env
+python3 setup_env.py
+# Ou avec le script bash :
+# ./setup_env.sh
+
+# Créer la base de données
+cd magicCounter
+python3 manage.py migrate
+
+# Lancer le serveur
+python3 manage.py runserver
+```
+
+Le script `setup_env.py` (ou `setup_env.sh`) génère automatiquement :
+- Une SECRET_KEY sécurisée
+- Le fichier .env avec la configuration de développement
+- Les instructions pour les prochaines étapes
+
+---
+
+## Étapes d'installation manuelle
+
+Si vous préférez installer manuellement, suivez ces étapes :
 
 ### 1. Cloner le projet
 
